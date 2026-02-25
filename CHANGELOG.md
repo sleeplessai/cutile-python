@@ -3,6 +3,52 @@
 
 Release Notes
 =============
+1.2.0 (2026-03-05)
+------------------
+### CTK 13.2 features
+- Support Ampere and Ada (sm80 family) GPUs.
+- Support `pip install cuda-tile[tileiras]` to use `tileiras` from Python environment
+  without system-wide CTK installation.
+- Add `ct.atan2(y, x)` operation for computing the arctangent of y/x.
+- Add optional `rounding_mode` parameter for `ct.tanh()`, supporting `RoundingMode.FULL` and
+  `RoundingMode.APPROX`.
+- Compiling FP8 operations for sm80 family GPUs will raise `TileUnsupportedFeatureError`.
+- Setting `opt_level=0` on `ct.kernel` is no longer required for `ct.printf()` and `ct.print()`.
+
+
+### Features
+- Add `ct.static_iter` keyword that enables compile-time `for` loops.
+- Add `ct.static_assert` keyword that can be used to assert that a condition is true at compile time.
+- Add `ct.static_eval` keyword that enables compile-time evaluation using the host Python interpreter.
+- Add `ct.scan()` for custom scan.
+- Add `ct.isnan()`.
+- Add `print()` and `ct.print()` that supports python-style print and f-strings.
+- Add optional `mask` parameter to `ct.gather()` and `ct.scatter()` for custom boolean masking.
+- Operator `+` can now be used to concatenate tuples.
+- Support unpacking nested tuples (e.g., `a, (b, c) = t`) and using square brackets
+  for unpacking (e.g., `[a, b] = 1, 2`).
+- Add bytecode-to-cubin disk cache to avoid recompilation of unchanged kernels.
+  Controlled by `CUDA_TILE_CACHE_DIR` and `CUDA_TILE_CACHE_SIZE`.
+
+### Bug Fixes
+- Fix a bug where `nan != nan` returns False.
+- Fix "potentially undefined variable `$retval`" error when a helper function
+  returns after a `while` loop that contains no early return.
+- Fix the missing column indicator in error messages when the underlined text is only one
+  character wide.
+- Add a missing check for unpacking a tuple with too many values. For example, `a, b = 1, 2, 3`
+  now raises an error instead of silently discarding the extra value.
+- Fix a bug where the promoted dtype of uint16 and uint64 was incorrectly set to uint32.
+
+
+### Enhancements
+- Erase the distinction between scalars and zero-dimensional tiles.
+  They are now completely interchangeable.
+- `~x` for const boolean `x` will raise a TypeError to prevent inconsistent
+  results compared to `~x` on a boolean Tile.
+- Add `TileUnsupportedFeatureError` to the public API.
+
+
 1.1.0 (2026-01-30)
 ------------------
 ### Features

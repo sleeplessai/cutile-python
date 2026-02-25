@@ -1,1 +1,0 @@
-- Fix a type promotion bug where the promoted dtype of uint16 and uint64 was incorrectly set to uint32.
