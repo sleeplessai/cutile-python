@@ -8,7 +8,7 @@ from typing import Optional, Any, Callable, Tuple
 from enum import IntEnum
 
 from cuda.tile._exception import TileTypeError
-from cuda.tile._ir.type import Type, TupleTy, SizeTy
+from cuda.tile._ir.type import Type
 from cuda.tile._execution import function
 import cuda.tile._bytecode as bc
 
@@ -295,23 +295,23 @@ def is_restricted_arithmetic(t: DType) -> bool:
     return t in NumericDTypeCategories.RestrictedFloat
 
 
-def broadcast_shapes(s1: TupleTy, s2: TupleTy) -> TupleTy:
+def broadcast_shapes(s1: Tuple[int, ...], s2: Tuple[int, ...]) -> Tuple[int, ...]:
     if len(s1) > len(s2):
         s1, s2 = s2, s1
-    s1 = [SizeTy(1)] * (len(s2) - len(s1)) + list(s1)
+    s1 = [1] * (len(s2) - len(s1)) + list(s1)
 
     result_shape = []
     for d1, d2 in zip(s1, s2):
         if d1 != d2:
-            if d1.value == 1:
+            if d1 == 1:
                 result_shape.append(d2)
-            elif d2.value == 1:
+            elif d2 == 1:
                 result_shape.append(d1)
             else:
                 raise TypeError(f"Broadcast shapes mismatch: {s1}, {s2}")
         else:
             result_shape.append(d1)
-    return TupleTy(tuple(result_shape))
+    return tuple(result_shape)
 
 
 # ============= Arithmetic Promotion ==============

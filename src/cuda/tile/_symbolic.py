@@ -28,7 +28,7 @@ class SymbolicTile(Symbol, Tile):
     def shape(self) -> tuple[int, ...]:
         ty = self._var.get_type()
         assert isinstance(ty, TileTy)
-        return ty.shape_value if isinstance(ty, TileTy) else ()
+        return ty.shape
 
     @property
     def ndim(self) -> int:
@@ -88,7 +88,7 @@ class SymbolicArray(Symbol, Array):
         ty = self._var.get_type()
         assert isinstance(ty, ArrayTy)
 
-        shape_str = ", ".join("?" if s.maybe_value is None else str(s.value) for s in ty.shape)
+        shape_str = ", ".join("?" if s is None else str(s) for s in ty.shape)
 
         return f"<array[{ty.dtype}, ({shape_str})]>"
 

@@ -7,7 +7,7 @@ import pytest
 from cuda.tile import TileValueError
 from cuda.tile._exception import TileTypeError
 from cuda.tile._ir.type import (
-    TupleTy, TileTy, ArrayTy, SizeTy, NONE, LooselyTypedScalar, make_tile_ty
+    TupleTy, TileTy, ArrayTy, NONE, LooselyTypedScalar, make_tile_ty
 )
 from cuda.tile._datatype import (
     DType,
@@ -63,15 +63,15 @@ def test_builtin_types():
 
 def test_tuple_type():
     # tuple type
-    shape = TupleTy((SizeTy(5), SizeTy(4)))
+    shape = TupleTy((5, 4))
     assert len(shape) == 2
-    assert shape[0].value == 5
-    assert shape[1].value == 4
+    assert shape[0] == 5
+    assert shape[1] == 4
 
 
 def test_tile_type():
     # tile type
-    shape = TupleTy((SizeTy(5), SizeTy(4)))
+    shape = (5, 4)
     tile = TileTy(float16, shape)
     assert tile.dtype == float16
     assert tile.shape == shape
@@ -80,14 +80,11 @@ def test_tile_type():
     tile2 = TileTy(float16, shape)
     assert tile == tile2
 
-    with pytest.raises(TypeError):
-        TileTy(float16, TupleTy((int32, SizeTy(3))))
-
 
 def test_array_type():
     # array with dynamic shape
-    arr = ArrayTy(bfloat16, shape=TupleTy((SizeTy(), SizeTy())),
-                  strides=TupleTy((SizeTy(), SizeTy())),
+    arr = ArrayTy(bfloat16, shape=(None, None),
+                  strides=(None, None),
                   elements_disjoint=True,
                   base_ptr_div_by=None,
                   stride_div_by=(None, None),
@@ -96,10 +93,8 @@ def test_array_type():
     assert arr.elements_disjoint
     assert len(arr.shape) == 2
     assert len(arr.strides) == 2
-    with pytest.raises(TypeError):
-        arr.shape[0].value
-    with pytest.raises(TypeError):
-        arr.strides[0].value
+    assert arr.shape[0] is None
+    assert arr.strides[0] is None
 
 
 def test_promote_dtypes():
@@ -357,60 +352,60 @@ def test_typeof_pyval():
     # 0D tensor
     t = torch.tensor(0, device='cuda', dtype=torch.int32)
     assert _array_base_equal(tp(t), int32,
-                             shape=TupleTy(()),
-                             strides=TupleTy(()))
+                             shape=(),
+                             strides=())
 
     # 1D tensor
     t = torch.zeros(4, device='cuda', dtype=torch.int32)
     assert _array_base_equal(tp(t), int32,
-                             shape=TupleTy((SizeTy(None),)),
-                             strides=TupleTy((SizeTy(1),)))
+                             shape=(None,),
+                             strides=(1,))
 
     # 2D transposed tensor, dim[0] contiguous
     t = torch.zeros(2, 4, device='cuda', dtype=torch.int32).t()
     assert t.stride() == (1, 4)
     assert _array_base_equal(tp(t), int32,
-                             shape=TupleTy((SizeTy(None), SizeTy(None))),
-                             strides=TupleTy((SizeTy(1), SizeTy(None))))
+                             shape=(None, None),
+                             strides=(1, None))
 
     # 2D transposed tensor, no dim contiguous
     t = torch.zeros(4, 6, device='cuda', dtype=torch.int32)[::2, ::3]
     assert t.stride() == (12, 3)
     assert _array_base_equal(tp(t), int32,
-                             shape=TupleTy((SizeTy(None), SizeTy(None))),
-                             strides=TupleTy((SizeTy(None), SizeTy(None))))
+                             shape=(None, None),
+                             strides=(None, None))
 
     # 2D tensor, dim[1] stride 0
     t = torch.zeros(3, 1, device='cuda', dtype=torch.int32).broadcast_to((3, 3))
     assert t.stride() == (1, 0)
     assert _array_base_equal(tp(t), int32,
-                             shape=TupleTy((SizeTy(None), SizeTy(None))),
-                             strides=TupleTy((SizeTy(1), SizeTy(None))))
+                             shape=(None, None),
+                             strides=(1, None))
 
     # 2D tensor, contiguous, dim[0] and dim[1] stride 1
     t = torch.zeros(1, 1, device='cuda', dtype=torch.int32)
     assert t.stride() == (1, 1)
     assert _array_base_equal(tp(t), int32,
-                             shape=TupleTy((SizeTy(None), SizeTy(None))),
-                             strides=TupleTy((SizeTy(1), SizeTy(1))))
+                             shape=(None, None),
+                             strides=(1, 1))
 
 
 def test_type_of_pyval_numba(numba_cuda):
     tp = typeof_pyval
     t = numba_cuda.to_device(np.zeros(4, dtype=np.int32))
     assert _array_base_equal(tp(t), int32,
-                             shape=TupleTy((SizeTy(None),)),
-                             strides=TupleTy((SizeTy(1),)))
+                             shape=(None,),
+                             strides=(1,))
 
     t = numba_cuda.to_device(np.transpose(np.zeros((2, 4), dtype=np.int32)))
     assert _array_base_equal(tp(t), int32,
-                             shape=TupleTy((SizeTy(None), SizeTy(None))),
-                             strides=TupleTy((SizeTy(1), SizeTy(None))))
+                             shape=(None, None),
+                             strides=(1, None))
 
     t = numba_cuda.to_device(np.zeros((4, 6), dtype=np.int32))[::2, ::3]
     assert _array_base_equal(tp(t), int32,
-                             shape=TupleTy((SizeTy(None), SizeTy(None))),
-                             strides=TupleTy((SizeTy(None), SizeTy(None))))
+                             shape=(None, None),
+                             strides=(None, None))
 
 
 def _assert_array_specialization_equal(arryty: ArrayTy, elements_disjoint,

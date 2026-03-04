@@ -53,7 +53,7 @@ from .typing_support import (
     BYTE_BITWIDTH, typeof_pyval, dtype_registry, loose_type_of_pyval, get_constant_value
 )
 from .type import (
-    TupleTy, TileTy, NoneType, BoundMethodTy, SizeTy, ArrayTy,
+    TupleTy, TileTy, NoneType, BoundMethodTy, ArrayTy,
     ListTy, make_tile_ty, SliceType, DTypeConstructor, RangeIterType, Type,
     NONE, ModuleTy, TypeTy, LooselyTypedScalar, DTypeSpec, StringTy, InvalidType,
     array_size_type, ClosureTy, LiveCapturedScope, TokenTy,
@@ -769,7 +769,7 @@ def comparison_operator_impl(fn: str, x: Var, y: Var) -> Var:
 
 
 def _promote_and_broadcast_to(x: Var, ty: TileTy) -> Var:
-    return broadcast_to(astype(x, ty.dtype), ty.shape_value)
+    return broadcast_to(astype(x, ty.dtype), ty.shape)
 
 
 # Does not do broadcasting or type promotion, hence the name "Raw"
@@ -1159,7 +1159,7 @@ def tile_expand_dims(x: Var, index: Tuple[Any, ...]) -> Var:
         elif idx is None:
             axes.append(i - len(index) if ellipsis_idx is not None and i > ellipsis_idx else i)
     new_rank = x_type.ndim + len(axes)
-    new_shape = list(x_type.shape_value)
+    new_shape = list(x_type.shape)
     for axis in axes:
         normalized_axis = axis + new_rank if axis < 0 else axis
         new_shape.insert(normalized_axis, 1)
@@ -1527,7 +1527,7 @@ def getattr_impl(object: Var, name: Var) -> Var:
         case ArrayTy(), "slice": return bind_method(object, ct._m_array_slice)
 
         case TileTy(), "dtype": return loosely_typed_const(ty.dtype)
-        case TileTy(), "shape": return loosely_typed_const(ty.shape_value)
+        case TileTy(), "shape": return loosely_typed_const(ty.shape)
         case TileTy(), "ndim": return loosely_typed_const(ty.ndim)
 
         case TileTy(), "extract": return bind_method(object, ct.extract)
@@ -1852,7 +1852,7 @@ def _unflatten_proper_aggregate(flattened_iter: Iterator[Var], nominal: Type, ac
         all_strides = []
         dynamic_strides = []
         for x, s, divisor in zip(val.strides, nominal.strides, nominal.stride_div_by, strict=True):
-            if s.maybe_value is None:
+            if s is None:
                 x = assume_div_by(assume_bounded(x, 0, None), divisor)
                 dynamic_strides.append(x)
             all_strides.append(x)
@@ -1894,13 +1894,13 @@ def _infer_sliced_shape(
     axis: int,
     const_start: Optional[int],
     const_stop: Optional[int],
-) -> Tuple[TupleTy, Tuple[Optional[int], ...]]:
+) -> Tuple[Tuple[Optional[int], ...], Tuple[Optional[int], ...]]:
     has_const_bounds = const_start is not None and const_stop is not None
     new_axis_size = const_stop - const_start if has_const_bounds else None
 
     # FIXME: Enable static shape in MakeTensorView for new_axis_size if static
-    new_shape = TupleTy(
-        SizeTy(None) if i == axis else dim
+    new_shape = tuple(
+        None if i == axis else dim
         for i, dim in enumerate(array_ty.shape)
     )
 
@@ -1931,7 +1931,7 @@ def _infer_sliced_base_ptr_alignment(
         return None
 
     # Get stride divisibility in elements or use static stride if present
-    stride_div_by = array_ty.stride_div_by[axis] or array_ty.strides[axis].maybe_value
+    stride_div_by = array_ty.stride_div_by[axis] or array_ty.strides[axis]
     if stride_div_by is None:
         return None
 
@@ -1982,7 +1982,7 @@ def array_slice_impl(array: Var, axis: Var, start: Var, stop: Var) -> Var:
 
     array_val = array.get_aggregate()
     assert isinstance(array_val, ArrayValue)
-    static_stride = array_ty.strides[axis].maybe_value
+    static_stride = array_ty.strides[axis]
     if static_stride == 1:
         offset = start  # skip multiplication for unit stride
     elif static_stride is not None:
@@ -2025,7 +2025,7 @@ class TileLoad(Operation, opcode="tile_load", memory_effect=MemoryEffect.LOAD):
     @override
     def generate_bytecode(self, ctx: BytecodeContext) -> tuple[bc.Value, bc.Value]:
         tile_type: TileTy = self.result_vars[0].get_type()
-        shape = tile_type.shape_value
+        shape = tile_type.shape
         partition = ctx.make_partition_view(self.array, self.order, shape, self.padding_mode)
         res, res_token = bc.encode_LoadViewTkoOp(
             ctx.builder,
@@ -2088,7 +2088,7 @@ class TileStore(Operation, opcode="tile_store", memory_effect=MemoryEffect.STORE
     @override
     def generate_bytecode(self, ctx: BytecodeContext) -> bc.Value:
         tile_ty = self.tile.get_type()
-        tile_shape = tuple(x.value for x in tile_ty.shape)
+        tile_shape = tile_ty.shape
         partition = ctx.make_partition_view(self.array, self.order, tile_shape,
                                             padding_mode=PaddingMode.UNDETERMINED)
         return bc.encode_StoreViewTkoOp(
@@ -2173,7 +2173,7 @@ class LoadPointer(Operation, opcode="load_pointer", memory_effect=MemoryEffect.L
 def load_pointer(pointer: Var, mask: Optional[Var], padding_value: Optional[Var],
                  latency: Optional[int]) -> tuple[Var, Var]:
     pointer_ty = pointer.get_type()
-    shape = pointer_ty.shape_value
+    shape = pointer_ty.shape
     result_ty = make_tile_ty(pointer_ty.dtype.pointee_type, shape)
     return add_operation(LoadPointer, (result_ty, TokenTy()),
                          pointer=pointer, mask=mask, padding_value=padding_value,
@@ -2223,10 +2223,10 @@ class PointerOffset(Operation, opcode="pointer_offset"):
 
 def pointer_offset(pointer: Var, offset: Var) -> Var:
     pointer_ty = pointer.get_type()
-    pointer_shape = pointer_ty.shape_value
+    pointer_shape = pointer_ty.shape
 
     offset_ty = offset.get_type()
-    offset_shape = offset_ty.shape_value
+    offset_shape = offset_ty.shape
 
     common_shape = broadcast_shapes2(pointer_shape, offset_shape)
     pointer = broadcast_to(pointer, common_shape)
@@ -2240,11 +2240,11 @@ def gather_impl(array: Var, indices: Var, mask: Var, padding_value: Var,
                 check_bounds: Var, latency: Var) -> Var:
     pointer, final_mask = _gather_scatter_pointer_and_mask(array, indices, check_bounds, mask)
     pointer_ty = pointer.get_type()
-    pointer_shape = pointer_ty.shape_value
+    pointer_shape = pointer_ty.shape
 
     # Handle the padding value
     padding_ty = require_tile_type(padding_value)
-    padding_shape = padding_ty.shape_value
+    padding_shape = padding_ty.shape
     if not is_shape_broadcastable_to(padding_shape, pointer_shape):
         raise TileTypeError(f"Padding shape {padding_shape} is not broadcastable to the"
                             f" index shape {pointer_ty}")
@@ -2265,7 +2265,7 @@ def scatter_impl(array: Var, indices: Var, value: Var, mask: Var,
                  check_bounds: Var, latency: Var):
     pointer, final_mask = _gather_scatter_pointer_and_mask(array, indices, check_bounds, mask)
     pointer_ty = pointer.get_type()
-    pointer_shape = pointer_ty.shape_value
+    pointer_shape = pointer_ty.shape
 
     # Handle the `value`
     array_dtype = array.get_type().dtype
@@ -2281,7 +2281,7 @@ def scatter_impl(array: Var, indices: Var, value: Var, mask: Var,
 def _get_scatter_value(value: Var, pointer_shape: Tuple[int, ...], array_dtype: DType,
                        value_name: str, cast_dtype: bool = True) -> Var:
     value_ty = require_tile_type(value)
-    value_shape = value_ty.shape_value
+    value_shape = value_ty.shape
 
     if not is_shape_broadcastable_to(value_shape, pointer_shape):
         raise TileTypeError(f"{value_name} shape {value_shape} is not broadcastable"
@@ -2319,7 +2319,7 @@ def _process_custom_mask(mask: Optional[Var], bounds_mask: Optional[Var],
         raise TileTypeError(f"Custom mask must have boolean dtype, but got {mask_dtype}")
 
     # Check that mask shape is broadcastable
-    mask_shape = mask_ty.shape_value if isinstance(mask_ty, TileTy) else ()
+    mask_shape = mask_ty.shape if isinstance(mask_ty, TileTy) else ()
     if not is_shape_broadcastable_to(mask_shape, pointer_shape):
         raise TileTypeError(f"Custom mask shape {mask_shape} is not broadcastable"
                             f" to the index shape {pointer_shape}")
@@ -2364,7 +2364,7 @@ def _gather_scatter_pointer_and_mask(
             raise TileTypeError(f"Index {for_dim}has non-integer data type {ind_dtype}")
 
     # Calculate the common index shape
-    index_shapes = tuple(indty.shape_value for indty in index_types)
+    index_shapes = tuple(indty.shape for indty in index_types)
     common_shape = ()
     for shape in index_shapes:
         try:
@@ -2397,7 +2397,7 @@ def _gather_scatter_pointer_and_mask(
             else:
                 mask = binary_bitwise("and_", mask, dim_mask)
 
-        static_stride = array_ty.strides[dim].maybe_value
+        static_stride = array_ty.strides[dim]
         if static_stride == 1:
             offset_delta = ind
         else:
@@ -2461,7 +2461,7 @@ def atomic_cas_impl(array: Var, indices: Var, expected: Var, desired: Var, check
 
     pointer, mask = _gather_scatter_pointer_and_mask(array, indices, check_bounds)
     pointer_ty = pointer.get_type()
-    pointer_shape = pointer_ty.shape_value
+    pointer_shape = pointer_ty.shape
 
     # Handle the `expected` and `desired` values
     expected = _get_scatter_value(expected, pointer_shape, array_dtype, "Expected value")
@@ -2565,7 +2565,7 @@ def atomic_rmw_impl(int_mode: Optional[AtomicRMWMode],
 
     pointer, mask = _gather_scatter_pointer_and_mask(array, indices, check_bounds)
     pointer_ty = pointer.get_type()
-    pointer_shape = pointer_ty.shape_value
+    pointer_shape = pointer_ty.shape
 
     update = _get_scatter_value(update, pointer_shape, array_dtype, "Update",
                                 cast_dtype=not bitwise)
@@ -2683,17 +2683,20 @@ def zeros_impl(shape: Var, dtype: Var) -> Var:
     return full_const(shape, 0, dtype)
 
 
-def _matmul_broadcast_shape(x_shape: TupleTy, y_shape: TupleTy) -> \
-        Tuple[TupleTy, TupleTy, TupleTy, TupleTy]:
+_TileShape = Tuple[int, ...]
+
+
+def _matmul_broadcast_shape(x_shape: _TileShape, y_shape: _TileShape) -> \
+        Tuple[_TileShape, _TileShape, _TileShape, _TileShape]:
     x_orig_ndim = len(x_shape)
     y_orig_ndim = len(y_shape)
 
     # Promote 1D tensors to 2D for matmul
     if x_orig_ndim == 1:
-        x_shape = TupleTy((SizeTy(1),) + x_shape.value_types)
+        x_shape = (1,) + x_shape
 
     if y_orig_ndim == 1:
-        y_shape = TupleTy(y_shape.value_types + (SizeTy(1),))
+        y_shape = y_shape + (1,)
 
     if x_shape[-1] != y_shape[-2]:
         raise TileTypeError(f"Incompatible shapes for matrix mul on tiles: {x_shape}, {y_shape}.")
@@ -2704,18 +2707,17 @@ def _matmul_broadcast_shape(x_shape: TupleTy, y_shape: TupleTy) -> \
     except TypeError:
         raise TileTypeError(f"Incompatible shapes for matrix mul on tiles: {x_shape}, {y_shape}.")
 
-    x_shape = TupleTy(batch_shape.value_types + x_shape.value_types[-2:])
-    y_shape = TupleTy(batch_shape.value_types + y_shape.value_types[-2:])
-    acc_shape = TupleTy(batch_shape.value_types + (x_shape[-2],) + (y_shape[-1],))
+    x_shape = batch_shape + x_shape[-2:]
+    y_shape = batch_shape + y_shape[-2:]
+    acc_shape = batch_shape + (x_shape[-2],) + (y_shape[-1],)
 
     output_shape = acc_shape
     # If x was 1D, squeeze the leading dim
     if x_orig_ndim == 1:
-        output_shape = TupleTy(output_shape.value_types[:-2]
-                               + output_shape.value_types[-1:])
+        output_shape = output_shape[:-2] + output_shape[-1:]
     # If y was 1D, squeeze the trailing dim
     if y_orig_ndim == 1:
-        output_shape = TupleTy(output_shape.value_types[:-1])
+        output_shape = output_shape[:-1]
 
     return (x_shape, y_shape, acc_shape, output_shape)
 
@@ -2782,14 +2784,14 @@ def matmul_impl(x: Var, y: Var) -> Var:
         # because y is first reshaped to 2d by appending 1.
         # Therefore, we need to first reshape y from (k,) to (k, 1) and then
         # apply the reshape+broadcast rule for batch dims
-        y_shape_2d = (y_shape_orig[0].value, 1)
+        y_shape_2d = (y_shape_orig[0], 1)
         y = reshape(y, y_shape_2d)
     y = _promote_and_broadcast_to(y, TileTy(common_dtype, y_shape))
     acc_ty = TileTy(acc_dtype, acc_shape)
     acc_value = strictly_typed_const(0, acc_ty)
     matmul_result = add_operation(TileMma, acc_ty, x=x, y=y, acc=acc_value)
     matmul_result = astype(matmul_result, common_dtype)
-    ret = reshape(matmul_result, tuple(dim.value for dim in output_shape))
+    ret = reshape(matmul_result, output_shape)
     return ret
 
 
@@ -2815,9 +2817,9 @@ class TileMmaScaled(Operation, opcode="tile_mma_scaled"):
 
 def _verify_scaling_block_size(ty: TileTy, scale_ty: TileTy, k_axis: int,
                                name: str, scale_name: str):
-    shape = ty.shape_value
+    shape = ty.shape
     dtype = ty.dtype
-    scale_shape = scale_ty.shape_value
+    scale_shape = scale_ty.shape
     scale_dtype = scale_ty.dtype
     k_axis = normalize_axis(k_axis, len(shape))
     if any(x != y for i, (x, y) in enumerate(zip(shape, scale_shape, strict=True)) if i != k_axis):
@@ -2959,9 +2961,9 @@ async def _get_reduce_scan_body_block(
         x_ty = x.get_type()
         assert isinstance(x_ty, TileTy)
         if i == 0:
-            input_shape = x_ty.shape_value
+            input_shape = x_ty.shape
         else:
-            assert input_shape == x_ty.shape_value
+            assert input_shape == x_ty.shape
         tile_0d_ty = make_tile_ty(x_ty.dtype, ())
         for _ in range(2):
             var = builder.ir_ctx.make_temp(builder.loc)
@@ -2977,7 +2979,7 @@ async def _get_reduce_scan_body_block(
         body_results = await body(tuple(lhs_vars), tuple(rhs_vars))
         for body_res, x in zip(body_results, xs, strict=True):
             body_res_ty = body_res.get_type()
-            assert body_res_ty.shape_value == ()
+            assert body_res_ty.shape == ()
             assert body_res_ty.dtype == x.get_type().dtype
 
         add_operation(EndBranch, (), outputs=body_results)
@@ -2987,7 +2989,7 @@ async def _get_reduce_scan_body_block(
 
 async def raw_reduce(xs: tuple[Var, ...], identities: tuple[bool | int | float], axis: int,
                      body: Callable) -> tuple[Var, ...]:
-    input_shape = require_tile_type(xs[0]).shape_value
+    input_shape = require_tile_type(xs[0]).shape
 
     assert 0 <= axis < len(input_shape)
     result_shape = input_shape[:axis] + input_shape[axis + 1:]
@@ -3016,9 +3018,9 @@ async def reduce(xs: tuple[Var, ...], identities: tuple[bool | int | float, ...]
     x_types = tuple(require_tile_type(x) for x in xs)
     for x_ty in x_types:
         try:
-            common_input_shape = broadcast_shapes2(common_input_shape, x_ty.shape_value)
+            common_input_shape = broadcast_shapes2(common_input_shape, x_ty.shape)
         except BroadcastError:
-            all_shapes = ", ".join(str(ty.shape_value) for ty in x_types)
+            all_shapes = ", ".join(str(ty.shape) for ty in x_types)
             raise TileTypeError(f"Input shapes {all_shapes}"
                                 f" are not broadcastable to a common shape")
 
@@ -3076,7 +3078,7 @@ def _make_reduce_scan_body(
                                     f" a value of non-tile type {r_ty}{extra_ctx}")
             if r_ty.ndim > 0:
                 raise TileTypeError(f"{op_name} function returned"
-                                    f" a tile of non-scalar shape {r_ty.shape_value}{extra_ctx}")
+                                    f" a tile of non-scalar shape {r_ty.shape}{extra_ctx}")
             error_ctx = f"{op_name} function returned a tile of unexpected dtype{extra_ctx}"
             cast_results.append(_implicit_cast(r, xi.get_type().dtype, error_ctx))
 
@@ -3226,7 +3228,7 @@ async def argmax_argmin(fn: str, x: Var, axis: Optional[int], keepdims: bool) ->
         x = astype(x, datatype.default_int_type)
 
     x_type = x.get_type()
-    indices = arange(x_type.shape_value[axis], datatype.default_int_type)
+    indices = arange(x_type.shape[axis], datatype.default_int_type)
     indices = reshape(indices, tuple(-1 if i == axis else 1 for i in range(x_type.ndim)))
 
     match fn:
@@ -3333,7 +3335,7 @@ class TileScan(Operation, opcode="tile_scan"):
 
 async def raw_scan(xs: tuple[Var, ...], identities: tuple[bool | int | float, ...], axis: int,
                    reverse: bool, body: Callable) -> tuple[Var, ...]:
-    input_shape = require_tile_type(xs[0]).shape_value
+    input_shape = require_tile_type(xs[0]).shape
     assert 0 <= axis < len(input_shape)
     result_types = tuple(make_tile_ty(x.get_type().dtype, input_shape) for x in xs)
     assert len(xs) == len(identities)
@@ -3360,7 +3362,7 @@ async def scan_simple(fn: str, x: Var, axis: int, reverse: bool,
         case _:
             assert False
 
-    x_shape = x_type.shape_value
+    x_shape = x_type.shape
     axis = normalize_axis(axis, len(x_shape))
     x_dtype = x_type.dtype
     x = _promote_and_broadcast_to(x, make_tile_ty(x_dtype, x_shape))
@@ -3401,9 +3403,9 @@ async def scan_impl(x: Var, axis: Var, func: Var, identity: Var, reverse: Var) -
     x_types = tuple(require_tile_type(x) for x in xs)
     for x_ty in x_types:
         try:
-            common_input_shape = broadcast_shapes2(common_input_shape, x_ty.shape_value)
+            common_input_shape = broadcast_shapes2(common_input_shape, x_ty.shape)
         except BroadcastError:
-            all_shapes = ", ".join(str(ty.shape_value) for ty in x_types)
+            all_shapes = ", ".join(str(ty.shape) for ty in x_types)
             raise TileTypeError(f"Input shapes {all_shapes}"
                                 f" are not broadcastable to a common shape")
     xs = tuple(broadcast_to(x, common_input_shape) for x in xs)
@@ -3442,7 +3444,7 @@ async def scan_impl_with_rd_and_ftz(fn: str, x: Var, axis: Var, reverse: Var,
 def expand_dims(x: Var, axis: int) -> Var:
     x_ty = require_tile_type(x)
     axis = normalize_axis(axis, x_ty.ndim + 1)
-    old_shape = x_ty.shape_value
+    old_shape = x_ty.shape
     new_shape = (*old_shape[:axis], 1, *old_shape[axis:])
     res_type = make_tile_ty(x_ty.dtype, new_shape)
     return add_operation(TileReshape, res_type, x=x)
@@ -3487,7 +3489,7 @@ def cat(tiles: Var, axis: int) -> Var:
 
     dtype = first_tile.dtype
     rank = first_tile.ndim
-    shape_value = list(first_tile.shape_value)
+    shape_value = list(first_tile.shape)
     axis = normalize_axis(axis, rank)
     for tile_ty in tuple_ty.value_types[1:]:
         if not isinstance(tile_ty, TileTy):
@@ -3496,12 +3498,12 @@ def cat(tiles: Var, axis: int) -> Var:
             raise TileTypeError(f"Expected tiles to have the same rank: {rank} != {tile_ty.ndim}")
         if tile_ty.dtype != dtype:
             raise TileTypeError(f"Expected tiles to have the same dtype: {dtype} != {tile_ty.dtype}")  # noqa: E501
-        for i, (x, y) in enumerate(zip(shape_value, tile_ty.shape_value, strict=True)):
+        for i, (x, y) in enumerate(zip(shape_value, tile_ty.shape, strict=True)):
             if i != axis and x != y:
                 raise TileTypeError("Expected tiles to have the same shape "
                                     "for non axis dimensions, "
-                                    f"got {tuple(shape_value)} and {tile_ty.shape_value}")
-        shape_value[axis] += tile_ty.shape_value[axis]
+                                    f"got {tuple(shape_value)} and {tile_ty.shape}")
+        shape_value[axis] += tile_ty.shape[axis]
 
     if not all(_is_power_of_2(x) for x in shape_value):
         raise TileTypeError(f"Result tile shape must be power of 2, got: {shape_value}")
@@ -3622,7 +3624,7 @@ class TileBroadcast(Operation, opcode="tile_broadcast"):
 
 def broadcast_to(x: Var, shape: Sequence[int]):
     x_ty = require_tile_type(x)
-    old_shape = x_ty.shape_value
+    old_shape = x_ty.shape
 
     if not is_shape_broadcastable_to(old_shape, shape):
         raise TileTypeError(f"Shape {old_shape} is not broadcastable to {tuple(shape)}")
@@ -3665,7 +3667,7 @@ def astype(x: Var, dtype: DType) -> Var:
         val = dtype._py_type(x.get_constant())
         return strictly_typed_const(val, make_tile_ty(dtype, ()))
 
-    result_ty = make_tile_ty(dtype, x_ty.shape_value)
+    result_ty = make_tile_ty(dtype, x_ty.shape)
     return add_operation(TileAsType, result_ty, x=x)
 
 
@@ -3699,7 +3701,7 @@ def bitcast(x: Var, dtype: DType) -> Var:
     if x_dtype == dtype:
         return x
 
-    res_ty = make_tile_ty(dtype, tile_ty.shape_value)
+    res_ty = make_tile_ty(dtype, tile_ty.shape)
     return add_operation(TileBitCast, res_ty, x=x)
 
 
@@ -3724,7 +3726,7 @@ def pack(x: Var) -> Var:
     tile_ty = require_tile_type(x)
     assert tile_ty.ndim == 1
     assert tile_ty.dtype.bitwidth != 8
-    old_dim = tile_ty.shape_value[0]
+    old_dim = tile_ty.shape[0]
     new_dim, rem = divmod(old_dim * tile_ty.dtype.bitwidth, 8)
     if rem != 0:
         raise TileTypeError(f"Cannot pack tile {tile_ty}: "
@@ -3763,7 +3765,7 @@ def unpack(x: Var, dtype: DType) -> Var:
     assert tile_ty.ndim == 1
     assert tile_ty.dtype == datatype.uint8
     assert dtype.bitwidth != 8
-    old_dim = tile_ty.shape_value[0]
+    old_dim = tile_ty.shape[0]
     new_dim, rem = divmod(old_dim * 8, dtype.bitwidth)
     if rem != 0:
         raise TileTypeError(
@@ -3781,7 +3783,7 @@ def unpack_from_bytes_impl(x: Var, dtype: Var):
     if tile_ty.ndim != 1:
         raise TileTypeError(
             f"unpack_from_bytes requires a 1D tile, "
-            f"got {tile_ty.ndim}D tile with shape {tile_ty.shape_value}")
+            f"got {tile_ty.ndim}D tile with shape {tile_ty.shape}")
     if x_dtype != datatype.uint8:
         raise TileTypeError(
             f"unpack_from_bytes requires uint8 tile, got {x_dtype} tile")
@@ -3832,7 +3834,7 @@ class TileReshape(Operation, opcode="tile_reshape"):
 
 def reshape(x: Var, new_shape: Tuple[int, ...]) -> Var:
     x_ty = require_tile_type(x)
-    x_shape = x_ty.shape_value
+    x_shape = x_ty.shape
     numel = math.prod(x_shape)
 
     negative_one_index = None
@@ -3885,7 +3887,7 @@ class TilePermute(Operation, opcode="tile_permute"):
 def permute(x: Var, axes: Sequence[int]) -> Var:
     ty = require_tile_type(x)
     axes = tuple(normalize_axis(ax, ty.ndim) for ax in axes)
-    shape = tuple(ty.shape_value[i] for i in axes)
+    shape = tuple(ty.shape[i] for i in axes)
     result_ty = make_tile_ty(ty.dtype, shape)
     return add_operation(TilePermute, result_ty, x=x, axes=axes)
 
@@ -3968,11 +3970,11 @@ def extract_impl(x: Var, index: Var, shape: Var) -> Var:
         raise TileTypeError(f"Index size {len(index_items)}"
                             f" does not match the tile rank {x_ty.ndim}")
 
-    for i, (s1, s2) in enumerate(zip(x_ty.shape_value, shape, strict=True)):
+    for i, (s1, s2) in enumerate(zip(x_ty.shape, shape, strict=True)):
         if s2 == 0:
             raise TileTypeError(f"Zero shape at dimension #{i}: {shape}")
         if s1 % s2 != 0:
-            raise TileTypeError(f"Input shape {x_ty.shape_value} is not divisible by"
+            raise TileTypeError(f"Input shape {x_ty.shape} is not divisible by"
                                 f" result shape {shape} at dimension #{i}")
     result = extract(x, index_items, shape)
     return reshape(result, orig_shape)

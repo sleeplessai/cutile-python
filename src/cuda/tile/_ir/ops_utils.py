@@ -290,7 +290,7 @@ def promote_types(t1: TileTy | LooselyTypedScalar,
     dtype_1 = t1 if isinstance(t1, LooselyTypedScalar) else t1.dtype
     dtype_2 = t2 if isinstance(t2, LooselyTypedScalar) else t2.dtype
     dtype = promote_dtypes(dtype_1, dtype_2, force_float)
-    shape = broadcast_shapes2(t1.shape_value, t2.shape_value)
+    shape = broadcast_shapes2(t1.shape, t2.shape)
     return make_tile_ty(dtype, shape)
 
 

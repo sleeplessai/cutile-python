@@ -19,7 +19,7 @@ from cuda.tile._ir.ops_utils import (
     padding_mode_to_bytecode, rounding_mode_to_bytecode,
     get_default_rounding_mode,
 )
-from cuda.tile._ir.type import Type, TileTy, PointerTy, TokenTy, TupleTy, ArrayTy, SizeTy
+from cuda.tile._ir.type import Type, TileTy, PointerTy, TokenTy, TupleTy, ArrayTy, size_to_bytecode
 
 
 def dtype_typeid(tt: bc.TypeTable, dtype: datatype.DType | PointerTy) -> bc.TypeId:
@@ -31,8 +31,8 @@ def dtype_typeid(tt: bc.TypeTable, dtype: datatype.DType | PointerTy) -> bc.Type
 
 def tensor_view_typeid(tt: bc.TypeTable, array_ty: ArrayTy) -> bc.TypeId:
     dtype = dtype_typeid(tt, array_ty.dtype)
-    shape = [x.bytecode_value for x in array_ty.shape]
-    strides = [x.bytecode_value for x in array_ty.strides]
+    shape = [size_to_bytecode(x) for x in array_ty.shape]
+    strides = [size_to_bytecode(x) for x in array_ty.strides]
     return tt.tensor_view(dtype, shape, strides)
 
 
@@ -45,7 +45,7 @@ def tensor_view_typeid_for_list(tt: bc.TypeTable, item_size_words: int) -> bc.Ty
 def typeid(tt: bc.TypeTable, ty: Type) -> bc.TypeId:
     if isinstance(ty, TileTy):
         dtype = dtype_typeid(tt, ty.dtype)
-        shape = [x.value for x in ty.shape]
+        shape = list(ty.shape)
         return tt.tile(dtype, shape)
     elif isinstance(ty, TokenTy):
         return tt.Token
@@ -148,7 +148,7 @@ def _broadcast_shape(ctx: "BytecodeContext",
     if len(fromty.shape) < len(toty.shape):
         # prepend 1s if input_shape have fewer dimensions
         diff = len(toty.shape) - len(fromty.shape)
-        new_shape = TupleTy(tuple([SizeTy(1)] * diff) + tuple(fromty.shape))
+        new_shape = (1,) * diff + fromty.shape
         reshaped_ty = TileTy(fromty.dtype, new_shape)
         reshaped_ty_id = typeid(ctx.type_table, reshaped_ty)
         val = bc.encode_ReshapeOp(ctx.builder, reshaped_ty_id, val)
@@ -163,25 +163,25 @@ def _broadcast_shape(ctx: "BytecodeContext",
 
 
 def _get_reduce_indices(
-    ctx: "BytecodeContext", input_shape: Tuple[SizeTy, ...], output_ty: TileTy,
+    ctx: "BytecodeContext", input_shape: Tuple[int, ...], output_ty: TileTy,
     normalized_axis: int,
 ) -> bc.Value:
     tt = ctx.type_table
     # iota
     indices_ty = TileTy(
-        output_ty.dtype, TupleTy(tuple([input_shape[normalized_axis]]))
+        output_ty.dtype, (input_shape[normalized_axis],)
     )
     indices = bc.encode_IotaOp(ctx.builder, typeid(tt, indices_ty))
 
     # prepend and append 1 until normalized_axis is at the right dimension.
-    new_shape = [SizeTy(1)] * len(input_shape)
+    new_shape = [1] * len(input_shape)
     new_shape[normalized_axis] = input_shape[normalized_axis]
     indices_ty = TileTy(
-        output_ty.dtype, TupleTy(new_shape)
+        output_ty.dtype, tuple(new_shape)
     )
     indices = bc.encode_ReshapeOp(ctx.builder, typeid(tt, indices_ty), indices)
     # broadcast to input_shape
-    to_indices_ty = TileTy(output_ty.dtype, TupleTy(input_shape))
+    to_indices_ty = TileTy(output_ty.dtype, tuple(input_shape))
     res, _ = _broadcast_shape(ctx, indices, indices_ty, to_indices_ty)
     return res
 

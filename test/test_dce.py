@@ -8,13 +8,13 @@ from cuda.tile._ir.ops import Loop, Continue, Break
 from cuda.tile._ir import ir
 from cuda.tile._compile import _get_final_ir
 from cuda.tile._cext import default_tile_context
-from cuda.tile._ir.type import ArrayTy, TupleTy, SizeTy
+from cuda.tile._ir.type import ArrayTy
 
 
 def get_ir(func) -> ir.Block:
     x = KernelArgument(type=ArrayTy(ct.int32,
-                                    shape=TupleTy((SizeTy(),)),
-                                    strides=TupleTy((SizeTy(1,),)),
+                                    shape=(None,),
+                                    strides=(1,),
                                     elements_disjoint=True,
                                     base_ptr_div_by=None,
                                     stride_div_by=(None,),

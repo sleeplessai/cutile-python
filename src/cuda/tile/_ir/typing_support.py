@@ -12,7 +12,7 @@ from cuda.tile._exception import TileTypeError, TileValueError
 from cuda.tile._cext import ArraySpecialization
 from .ir import ClosureValue
 
-from .type import Type, SizeTy, TupleTy, DTypeConstructor, DTypeSpec, ListTy, NONE, StringTy, \
+from .type import Type, TupleTy, DTypeConstructor, DTypeSpec, ListTy, NONE, StringTy, \
     ELLIPSIS, SLICE, ModuleTy, FunctionTy, ArrayTy, EnumTy, TypeTy, LooselyTypedScalar, ClosureTy, \
     make_tile_ty
 
@@ -333,16 +333,16 @@ if HAS_TORCH:
         if x.device.type != 'cuda':
             raise ValueError('Tensor must be on cuda device')
         # Assume dynamic shape
-        shape = TupleTy(SizeTy(None) for i in x.shape)
+        shape = tuple(None for i in x.shape)
         dtype = to_dtype(x.dtype)
 
         arr_special = ArraySpecialization(
             x.data_ptr(), dtype.bitwidth, x.shape, x.stride())
 
         # Assume dynamic strides except for the ones marked static
-        strides = TupleTy(SizeTy(i) if static else SizeTy(None)
-                          for i, static in
-                          zip(x.stride(), arr_special.stride_is_static))
+        strides = tuple(i if static else None
+                        for i, static in
+                        zip(x.stride(), arr_special.stride_is_static))
 
         return ArrayTy(dtype, shape=shape, strides=strides,
                        elements_disjoint=arr_special.elements_disjoint,
@@ -373,7 +373,7 @@ def _compute_elem_strides(shape, dtype_bytewidth, byte_strides):
 def from_cuda_array_interface(x: Any) -> ArrayTy:
     desc = x.__cuda_array_interface__
     # Assume dynamic shape
-    shape = TupleTy(SizeTy(None) for i in desc['shape'])
+    shape = tuple(None for i in desc['shape'])
     dtype = to_dtype(np.dtype(desc['typestr']))
     if dtype.bitwidth % BYTE_BITWIDTH != 0:
         raise ValueError("Only byte-aligned types should be supported by __cuda_array_interface__")
@@ -388,9 +388,9 @@ def from_cuda_array_interface(x: Any) -> ArrayTy:
             desc['data'][0], dtype.bitwidth, tuple(desc['shape']), elem_strides)
 
     # Assume dynamic strides except for the ones marked static
-    strides = TupleTy(SizeTy(i) if static else SizeTy(None)
-                      for i, static in
-                      zip(elem_strides, arr_special.stride_is_static))
+    strides = tuple(i if static else None
+                    for i, static in
+                    zip(elem_strides, arr_special.stride_is_static))
 
     return ArrayTy(dtype, shape=shape, strides=strides,
                    elements_disjoint=arr_special.elements_disjoint,

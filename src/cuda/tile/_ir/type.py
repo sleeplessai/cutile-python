@@ -59,10 +59,6 @@ class LooselyTypedScalar(Type):
     def shape(self):
         return ()
 
-    @property
-    def shape_value(self):
-        return ()
-
 
 # ============== None Type ===============
 
@@ -213,41 +209,8 @@ class TupleTy(Type):
         return tuple(unwrap(t) for t in self.value_types)
 
 
-# ============== SizeTy ===============
-
-class SizeTy(Type):
-
-    def __init__(self, value: Optional[int] = None):
-        """Represent a compile time or runtime size"""
-        if isinstance(value, int):
-            if value < 0:
-                raise TypeError(f'SizeTy value must be non negative, got {value}')
-        elif value is not None:
-            raise TypeError(f'SizeTy value must be int or None, got {value}')
-        self._value = value
-
-    @property
-    def value(self) -> int:
-        if self._value is None:
-            raise TypeError('SizeTy value is unknown at compile time')
-        return self._value
-
-    @property
-    def maybe_value(self) -> Optional[int]:
-        return self._value
-
-    @property
-    def bytecode_value(self) -> int:
-        return bc.DYNAMIC_SHAPE if self._value is None else self._value
-
-    def __eq__(self, other: Type):
-        return isinstance(other, SizeTy) and self._value == other._value
-
-    def __hash__(self):
-        return hash(("SizeTy", self._value))
-
-    def __str__(self):
-        return 'Size(?)' if self._value is None else f'Size({self._value})'
+def size_to_bytecode(s: Optional[int]) -> int:
+    return bc.DYNAMIC_SHAPE if s is None else s
 
 
 # ============== Pointer Type ===============
@@ -264,18 +227,9 @@ class PointerTy(Type):
 class TileTy(Type):
     def __init__(self,
                  dtype: "DType | PointerTy",
-                 shape: TupleTy):
+                 shape: Tuple[int, ...]):
         self.dtype = dtype
         self.shape = shape
-        try:
-            unwrap: Callable[[SizeTy], int] = lambda t: t.value
-            self._unwrapped_shape: Tuple[int, ...] = shape.map(unwrap)
-        except (TypeError, AttributeError):
-            raise TypeError(f'`shape` must be an Tuple[Size, ...], got: {shape}') from None
-
-    @property
-    def shape_value(self) -> Tuple[int, ...]:
-        return tuple(x.value for x in self.shape)
 
     @property
     def ndim(self):
@@ -283,8 +237,7 @@ class TileTy(Type):
 
     @property
     def numel(self):
-        # Total number of elements
-        return reduce(operator.mul, self._unwrapped_shape, 1)
+        return reduce(operator.mul, self.shape, 1)
 
     def __eq__(self, other: Type):
         if isinstance(other, TileTy):
@@ -295,16 +248,15 @@ class TileTy(Type):
         return hash(("TileTy", self.dtype, self.shape))
 
     def __repr__(self):
-        return f"TileTy(dtype={self.dtype}, shape={self.shape_value})"
+        return f"TileTy(dtype={self.dtype}, shape={self.shape})"
 
     def __str__(self):
-        shape_str = "(" + ','.join(str(x) for x in self._unwrapped_shape) + ")"
+        shape_str = "(" + ','.join(str(x) for x in self.shape) + ")"
         return f"Tile[{self.dtype},{shape_str}]"
 
 
 def make_tile_ty(dtype, shape: Sequence[int]) -> TileTy:
-    shape = TupleTy(tuple(SizeTy(x) for x in shape))
-    return TileTy(dtype, shape)
+    return TileTy(dtype, tuple(shape))
 
 
 # ============== Array Type ===============
@@ -312,15 +264,15 @@ def make_tile_ty(dtype, shape: Sequence[int]) -> TileTy:
 
 def array_size_type() -> Type:
     from .._datatype import int32
-    return TileTy(int32, TupleTy(()))
+    return TileTy(int32, ())
 
 
 class ArrayTy(Type):
     def __init__(self,
                  dtype,
                  /,
-                 shape: TupleTy,
-                 strides: TupleTy,
+                 shape: Tuple[Optional[int], ...],
+                 strides: Tuple[Optional[int], ...],
                  elements_disjoint: bool,
                  base_ptr_div_by: Optional[int],
                  stride_div_by: Tuple[Optional[int], ...],
@@ -328,17 +280,6 @@ class ArrayTy(Type):
         self.dtype = dtype
         self.shape = shape
         self.strides = strides
-
-        unwrap: Callable[[SizeTy], Optional[int]] = lambda t: t.maybe_value
-        try:
-            self._unwrapped_shape: Tuple[Optional[int], ...] = shape.map(unwrap)
-        except (TypeError, AttributeError):
-            raise TypeError(f'`shape` must be an Tuple[Size], got: {shape}') from None
-
-        try:
-            self._unwrapped_strides: Tuple[Optional[int], ...] = strides.map(unwrap)
-        except (TypeError, AttributeError):
-            raise TypeError(f'`strides` must be an Tuple[Size], got: {strides}') from None
 
         self.elements_disjoint = elements_disjoint
         self.base_ptr_div_by = base_ptr_div_by
@@ -353,7 +294,7 @@ class ArrayTy(Type):
 
     def aggregate_item_types(self) -> tuple["Type", ...]:
         base_ptr_ty = PointerTy(self.dtype)
-        base_ptr_tile_ty = TileTy(base_ptr_ty, TupleTy(()))
+        base_ptr_tile_ty = TileTy(base_ptr_ty, ())
         size_ty = array_size_type()
         return (base_ptr_tile_ty,) + (size_ty,) * (self.ndim * 2)
 
@@ -366,10 +307,10 @@ class ArrayTy(Type):
         if self.dtype != other.dtype or self.ndim != other.ndim:
             return None
 
-        shape = TupleTy(tuple(s1 if s1 == s2 else SizeTy()
-                              for s1, s2 in zip(self.shape, other.shape, strict=True)))
-        strides = TupleTy(tuple(s1 if s1 == s2 else SizeTy()
-                                for s1, s2 in zip(self.strides, other.strides, strict=True)))
+        shape = tuple(s1 if s1 == s2 else None
+                      for s1, s2 in zip(self.shape, other.shape, strict=True))
+        strides = tuple(s1 if s1 == s2 else None
+                        for s1, s2 in zip(self.strides, other.strides, strict=True))
 
         elements_disjoint = self.elements_disjoint and other.elements_disjoint
         base_ptr_div_by = (
@@ -410,9 +351,9 @@ class ArrayTy(Type):
                      self.base_ptr_div_by, self.stride_div_by, self.shape_div_by))
 
     def __str__(self):
-        shape_str = ('?' if x is None else str(x) for x in self._unwrapped_shape)
+        shape_str = ('?' if x is None else str(x) for x in self.shape)
         shape_str = "(" + ','.join(shape_str) + ")"
-        strides_str = ('?' if x is None else str(x) for x in self._unwrapped_strides)
+        strides_str = ('?' if x is None else str(x) for x in self.strides)
         strides_str = "(" + ','.join(strides_str) + ")"
         return f"Array[{self.dtype},{shape_str}:{strides_str}]"
 
@@ -430,8 +371,8 @@ class ListTy(Type):
     def aggregate_item_types(self) -> tuple["Type", ...]:
         from .._datatype import int32, int64
         ptr_ty = PointerTy(int64)
-        ptr_tile_ty = TileTy(ptr_ty, TupleTy(()))
-        len_ty = TileTy(int32, TupleTy(()))
+        ptr_tile_ty = TileTy(ptr_ty, ())
+        len_ty = TileTy(int32, ())
         return ptr_tile_ty, len_ty
 
     def make_aggregate_value(self, items: tuple["Var", ...]) -> "AggregateValue":
