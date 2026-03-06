@@ -2023,15 +2023,6 @@ def printf(format, *args) -> None:
     Notes:
         This operation has significant overhead, and should only be used
         for debugging purpose.
-
-        When printing from multiple tile blocks, outputs will be interleaved.
-        One workaround is to set optimization level to 0:
-
-        .. code-block:: python
-
-            @ct.kernel(opt_level=0)
-            def my_print_kernel():
-                ct.printf("%d", 123)
     """
 
 
@@ -2062,8 +2053,6 @@ def print(*args, sep: str = ' ', end: str = '\n') -> None:
 
         F-string expressions must evaluate to tile values. Constant compile-time
         values are supported as string-formatted segments.
-
-        Use ``opt_level=0`` to prevent block-level output interleaving.
     """
 
 

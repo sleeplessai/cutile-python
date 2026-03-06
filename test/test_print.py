@@ -12,68 +12,72 @@ import pytest
 
 from math import ceil
 import cuda.tile as ct
+from cuda.tile._bytecode.version import BytecodeVersion
+from cuda.tile._compiler_options import CompilerOptions
+from conftest import get_tileiras_version
 
-# FIXME: Default opt_level causes print to be out of order.
-# Remove when it is fixed in tile compiler.
+# opt_level=0 required for correct print ordering in tileiras < 13.2
+_DEFAULT_OPT_LEVEL = CompilerOptions.__dataclass_fields__['opt_level'].default
+_OPT_LEVEL = 0 if get_tileiras_version() < BytecodeVersion.V_13_2 else _DEFAULT_OPT_LEVEL
 
 
-@ct.kernel(opt_level=0)
+@ct.kernel(opt_level=_OPT_LEVEL)
 def kernel_printf_float(x, TILE: ct.Constant[int]):
     bid = ct.bid(0)
     tx = ct.load(x, index=(bid,), shape=(TILE,))
     ct.printf("tile[%d]:%.5f\n", bid, tx)
 
 
-@ct.kernel(opt_level=0)
+@ct.kernel(opt_level=_OPT_LEVEL)
 def kernel_printf_int(x, TILE: ct.Constant[int]):
     bid = ct.bid(0)
     tx = ct.load(x, index=(bid,), shape=(TILE,))
     ct.printf("tile[%d]:%d\n", bid, tx)
 
 
-@ct.kernel(opt_level=0)
+@ct.kernel(opt_level=_OPT_LEVEL)
 def kernel_print_int(x, TILE: ct.Constant[int]):
     bid = ct.bid(0)
     tx = ct.load(x, index=(bid,), shape=(TILE,))
     ct.print(f"tile[{bid}]:{tx}")
 
 
-@ct.kernel(opt_level=0)
+@ct.kernel(opt_level=_OPT_LEVEL)
 def kernel_print_float(x, TILE: ct.Constant[int]):
     bid = ct.bid(0)
     tx = ct.load(x, index=(bid,), shape=(TILE,))
     ct.print(f"tile[{bid}]:{tx:.5f}")
 
 
-@ct.kernel(opt_level=0)
+@ct.kernel(opt_level=_OPT_LEVEL)
 def kernel_print_sep(x, TILE: ct.Constant[int]):
     bid = ct.bid(0)
     tx = ct.load(x, index=(bid,), shape=(TILE,))
     ct.print("tile:", tx, sep='')
 
 
-@ct.kernel(opt_level=0)
+@ct.kernel(opt_level=_OPT_LEVEL)
 def kernel_print_two_vars_with_expr(x, TILE: ct.Constant[int]):
     bid = ct.bid(0)
     tx = ct.load(x, index=(bid,), shape=(TILE,))
     ct.print(f"tile[{bid}]: a={tx:.6f} b={tx + tx:.6f}")
 
 
-@ct.kernel(opt_level=0)
+@ct.kernel(opt_level=_OPT_LEVEL)
 def kernel_print_no_end(x, TILE: ct.Constant[int]):
     bid = ct.bid(0)
     tx = ct.load(x, index=(bid,), shape=(TILE,))
     ct.print(tx, end='')
 
 
-@ct.kernel(opt_level=0)
+@ct.kernel(opt_level=_OPT_LEVEL)
 def kernel_builtin_print_int(x, TILE: ct.Constant[int]):
     bid = ct.bid(0)
     tx = ct.load(x, index=(bid,), shape=(TILE,))
     print(f"tile[{bid}]:{tx}")
 
 
-@ct.kernel(opt_level=0)
+@ct.kernel(opt_level=_OPT_LEVEL)
 def kernel_builtin_print_float(x, TILE: ct.Constant[int]):
     bid = ct.bid(0)
     tx = ct.load(x, index=(bid,), shape=(TILE,))
@@ -213,7 +217,7 @@ def test_builtin_print(shape, tile, dtype_str):
 def test_ct_print_error_conversion():
     from cuda.tile._exception import TileSyntaxError
 
-    @ct.kernel(opt_level=0)
+    @ct.kernel(opt_level=_OPT_LEVEL)
     def bad_kernel(x, TILE: ct.Constant[int]):
         tx = ct.load(x, index=(0,), shape=(TILE,))
         ct.print(f"{tx!r}")
@@ -226,7 +230,7 @@ def test_ct_print_error_conversion():
 def test_ct_print_error_dynamic_format_spec():
     from cuda.tile._exception import TileSyntaxError
 
-    @ct.kernel(opt_level=0)
+    @ct.kernel(opt_level=_OPT_LEVEL)
     def bad_kernel(x, TILE: ct.Constant[int]):
         width = 5
         tx = ct.load(x, index=(0,), shape=(TILE,))
