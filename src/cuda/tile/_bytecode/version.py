@@ -20,3 +20,9 @@ class BytecodeVersion(enum.IntEnum):
 
     def tag(self) -> int:
         return self._value_ % 100
+
+    def as_string(self) -> str:
+        if self.tag() == 0:
+            return f"{self.major()}.{self.minor()}"
+        else:
+            return f"{self.major()}.{self.minor()}.{self.tag()}"

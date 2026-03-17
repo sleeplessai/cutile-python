@@ -14,21 +14,22 @@ from typing import Optional
 @dataclass
 class TileContextConfig:
     temp_dir: str
-    log_keys: list[str]
     compiler_timeout_sec: Optional[int]
     enable_crash_dump: bool
     cache_dir: Optional[str]
     cache_size_limit: int
+    log_cutile_ir: bool = False
+    log_tileir: bool = False
 
 
 def init_context_config_from_env():
     config = TileContextConfig(
             temp_dir=get_temp_dir_from_env(),
-            log_keys=get_log_keys_from_env(),
             compiler_timeout_sec=get_compile_timeout_from_env(),
             enable_crash_dump=get_enable_crash_dump_from_env(),
             cache_dir=get_cache_dir_from_env(),
-            cache_size_limit=get_cache_size_limit_from_env()
+            cache_size_limit=get_cache_size_limit_from_env(),
+            **get_log_keys_from_env(),
             )
     return config
 
@@ -43,18 +44,26 @@ def get_compile_timeout_from_env() -> Optional[int]:
     return t
 
 
-def get_log_keys_from_env() -> list[str]:
-    KEYS = {"CUTILEIR", "TILEIR"}
+# Map from CUDA_TILE_LOGS env variable value to TileContextConfig attribute name
+_LOG_KEYS = {
+    "CUTILEIR": "log_cutile_ir",
+    "TILEIR": "log_tileir"
+}
+
+
+def get_log_keys_from_env() -> dict[str, bool]:
     env = os.environ.get('CUDA_TILE_LOGS', "")
-    ret = []
+    ret = dict()
     for x in env.split(","):
         x = x.upper().strip()
         if len(x) == 0:
             continue
-        if x not in KEYS:
+        try:
+            attr_name = _LOG_KEYS[x]
+        except KeyError:
             raise RuntimeError(f"Unexpected value {x} in CUDA_TILE_LOGS, "
-                               f"supported values are {KEYS}")
-        ret.append(x)
+                               f"supported values are {list(_LOG_KEYS.keys())}")
+        ret[attr_name] = True
     return ret
 
 

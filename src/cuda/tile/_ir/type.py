@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import inspect
-import math
 from dataclasses import dataclass
 from enum import EnumMeta
 from types import ModuleType, FunctionType
@@ -347,36 +346,6 @@ class ArrayTy(Type):
         from .ir import ArrayValue
         assert len(items) == 1 + 2 * self.ndim
         return ArrayValue(items[0], items[1:self.ndim + 1], items[self.ndim + 1:])
-
-    def unify(self, other: "ArrayTy") -> Optional["ArrayTy"]:
-        if self.dtype != other.dtype or self.ndim != other.ndim:
-            return None
-
-        shape = tuple(s1 if s1 == s2 else None
-                      for s1, s2 in zip(self.shape, other.shape, strict=True))
-        strides = tuple(s1 if s1 == s2 else None
-                        for s1, s2 in zip(self.strides, other.strides, strict=True))
-
-        elements_disjoint = self.elements_disjoint and other.elements_disjoint
-        base_ptr_div_by = (
-            None if (self.base_ptr_div_by is None or other.base_ptr_div_by is None)
-            else math.gcd(self.base_ptr_div_by, other.base_ptr_div_by)
-        )
-        shape_div_by = tuple(
-            None if (d1 is None or d2 is None) else math.gcd(d1, d2)
-            for d1, d2 in zip(self.shape_div_by, other.shape_div_by, strict=True)
-        )
-        stride_div_by = tuple(
-            None if (d1 is None or d2 is None) else math.gcd(d1, d2)
-            for d1, d2 in zip(self.stride_div_by, other.stride_div_by, strict=True)
-        )
-        return ArrayTy(self.dtype,
-                       shape=shape,
-                       strides=strides,
-                       elements_disjoint=elements_disjoint,
-                       base_ptr_div_by=base_ptr_div_by,
-                       shape_div_by=shape_div_by,
-                       stride_div_by=stride_div_by)
 
     @property
     def ndim(self):

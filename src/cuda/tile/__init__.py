@@ -155,6 +155,8 @@ from cuda.tile._execution import (
     kernel
 )
 
+import cuda.tile.compilation as compilation
+
 __all__ = [
     "launch",
 
@@ -294,4 +296,6 @@ __all__ = [
 
     "function",
     "kernel",
+
+    "compilation",
 ]

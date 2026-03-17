@@ -11,7 +11,6 @@ import numpy as np
 from math import ceil
 import cuda.tile as ct
 from cuda.tile import TileValueError
-from cuda.tile._compiler_options import CompilerOptions
 from cuda.tile._exception import TileTypeError
 from cuda.tile._ir.ops import LoadPointer, StorePointer
 from cuda.tile._ir.ops_utils import _is_implicit_cast_ok
@@ -202,7 +201,11 @@ def test_unchecked():
 def test_ir_checked_vs_unchecked(kernel, expected_mask):
     x = torch.arange(10, 18, dtype=torch.float32, device="cuda")
     y = torch.zeros_like(x)
-    root_block = compile_tile(kernel._pyfunc, (x, y), CompilerOptions()).final_ir
+    sig = ct.compilation.KernelSignature.from_kernel_args(
+            kernel, (x, y),
+            ct.compilation.CallingConvention.cutile_python_v1())
+    [root_block] = compile_tile(kernel._pyfunc, [sig], return_cubin=False,
+                                return_final_ir=True).final_ir
 
     load_ops = [op for op in root_block.traverse() if isinstance(op, LoadPointer)]
     assert len(load_ops) == 1

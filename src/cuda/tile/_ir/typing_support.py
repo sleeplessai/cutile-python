@@ -9,11 +9,10 @@ from types import ModuleType, FunctionType
 from typing import Any, Callable, Mapping, Union
 from cuda.tile import _datatype as datatype
 from cuda.tile._exception import TileTypeError, TileValueError
-from cuda.tile._cext import ArraySpecialization
 from .ir import ClosureValue
 
-from .type import Type, TupleTy, DTypeConstructor, DTypeSpec, ListTy, NONE, StringTy, \
-    ELLIPSIS, SLICE, ModuleTy, FunctionTy, ArrayTy, EnumTy, TypeTy, LooselyTypedScalar, ClosureTy, \
+from .type import Type, TupleTy, DTypeConstructor, DTypeSpec, NONE, StringTy, \
+    ELLIPSIS, SLICE, ModuleTy, FunctionTy, EnumTy, TypeTy, LooselyTypedScalar, ClosureTy, \
     make_tile_ty
 
 # Store mapping from 3rd party dtype objects
@@ -63,20 +62,6 @@ class TypeHandlerTable(dict[TypeKey, TypeHandler]):
                     self[key] = self[parent_ty]
                     return self[key]
         raise KeyError
-
-
-_type_handler = TypeHandlerTable()
-
-
-def register_type_handler(t: Union[type, str], allow_subtypes=False):
-
-    def wrapped(handler: TypeHandler):
-        _type_handler[t] = handler
-        if allow_subtypes and isinstance(t, type):
-            _type_handler._types_with_subtypes.append(t)
-        return handler
-
-    return wrapped
 
 
 BUILTIN_FUNCS = {
@@ -142,7 +127,7 @@ def is_supported_builtin_func(x: Any) -> bool:
     return _safe_get(BUILTIN_FUNCS, x) is not None
 
 
-def typeof_pyval(val, kernel_arg: bool = False) -> Type:
+def typeof_pyval(val) -> Type:
     if val is None:
         return NONE
     if (t := _safe_get(dtype_registry, type(val))):
@@ -150,13 +135,7 @@ def typeof_pyval(val, kernel_arg: bool = False) -> Type:
     if isinstance(val, bool):
         return make_tile_ty(datatype.bool_, ())
     if isinstance(val, int):
-        if kernel_arg:
-            # Non-constant integer kernel arguments are currently always treated as int32.
-            # Specializing the kernel dynamically based on the magnitude of an integer value
-            # could be confusing and surprising. Instead, we should consider adding
-            # an annotation-based mechanism for specifying parameter types.
-            dtype = datatype.default_int_type
-        elif -2**31 <= val < 2**31:
+        if -2**31 <= val < 2**31:
             dtype = datatype.int32
         elif -2**63 <= val < 2**63:
             dtype = datatype.int64
@@ -171,7 +150,7 @@ def typeof_pyval(val, kernel_arg: bool = False) -> Type:
     if isinstance(val, str):
         return StringTy(val)
     if isinstance(val, tuple):
-        return TupleTy(tuple(typeof_pyval(v, kernel_arg) for v in val))
+        return TupleTy(tuple(typeof_pyval(v) for v in val))
     if val is Ellipsis:
         return ELLIPSIS
     if isinstance(val, slice):
@@ -184,40 +163,11 @@ def typeof_pyval(val, kernel_arg: bool = False) -> Type:
         return FunctionTy(val)
     if (t := _safe_get(dtype_registry, val)) is not None:
         return t
-    if isinstance(val, list):
-        if len(val) == 0:
-            raise TypeError('Empty lists are not yet supported.')
-        first, *tail = val
-        item_ty = typeof_pyval(first, kernel_arg)
-        if isinstance(item_ty, ArrayTy):
-            for x in tail:
-                x_ty = typeof_pyval(x, kernel_arg)
-                if not isinstance(x_ty, ArrayTy):
-                    raise TypeError("Expected all list items to be arrays")
-                new_item_ty = item_ty.unify(x_ty)
-                if new_item_ty is None:
-                    raise TypeError(f"Array types {item_ty} and {x_ty}"
-                                    f" found in list are not compatible")
-                item_ty = new_item_ty
-            return ListTy(item_ty)
-        else:
-            raise TypeError(f'Items of type {type(val)} are not supported as list elements')
-
-    try:
-        return _type_handler[type(val)](val)
-    except KeyError:
-        pass
 
     if isinstance(val, type):
         return TypeTy(val)
     if isinstance(val, Enum):
         return EnumTy(type(val))
-
-    if hasattr(val, '__cuda_array_interface__'):
-        try:
-            return _type_handler['__cuda_array_interface__'](val)
-        except KeyError:
-            pass
 
     # TODO: should we add dlpack?
     raise TypeError(f'Python value {val} of type {type(val)} is not supported.')
@@ -329,28 +279,6 @@ if HAS_TORCH:
         torch.float8_e8m0fnu: datatype.float8_e8m0fnu,
     })
 
-    @register_type_handler(torch.Tensor, allow_subtypes=True)
-    def torch_tensor_to_array(x: torch.Tensor) -> ArrayTy:
-        if x.device.type != 'cuda':
-            raise ValueError('Tensor must be on cuda device')
-        # Assume dynamic shape
-        shape = tuple(None for i in x.shape)
-        dtype = to_dtype(x.dtype)
-
-        arr_special = ArraySpecialization(
-            x.data_ptr(), dtype.bitwidth, x.shape, x.stride())
-
-        # Assume dynamic strides except for the ones marked static
-        strides = tuple(i if static else None
-                        for i, static in
-                        zip(x.stride(), arr_special.stride_is_static))
-
-        return ArrayTy(dtype, shape=shape, strides=strides,
-                       elements_disjoint=arr_special.elements_disjoint,
-                       base_ptr_div_by=arr_special.base_ptr_div_by,
-                       stride_div_by=arr_special.stride_div_by,
-                       shape_div_by=arr_special.shape_div_by)
-
 
 # ===== Cuda Array Interface ===========
 BYTE_BITWIDTH = 8
@@ -368,33 +296,3 @@ def _compute_elem_strides(shape, dtype_bytewidth, byte_strides):
         reverse_elem_strides.append(reverse_elem_strides[-1] * i)
 
     return tuple(reverse_elem_strides[::-1])
-
-
-@register_type_handler('__cuda_array_interface__')
-def from_cuda_array_interface(x: Any) -> ArrayTy:
-    desc = x.__cuda_array_interface__
-    # Assume dynamic shape
-    shape = tuple(None for i in desc['shape'])
-    dtype = to_dtype(np.dtype(desc['typestr']))
-    if dtype.bitwidth % BYTE_BITWIDTH != 0:
-        raise ValueError("Only byte-aligned types should be supported by __cuda_array_interface__")
-
-    dtype_bytewidth = dtype.bitwidth // BYTE_BITWIDTH
-    byte_strides = desc.get('strides', None)
-    elem_strides = _compute_elem_strides(desc['shape'], dtype_bytewidth, byte_strides)
-
-    assert len(elem_strides) == len(shape)
-
-    arr_special = ArraySpecialization(
-            desc['data'][0], dtype.bitwidth, tuple(desc['shape']), elem_strides)
-
-    # Assume dynamic strides except for the ones marked static
-    strides = tuple(i if static else None
-                    for i, static in
-                    zip(elem_strides, arr_special.stride_is_static))
-
-    return ArrayTy(dtype, shape=shape, strides=strides,
-                   elements_disjoint=arr_special.elements_disjoint,
-                   base_ptr_div_by=arr_special.base_ptr_div_by,
-                   stride_div_by=arr_special.stride_div_by,
-                   shape_div_by=arr_special.shape_div_by)

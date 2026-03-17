@@ -1,34 +1,31 @@
 # SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 #
 # SPDX-License-Identifier: Apache-2.0
+from io import BytesIO
 
 import pytest
 import torch
 from torch.testing import make_tensor
-from unittest.mock import patch
 
 import cuda.tile as ct
-from cuda.tile._bytecode.version import BytecodeVersion
-from cuda.tile._compile import compile_tile
-from cuda.tile._compiler_options import CompilerOptions
+from cuda.tile._bytecode import BytecodeVersion
+from cuda.tile._cext import CallingConvention
 from cuda.tile._exception import TileUnsupportedFeatureError, TileValueError
-from conftest import dtype_id
+from conftest import dtype_id, requires_tileiras
 
 # TODO: remove when feature is out of development only
 from cuda.tile._datatype import float8_e8m0fnu, float4_e2m1fn
+
 ct.float8_e8m0fnu = float8_e8m0fnu
 ct.float4_e2m1fn = float4_e2m1fn
 
 
-def compile(pyfunc, args):
-    return compile_tile(pyfunc, args, CompilerOptions())
-
-
-def compile_with(pyfunc, args, arch: str, version: BytecodeVersion):
-    with patch('cuda.tile._compile.get_sm_arch', return_value=arch):
-        with patch('cuda.tile._compile._get_max_supported_bytecode_version',
-                   return_value=version):
-            return compile_tile(pyfunc, args, CompilerOptions())
+def compile_with(pyfunc, args, arch: str, version: str):
+    kernel = ct.kernel(pyfunc)
+    sig = ct.compilation.KernelSignature.from_kernel_args(
+            kernel, args, CallingConvention.cutile_python_v1())
+    ct.compilation.export_kernel(kernel, [sig], output_file=BytesIO(), gpu_code=arch,
+                                 output_format="cubin", bytecode_version=version)
 
 
 @pytest.mark.parametrize("dtype", [
@@ -44,9 +41,10 @@ def test_fp8_not_supported_on_sm80(dtype):
         ct.scatter(x, 0, tx)
 
     with pytest.raises(TileUnsupportedFeatureError, match="is not supported on sm_80"):
-        compile_with(kernel, (x,), "sm_80", BytecodeVersion.V_13_2)
+        compile_with(kernel, (x,), "sm_80", "13.2")
 
 
+@requires_tileiras(BytecodeVersion.V_13_3)
 @pytest.mark.parametrize("arch", ["sm_80", "sm_90"])
 def test_fp4_not_supported_on_arch(arch):
     def kernel():
@@ -54,7 +52,7 @@ def test_fp4_not_supported_on_arch(arch):
         ct.printf("%f", t)
 
     with pytest.raises(TileUnsupportedFeatureError, match=f"is not supported on {arch}"):
-        compile_with(kernel, (), arch, BytecodeVersion.V_13_3)
+        compile_with(kernel, (), arch, "13.3")
 
 
 def test_f8e8m0fnu_requires_13_2():
@@ -66,7 +64,7 @@ def test_f8e8m0fnu_requires_13_2():
                        match=r"float8_e8m0fnu requires tileiras 13\.2"):
         x = make_tensor((1,), dtype=torch.uint8, device='cuda').view(torch.float8_e8m0fnu)
         y = torch.zeros_like(x)
-        compile_with(kernel, (x, y), "sm_100", BytecodeVersion.V_13_1)
+        compile_with(kernel, (x, y), "sm_100", "13.1")
 
 
 def test_f4e2m1fn_requires_13_3():
@@ -77,7 +75,7 @@ def test_f4e2m1fn_requires_13_3():
     x = make_tensor((1,), dtype=torch.uint8, device='cuda')
     with pytest.raises(TileUnsupportedFeatureError,
                        match=r"float4_e2m1fn requires tileiras 13\.3"):
-        compile_with(kernel, (x,), "sm_100",  BytecodeVersion.V_13_2)
+        compile_with(kernel, (x,), "sm_100", "13.2")
 
 
 @pytest.mark.parametrize("val", [-1.0, -0.0, float("-inf"), float("-nan")])
@@ -88,9 +86,10 @@ def test_f8e8m0fnu_rejects_negative(val):
 
     with pytest.raises(TileValueError,
                        match="negative values cannot be represented in float8_e8m0fnu"):
-        compile_with(kernel, (), "sm_100", BytecodeVersion.V_13_2)
+        compile_with(kernel, (), "sm_100", "13.2")
 
 
+@requires_tileiras(BytecodeVersion.V_13_3)
 @pytest.mark.parametrize("val", [float("nan"), float("-nan")])
 def test_f4e2m1fn_rejects_nan(val):
     def kernel():
@@ -99,4 +98,4 @@ def test_f4e2m1fn_rejects_nan(val):
 
     with pytest.raises(TileValueError,
                        match="NaN cannot be represented in float4_e2m1fn"):
-        compile_with(kernel, (), "sm_100", BytecodeVersion.V_13_3)
+        compile_with(kernel, (), "sm_100", "13.3")

@@ -1,19 +1,28 @@
 # SPDX-FileCopyrightText: Copyright (c) <2025> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 #
 # SPDX-License-Identifier: Apache-2.0
+from io import BytesIO
 
 import pytest
 import torch
 import cuda.tile as ct
 import re
 
-from cuda.tile._compiler_options import CompilerOptions
-from cuda.tile._compile import compile_tile
+from cuda.tile._cext import CallingConvention
+from cuda.tile._compile import get_sm_arch
 from cuda.tile._exception import TileTypeError
 
 
 def nd_tensor(nd: int, dtype=None):
     return torch.rand((4,) * nd, dtype=dtype, device='cuda')
+
+
+def compile(pyfunc, pyargs):
+    kernel = ct.kernel(pyfunc)
+    sig = ct.compilation.KernelSignature.from_kernel_args(kernel, pyargs,
+                                                          CallingConvention.cutile_python_v1())
+    ct.compilation.export_kernel(kernel, [sig], BytesIO(), gpu_code=get_sm_arch(),
+                                 output_format="cubin")
 
 
 def test_tuple_static_getitem_int():
@@ -24,7 +33,7 @@ def test_tuple_static_getitem_int():
         ct.arange(s1, dtype=ct.int32)
         ct.arange(s2, dtype=ct.int32)
 
-    compile_tile(kernel, (), CompilerOptions())
+    compile(kernel, ())
 
 
 def test_tuple_static_getitem_slice():
@@ -35,7 +44,7 @@ def test_tuple_static_getitem_slice():
         ct.arange(s1, dtype=ct.int32)
         ct.arange(s2, dtype=ct.int32)
 
-    compile_tile(kernel, (), CompilerOptions())
+    compile(kernel, ())
 
 
 def test_tuple_getitem_non_static():
@@ -46,7 +55,7 @@ def test_tuple_getitem_non_static():
         ct.arange(s1, dtype=ct.int32)
 
     with pytest.raises(TileTypeError, match=r"Expected an integer constant"):
-        compile_tile(kernel, ((0,)), CompilerOptions())
+        compile(kernel, (0,))
 
 
 def test_tuple_getitem_unsupported_key():
@@ -56,7 +65,7 @@ def test_tuple_getitem_unsupported_key():
         t[(0, 1)]
 
     with pytest.raises(TileTypeError, match=r"Expected an integer constant"):
-        compile_tile(kernel, (), CompilerOptions())
+        compile(kernel, ())
 
 
 def test_tile_attr():
@@ -69,7 +78,7 @@ def test_tile_attr():
         ndim = tx.ndim
         ct.full(shape, ndim, dtype=dtype)
 
-    compile_tile(kernel, (), CompilerOptions())
+    compile(kernel, ())
 
 
 def test_compare_dtype():
@@ -81,7 +90,7 @@ def test_compare_dtype():
             val = 2
         ct.full((2, 2), val, dtype=ct.float32)
 
-    compile_tile(kernel, (nd_tensor(2),), CompilerOptions())
+    compile(kernel, (nd_tensor(2),))
 
 
 def test_none_as_constant():
@@ -92,7 +101,7 @@ def test_none_as_constant():
         if x is y:
             ct.printf('done')
 
-    compile_tile(kernel, (), CompilerOptions())
+    compile(kernel, ())
 
 
 @pytest.mark.parametrize("negate", [False, True])
@@ -109,7 +118,7 @@ def test_is_or_not_op_on_none_constant(negate):
     op_name = 'is not' if negate else 'is'
     msg = re.escape(f"Operator '{op_name}' expects one of the operands to be None")
     with pytest.raises(TileTypeError, match=msg):
-        compile_tile(kernel, (), CompilerOptions())
+        compile(kernel, ())
 
 
 def test_fold_if_expr():
@@ -119,7 +128,7 @@ def test_fold_if_expr():
         ct.full((1,), 0, dtype=dtype)
 
     x = nd_tensor(1, dtype=torch.float32)
-    compile_tile(kernel, (x,), CompilerOptions())
+    compile(kernel, (x,))
 
 
 def test_fold_if_stmt():
@@ -133,7 +142,7 @@ def test_fold_if_stmt():
             dtype = ct.float64
         ct.full(shape, 0, dtype=dtype)
 
-    compile_tile(kernel, (), CompilerOptions())
+    compile(kernel, ())
 
 
 def test_fold_if_break_in_loop():
@@ -148,7 +157,7 @@ def test_fold_if_break_in_loop():
                 break
         ct.full((sz, sz), 1.0, dtype=ct.float32)
 
-    compile_tile(kernel, (), CompilerOptions())
+    compile(kernel, ())
 
 
 def test_fold_nested_if_both_early_terminators_in_loop():
@@ -191,7 +200,7 @@ def test_fold_if_calling_function():
             sz = 2
         ct.full((sz, sz), 1.0, dtype=ct.float32)
 
-    compile_tile(kernel, (), CompilerOptions())
+    compile(kernel, ())
 
 
 def plus_two(x):
@@ -211,7 +220,7 @@ def test_fold_if_calling_function_with_function_call():
             sz = 2
         ct.full((sz, sz), 1.0, dtype=ct.float32)
 
-    compile_tile(kernel, (), CompilerOptions())
+    compile(kernel, ())
 
 
 def test_dtype_in_for_loop():
@@ -222,7 +231,7 @@ def test_dtype_in_for_loop():
             dtype = ct.float16
         ct.full((1, 1), 1.0, dtype=dtype)
 
-    compile_tile(kernel, (), CompilerOptions())
+    compile(kernel, ())
 
 
 def test_semi_constant_tuple_yielded_by_ifelse():

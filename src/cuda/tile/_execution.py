@@ -5,14 +5,16 @@
 from __future__ import annotations
 import functools
 from types import FunctionType
+from typing import TYPE_CHECKING
 
 from cuda.tile._by_target import ByTarget
-from cuda.tile._cext import TileDispatcher
+from cuda.tile._cext import TileDispatcher, TileContext
+from cuda.tile._dispatch_mode import DispatchMode
 
+if TYPE_CHECKING:
+    from cuda.tile.compilation import KernelSignature
 
 __all__ = ("function", "kernel")
-
-from cuda.tile._dispatch_mode import DispatchMode
 
 
 ###############################################################################
@@ -103,18 +105,28 @@ class kernel(TileDispatcher):
             raise TypeError("`kernel` decorator must be applied to a Python function")
 
         from cuda.tile._compiler_options import CompilerOptions
-        from cuda.tile._const_utils import get_constant_arg_flags
-        from cuda.tile import _compile
+        from cuda.tile._annotated_function import get_annotated_function
 
-        constant_flags = get_constant_arg_flags(function)
+        ann_func = get_annotated_function(function)
         compiler_options = CompilerOptions(
             num_ctas=num_ctas,
             occupancy=occupancy,
             opt_level=opt_level
         )
-        compile = _compile.CompileCallback(function, compiler_options)
-        super().__init__(constant_flags, compile)
-        self._pyfunc = function
+        super().__init__(ann_func.constant_parameter_mask)
+        self._annotated_function = ann_func
+        self._compiler_options = compiler_options
+
+    def _compile(self, signature: KernelSignature, context: TileContext):
+        from cuda.tile._compile import compile_tile, get_sm_arch
+        result = compile_tile(self._annotated_function, (signature,),
+                              get_sm_arch(), self._compiler_options, context)
+        [kernel_sig] = result.kernel_signatures
+        return result.cubin, kernel_sig.symbol
+
+    @property
+    def _pyfunc(self):
+        return self._annotated_function.pyfunc
 
     def __call__(self, *args, **kwargs):
         raise TypeError("Tile kernels cannot be called directly. Use cuda.tile.launch() instead.")

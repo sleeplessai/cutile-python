@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) <2025> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 #
 # SPDX-License-Identifier: Apache-2.0
+import sys
 
 import pytest
 import torch
@@ -593,6 +594,10 @@ class TestIfCondtion:
     @pytest.mark.parametrize("condition2", [-5, 0, True, False])
     @pytest.mark.parametrize("base", [100, 0])
     def test_if_multiple_conditions(self, condition0, condition1, condition2, base):
+        if sys.platform == "win32" and (isinstance(condition0, bool) + isinstance(condition1, bool)
+                                        + isinstance(condition2, bool) >= 2):
+            pytest.xfail("This results in Access Violation on Windows (tileiras bug 6039732)")
+
         N = 256
         tile = 128
         x = torch.zeros(N, dtype=torch.float32, device='cuda')

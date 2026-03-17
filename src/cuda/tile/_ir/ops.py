@@ -643,18 +643,22 @@ class MakeDummy(Operation, opcode="make_dummy"):
 
 def loosely_typed_const(value: Any,
                         ty: Optional[Type] = None,
-                        loose_ty: Optional[Type] = None) -> Var:
+                        loose_ty: Optional[Type] = None,
+                        name: str | None = None) -> Var:
     if ty is None:
         ty = typeof_pyval(value)
-    ret = strictly_typed_const(value, ty)
+    ret = strictly_typed_const(value, ty, name=name)
     if loose_ty is None:
         loose_ty = loose_type_of_pyval(value)
     ret.set_loose_type(loose_ty)
     return ret
 
 
-def strictly_typed_const(value: Any, ty: Type) -> Var:
-    ret = add_operation(TypedConst, ty, value=value)
+def strictly_typed_const(value: Any, ty: Type, name: str | None = None) -> Var:
+    builder = Builder.get_current()
+    result = None if name is None else builder.ir_ctx.make_var(name, builder.loc)
+
+    ret = builder.add_operation(TypedConst, ty, dict(value=value), result=result)
     if not isinstance(ty, TileTy) or ty.ndim == 0:
         # We currently don't have a way to represent an N-dimensional tile constant
         ret.set_constant(value)

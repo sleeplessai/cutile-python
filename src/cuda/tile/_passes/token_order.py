@@ -20,7 +20,7 @@ from cuda.tile._ir.ops import (
     TileStore, TileAssert, TilePrintf,
 )
 from cuda.tile._ir.ops_utils import memory_order_has_acquire, memory_order_has_release
-from cuda.tile._passes.alias_analysis import ALIAS_UNIVERSE, AliasResult, AliasSet
+from cuda.tile._passes.dataflow_analysis import ALIAS_UNIVERSE, DataflowResult, AliasSet
 
 
 class MemoryEffects:
@@ -95,14 +95,14 @@ class VarInfo:
 
 @dataclass(frozen=True)
 class TokenOrderContext:
-    alias_result: AliasResult
+    dataflow_result: DataflowResult
     block_memory_effects: Dict[Block, MemoryEffects]
 
 
-def token_order_pass(root_block: Block, alias_result: AliasResult):
+def token_order_pass(root_block: Block, dataflow_result: DataflowResult):
     block_memory_effects = {}
-    _get_block_memory_effects(root_block, alias_result, block_memory_effects)
-    context = TokenOrderContext(alias_result, block_memory_effects)
+    _get_block_memory_effects(root_block, dataflow_result, block_memory_effects)
+    context = TokenOrderContext(dataflow_result, block_memory_effects)
 
     root_tok = _make_token_var(root_block.ctx, root_block.loc)
     token_map = defaultdict(lambda: root_tok)
@@ -121,7 +121,7 @@ def _get_input_var(op: Operation):
 
 
 def _get_block_memory_effects(block: Block,
-                              alias_result: AliasResult,
+                              dataflow_result: DataflowResult,
                               block_memory_effects: Dict[Block, MemoryEffects]):
 
     def get_memory_effects(cur_op):
@@ -133,14 +133,15 @@ def _get_block_memory_effects(block: Block,
         if isinstance(cur_op, (TileAtomicCAS, TileAtomicRMW)):
             has_acquire_order = memory_order_has_acquire(cur_op.memory_order)
 
-        return MemoryEffects({alias_result[_get_input_var(cur_op).name]: effect}, has_acquire_order)
+        return MemoryEffects({dataflow_result[_get_input_var(cur_op).name].alias_set: effect},
+                             has_acquire_order)
 
     blk_mem_effects = EMPTY_MEMORY_EFFECTS
     for op in block.operations:
         blk_mem_effects = blk_mem_effects | get_memory_effects(op)
         # Include nested blocks' memory effects in parent block
         for nested_block in op.nested_blocks:
-            _get_block_memory_effects(nested_block, alias_result, block_memory_effects)
+            _get_block_memory_effects(nested_block, dataflow_result, block_memory_effects)
             blk_mem_effects = blk_mem_effects | block_memory_effects[nested_block]
 
     block_memory_effects[block] = blk_mem_effects
@@ -158,7 +159,7 @@ def _to_token_order_in_block(block: Block,
     # including control flow ops containing token ordered ops
     for op in block.operations:
         if isinstance(op, (TileLoad, LoadPointer)):
-            alias_set = context.alias_result[_get_input_var(op).name]
+            alias_set = context.dataflow_result[_get_input_var(op).name].alias_set
             last_op_key = _last_op_key(alias_set)
             last_store_key = _last_store_key(alias_set)
 
@@ -184,14 +185,14 @@ def _to_token_order_in_block(block: Block,
             # Try to parallelize the store in the innermost loop if possible
             if (
                 isinstance(op, TileStore)
-                and (parallel_store_ops := _try_loop_parallel_store(op, context.alias_result,
+                and (parallel_store_ops := _try_loop_parallel_store(op, context.dataflow_result,
                                                                     token_map, innermost_loop_info,
                                                                     block.ctx))
             ):
                 operations.extend(parallel_store_ops)
                 continue
 
-            alias_set = context.alias_result[_get_input_var(op).name]
+            alias_set = context.dataflow_result[_get_input_var(op).name].alias_set
             last_op_key = _last_op_key(alias_set)
             last_store_key = _last_store_key(alias_set)
 
@@ -207,7 +208,7 @@ def _to_token_order_in_block(block: Block,
             token_map[last_store_key] = result_tok
 
         elif isinstance(op, (TileAtomicCAS, TileAtomicRMW)):
-            alias_set = context.alias_result[_get_input_var(op).name]
+            alias_set = context.dataflow_result[_get_input_var(op).name].alias_set
             last_op_key = _last_op_key(alias_set)
             last_store_key = _last_store_key(alias_set)
 
@@ -443,7 +444,7 @@ def _get_parallel_stores(
 
     # Skips this optimization if alias_set size > 1 is present in the loop body
     body_mem_effects = context.block_memory_effects[loop_op.body]
-    if any(alias_set == ALIAS_UNIVERSE or len(alias_set) > 1
+    if any(alias_set == ALIAS_UNIVERSE or alias_set.bit_count() > 1
            for alias_set, _ in body_mem_effects.items()):
         return set()
 
@@ -453,7 +454,8 @@ def _get_parallel_stores(
     for op in loop_op.body.operations:
         if isinstance(op, (TileLoad, StorePointer, LoadPointer, TileStore,
                            TileAtomicCAS, TileAtomicRMW)):
-            alias_set_to_mem_ops[context.alias_result[_get_input_var(op).name]].append(op)
+            alias_set = context.dataflow_result[_get_input_var(op).name].alias_set
+            alias_set_to_mem_ops[alias_set].append(op)
 
     tile_store_candidates = set()
     for alias_set, mem_ops in alias_set_to_mem_ops.items():
@@ -498,7 +500,7 @@ def _filter_by_store_index(loop_op: Loop,
 
 def _try_loop_parallel_store(
     store_op: TileStore,
-    alias_result: AliasResult,
+    dataflow_result: DataflowResult,
     token_map: Dict[TokenKey, Var],
     innermost_loop_info: Optional[InnermostLoopInfo],
     ctx: IRContext,
@@ -508,7 +510,7 @@ def _try_loop_parallel_store(
             store_op not in innermost_loop_info.loop_parallel_stores):
         return None
 
-    alias_set = alias_result[_get_input_var(store_op).name]
+    alias_set = dataflow_result[_get_input_var(store_op).name].alias_set
     last_op_key = _last_op_key(alias_set)
     last_store_key = _last_store_key(alias_set)
 

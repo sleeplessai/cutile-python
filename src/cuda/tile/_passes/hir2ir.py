@@ -11,57 +11,44 @@ from .. import TileTypeError
 from .._coroutine_util import resume_after, run_coroutine
 from .._exception import Loc, TileSyntaxError, TileInternalError, TileError, TileRecursionError
 from .._ir import hir, ir
-from .._ir.ir import (
-    Var, IRContext, BoundMethodValue, ClosureValue, KernelArgument
-)
+from .._ir.ir import Var, IRContext, BoundMethodValue, ClosureValue
 from .._ir.op_impl import op_implementations
 from .._ir.ops import loosely_typed_const, end_branch, return_, continue_, \
-    break_, flatten_block_parameters, store_var
+    break_, store_var
 from .._ir.scope import Scope, LocalScope, IntMap
 from .._ir.type import FunctionTy, BoundMethodTy, DTypeConstructor, ClosureTy, \
     ClosureDefaultPlaceholder, StringFormat
 from .._ir.typing_support import get_signature, Closure
 
+
 MAX_RECURSION_DEPTH = 1000
 
 
-def hir2ir(func_hir: hir.Function, args: Sequence[KernelArgument], ir_ctx: IRContext) -> ir.Block:
+def hir2ir(func_hir: hir.Function,
+           param_aggregate_vars: Sequence[ir.Var],
+           ir_ctx: IRContext):
     # Run as a coroutine using a software stack, so that we don't exceed Python's recursion limit.
-    return run_coroutine(_hir2ir_coroutine(func_hir, args, ir_ctx))
+    run_coroutine(_hir2ir_coroutine(func_hir, param_aggregate_vars, ir_ctx))
 
 
-async def _hir2ir_coroutine(func_hir: hir.Function, args: Sequence[KernelArgument],
+async def _hir2ir_coroutine(func_hir: hir.Function,
+                            param_aggregate_vars: Sequence[ir.Var],
                             ir_ctx: IRContext):
     scope = _create_scope(func_hir, ir_ctx, call_site=None, parent_scopes=())
+    for local_idx, var in zip(func_hir.param_local_indices, param_aggregate_vars, strict=True):
+        scope.local[local_idx] = var
 
-    with ir.Builder(ir_ctx, func_hir.body.loc) as ir_builder, scope.make_current():
+    ir_builder = ir.Builder.get_current()
+    with scope.make_current():
         try:
-            aggregate_params = []
-            for local_idx, param_loc, arg in zip(func_hir.param_local_indices,
-                                                 func_hir.param_locs, args, strict=True):
-                if arg.is_const:
-                    var = loosely_typed_const(arg.const_value)
-                    store_var(local_idx, var, var.loc)
-                else:
-                    var = scope.local.redefine(local_idx, param_loc)
-                    var.set_type(arg.type)
-                    aggregate_params.append(var)
-
-            flat_params = flatten_block_parameters(aggregate_params)
-
             await _dispatch_hir_block_inner(func_hir.body, ir_builder)
         except Exception as e:
-            if 'CUTILEIR' in ir_ctx.config.log_keys:
+            if ir_ctx.log_ir_on_error:
                 highlight_loc = e.loc if hasattr(e, 'loc') else None
                 ir_str = "\n".join(op.to_string(highlight_loc=highlight_loc)
                                    for op in ir_builder.ops)
                 print(f"==== Partial cuTile IR ====\n\n{ir_str}\n\n", file=sys.stderr)
             raise
-
-    ret = ir.Block(ir_ctx, func_hir.body.loc)
-    ret.params = sum(flat_params, ())
-    ret.extend(ir_builder.ops)
-    return ret
 
 
 def _create_scope(func_hir: hir.Function, ir_ctx: IRContext, call_site: Loc | None,
@@ -94,7 +81,7 @@ async def _dispatch_hir_block_inner(block: hir.Block, builder: ir.Builder):
         with _wrap_exceptions(loc), builder.change_loc(loc):
             _dispatch_hir_jump(block, scope)
     except Exception:
-        if 'CUTILEIR' in builder.ir_ctx.config.log_keys:
+        if builder.ir_ctx.log_ir_on_error:
             hir_params = ", ".join(p.name for p in block.params)
             hir_lines = [str(c) for c in block.calls]
             hir_lines.append(block.jump_str())

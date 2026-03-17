@@ -67,6 +67,11 @@ class LocalScope:
             raise TileSyntaxError(f"Undefined variable {self._local_names[index]} used")
         return var
 
+    def __setitem__(self, index: int, var: Var):
+        assert not self._dead
+        assert index >= 0
+        self._map[index] = var
+
     def get(self, index: int, loc: Loc):
         assert not self._dead
         assert index >= 0

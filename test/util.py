@@ -6,6 +6,7 @@ import re
 import shutil
 import subprocess
 from contextlib import contextmanager
+from io import BytesIO
 
 import pytest
 import torch
@@ -17,23 +18,29 @@ from torch.testing import make_tensor
 import cuda.tile as ct
 import tempfile
 
-from cuda.tile._compiler_options import CompilerOptions
+from cuda.tile._compile import get_sm_arch
 from cuda.tile._ir.typing_support import to_dtype
 
 from cuda.tile import _datatype as datatype
 
 from cuda.tile._exception import TileTypeError
-from cuda.tile._compile import compile_tile
 from cuda.tile._cext import get_compute_capability
-
+from cuda.tile.compilation import CallingConvention, KernelSignature
 
 TensorLike = torch.Tensor
 Scalar = Union[int, float]
 
 
-def get_bytecode(kernel, kernel_args) -> bytearray:
-    pyfunc = kernel._pyfunc if isinstance(kernel, ct.kernel) else kernel
-    return compile_tile(pyfunc, kernel_args, CompilerOptions()).bytecode
+def get_bytecode(kernel, kernel_args) -> bytes:
+    if not isinstance(kernel, ct.kernel):
+        kernel = ct.kernel(kernel)
+
+    cconv = CallingConvention.cutile_python_v1()
+    sig = KernelSignature.from_kernel_args(kernel, kernel_args, cconv)
+    io = BytesIO()
+    ct.compilation.export_kernel(kernel, [sig], io,
+                                 gpu_code=get_sm_arch(), output_format="tileir_bytecode")
+    return io.getvalue()
 
 
 def jit_kernel(name: str, source: str, tmp_path, globals: dict = None):

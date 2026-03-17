@@ -41,8 +41,25 @@ T pylong_as(PyObject* obj) {
         return PyLong_AsLong(obj);
     } else if constexpr (std::is_same_v<T, long long>) {
         return PyLong_AsLongLong(obj);
+    } else if constexpr (std::is_same_v<T, unsigned long>) {
+        return PyLong_AsUnsignedLong(obj);
+    } else if constexpr (std::is_same_v<T, unsigned long long>) {
+        return PyLong_AsUnsignedLongLong(obj);
     } else {
         static_assert(!sizeof(T*), "pylong_as<T> not implemented for given T");
+    }
+}
+
+template <typename T>
+T pylong_as_overflow_and(PyObject* obj, int* overflow) {
+    if constexpr (std::is_same_v<T, int>) {
+        return pylong_as_int(obj);
+    } else if constexpr (std::is_same_v<T, long>) {
+        return PyLong_AsLongAndOverflow(obj, overflow);
+    } else if constexpr (std::is_same_v<T, long long>) {
+        return PyLong_AsLongLongAndOverflow(obj, overflow);
+    } else {
+        static_assert(!sizeof(T*), "pylong_as_overflow_and<T> not implemented for given T");
     }
 }
 
@@ -73,6 +90,21 @@ void pywrapper_dealloc(PyObject* self) {
     PythonWrapper<T>* wrapper = reinterpret_cast<PythonWrapper<T>*>(self);
     wrapper->object.~T();
     Py_TYPE(self)->tp_free(self);
+}
+
+template <typename T>
+PyObject* pywrapper_richcompare_via_operator_equals(PyObject* self, PyObject* other, int op) {
+    if (!PyObject_TypeCheck(self, &T::pytype) || !PyObject_TypeCheck(other, &T::pytype))
+        return Py_NewRef(Py_NotImplemented);
+
+    T& a = py_unwrap<T>(self);
+    T& b = py_unwrap<T>(other);
+
+    switch (op) {
+    case Py_EQ: return Py_NewRef(a == b ? Py_True : Py_False);
+    case Py_NE: return Py_NewRef(a == b ? Py_False : Py_True);
+    default: return Py_NewRef(Py_NotImplemented);
+    }
 }
 
 struct OK_t{};

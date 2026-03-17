@@ -6,9 +6,7 @@ import hashlib
 import logging
 import os
 import sqlite3
-import tempfile
 import time
-from pathlib import Path
 from typing import Optional
 
 logger = logging.getLogger(__name__)
@@ -84,8 +82,7 @@ def cache_key(compiler_version: str, sm_arch: str, opt_level: int,
     return h.hexdigest()
 
 
-def cache_lookup(cache_dir: str, key: str,
-                 temp_dir: str) -> Optional[Path]:
+def cache_lookup(cache_dir: str, key: str) -> Optional[bytes]:
     conn = None
     try:
         conn = _connect(cache_dir)
@@ -100,30 +97,22 @@ def cache_lookup(cache_dir: str, key: str,
         )
         conn.commit()
         blob = row[0]
+        return blob
     except (sqlite3.Error, OSError):
         logger.debug("cache lookup failed for %s", key, exc_info=True)
         return None
     finally:
         _close(conn)
 
-    try:
-        with tempfile.NamedTemporaryFile(dir=temp_dir, suffix=".cubin", delete=False) as f:
-            f.write(blob)
-            return Path(f.name)
-    except OSError:
-        logger.debug("cache lookup failed for %s", key, exc_info=True)
-        return None
 
-
-def cache_store(cache_dir: str, key: str, cubin_path) -> None:
+def cache_store(cache_dir: str, key: str, cubin: bytes) -> None:
     conn = None
     try:
-        blob = Path(cubin_path).read_bytes()
         conn = _connect(cache_dir)
         conn.execute(
             "INSERT OR IGNORE INTO cache"
             " (key, blob, blob_size, atime) VALUES (?, ?, ?, ?)",
-            (key, blob, len(blob), time.time())
+            (key, cubin, len(cubin), time.time())
         )
         conn.commit()
     except (sqlite3.Error, OSError):

@@ -6,7 +6,6 @@ import torch
 
 import cuda.tile as ct
 from cuda.tile._ir.ops import Loop
-from cuda.tile._compiler_options import CompilerOptions
 from cuda.tile._compile import compile_tile
 
 from util import assert_equal
@@ -23,7 +22,11 @@ def split_ge_kernel(x):
 
 def test_split_ge():
     x = torch.zeros(10, dtype=torch.int32, device="cuda")
-    root_block = compile_tile(split_ge_kernel._pyfunc, (x,), CompilerOptions()).final_ir
+    sig = ct.compilation.KernelSignature.from_kernel_args(
+            split_ge_kernel, (x,),
+            ct.compilation.CallingConvention.cutile_python_v1())
+    [root_block] = compile_tile(split_ge_kernel._pyfunc, [sig],
+                                return_final_ir=True, return_cubin=False).final_ir
     loop_ops = [op for op in root_block.traverse() if isinstance(op, Loop)]
     assert len(loop_ops) == 2
 

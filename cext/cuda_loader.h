@@ -11,7 +11,7 @@
 
 #define FOREACH_CUDA_FUNCTION_TO_LOAD(X) \
     X(cuInit, 2000) \
-    X(cuLibraryLoadFromFile, 12000) \
+    X(cuLibraryLoadData, 12000) \
     X(cuLibraryUnload, 12000) \
     X(cuLibraryGetKernel, 12000) \
     X(cuGetErrorString, 6000) \

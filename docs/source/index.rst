@@ -53,5 +53,6 @@ Proceed to the :ref:`quickstart` page for installation instructions and a comple
    interoperability
    performance
    operations
+   compilation
    debugging
    known_issues

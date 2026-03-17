@@ -3,12 +3,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import cuda.tile as ct
-from cuda.tile._ir.ir import KernelArgument
+from cuda.tile._cext import CallingConvention
+from cuda.tile._compile import compile_tile
 from cuda.tile._ir.ops import Loop, Continue, Break, MakeDummy
 from cuda.tile._ir import ir
-from cuda.tile._compile import _get_final_ir
-from cuda.tile._cext import default_tile_context
-from cuda.tile._ir.type import ArrayTy
+from cuda.tile.compilation import ArrayConstraint, KernelSignature
 
 
 def _get_defining_op(var, root_block: ir.Block):
@@ -19,17 +18,11 @@ def _get_defining_op(var, root_block: ir.Block):
 
 
 def get_ir(func) -> ir.Block:
-    x = KernelArgument(type=ArrayTy(ct.int32,
-                                    shape=(None,),
-                                    strides=(1,),
-                                    elements_disjoint=True,
-                                    base_ptr_div_by=None,
-                                    stride_div_by=(None,),
-                                    shape_div_by=(None,)),
-                       is_const=False,
-                       const_value=None)
-    ir = _get_final_ir(func, (x,), default_tile_context.config)
-    return ir.body
+    x = ArrayConstraint(dtype=ct.int32, ndim=1, stride_lower_bound_incl=0,
+                        alias_groups=(), may_alias_internally=False)
+    sig = KernelSignature([x], CallingConvention.cutile_python_v1(), symbol="kernel")
+    [body] = compile_tile(func, [sig], return_final_ir=True, return_cubin=False).final_ir
+    return body
 
 
 def test_unused_loop_var():

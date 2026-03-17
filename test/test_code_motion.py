@@ -8,9 +8,9 @@ import pytest
 import torch
 
 import cuda.tile as ct
+from cuda.tile.compilation import CallingConvention
 from cuda.tile._ir.ir import Operation
 from cuda.tile._ir.ops import Loop, Unary, IfElse, TileExtract
-from cuda.tile._compiler_options import CompilerOptions
 from cuda.tile._compile import compile_tile
 
 from util import assert_close
@@ -210,7 +210,9 @@ def test_hoisting(kernel, op_finder, expected_x):
 
     x = torch.zeros(3, dtype=torch.float32, device="cuda")
     a = torch.tensor([5, 6, 7], dtype=torch.int32, device="cuda")
-    root_block = compile_tile(kernel._pyfunc, (x, a, 4.0), CompilerOptions()).final_ir
+    sig = ct.compilation.KernelSignature.from_kernel_args(kernel, (x, a, 4.0),
+                                                          CallingConvention.cutile_python_v1())
+    [root_block] = compile_tile(kernel._pyfunc, [sig], return_final_ir=True).final_ir
 
     op = op_finder(root_block)
 

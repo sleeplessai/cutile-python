@@ -132,6 +132,9 @@
 .. |memory scope| replace:: :ref:`memory scope <memory-model-memory-scope>`
 .. |Memory Scope| replace:: :ref:`Memory Scope <memory-model-memory-scope>`
 
+.. |Calling convention| replace:: :ref:`Calling convention <compilation-callconv>`
+.. |calling convention| replace:: :ref:`calling convention <compilation-callconv>`
+
 .. |Python Array API| replace:: `Python Array API <https://data-apis.org/array-api/latest/>`__
 .. |Numpy broadcasting rule| replace:: `Numpy broadcasting rule <https://numpy.org/devdocs/user/basics.broadcasting.html>`__
 .. |DLPack| replace:: `DLPack <https://dmlc.github.io/dlpack/latest/>`__

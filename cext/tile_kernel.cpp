@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <utility>
 
+
 static PyObject* g___cuda_array_interface___pyunicode;
 static PyObject* g_typestr_pyunicode;
 static PyObject* g_shape_pyunicode;
@@ -32,6 +33,21 @@ static PyTypeObject* g_torch_cuda_Stream_type;
 static PyObject* g_torch_to_dlpack_func;
 
 static PyObject* g_default_tile_context;
+
+
+static PyObject* get_datatype_module() {
+    static PyObject* m;
+    if (!m) m = PyImport_ImportModule("cuda.tile._datatype");
+    return m;
+}
+
+
+static PyObject* get_signature_module() {
+    static PyObject* m;
+    if (!m) m = PyImport_ImportModule("cuda.tile.compilation._signature");
+    return m;
+}
+
 
 #define FOREACH_TORCH_DTYPE(X) \
     X(bool, 8, 1, kDLBool) \
@@ -95,6 +111,100 @@ namespace { union ArraySpecializationBits {
 
 static_assert(sizeof(ArraySpecializationBits) == 8);
 
+enum class CallConvVersion {
+    CutilePython_V1 = 1,
+};
+
+namespace { struct CallingConvention {
+    CallConvVersion version;
+
+    inline bool operator== (const CallingConvention& other) const {
+        return version == other.version;
+    }
+
+    static PyTypeObject pytype;
+}; }
+
+static PyObject* CallingConvention_get_name(PyObject* self, void*) {
+    CallingConvention& cconv = py_unwrap<CallingConvention>(self);
+    return PyUnicode_FromFormat("cutile_python_v%d", cconv.version);
+}
+
+static PyObject* CallingConvention_get_code(PyObject* self, void*) {
+    CallingConvention& cconv = py_unwrap<CallingConvention>(self);
+    return PyUnicode_FromFormat("t%d", cconv.version);
+}
+
+static PyObject* CallingConvention_repr(PyObject* self) {
+    PyPtr name = steal(PyObject_GetAttrString(self, "name"));
+    if (!name) return nullptr;
+    PyPtr code = steal(PyObject_GetAttrString(self, "code"));
+    if (!code) return nullptr;
+    return PyUnicode_FromFormat("CallingConvention(%R, %R)", name.get(), code.get());
+}
+
+static PyGetSetDef CallingConvention_getsetters[] = {
+    {"name", CallingConvention_get_name, nullptr},
+    {"code", CallingConvention_get_code, nullptr},
+    {}  // sentinel
+};
+
+static PyPtr get_cconv(CallConvVersion version) {
+    PyObject* ret = CallingConvention::pytype.tp_new(&CallingConvention::pytype, nullptr, nullptr);
+    if (!ret) return {};
+
+    CallingConvention& cconv = py_unwrap<CallingConvention>(ret);
+    cconv.version = version;
+    return steal(ret);
+}
+
+static PyObject* CallingConvention_cutile_python_v1(PyObject*, PyObject*) {
+    static PyObject* c;
+    if (!c) c = get_cconv(CallConvVersion::CutilePython_V1).release();
+    return Py_NewRef(c);
+}
+
+static PyPtr parse_cutile_python_calling_convention(const char* s) {
+    if (s[0] == '1' && !s[1])
+        return get_cconv(CallConvVersion::CutilePython_V1);
+    return {};
+}
+
+
+static PyObject* CallingConvention_from_code(PyObject*, PyObject* args) {
+    const char* code;
+    if (!PyArg_ParseTuple(args, "s", &code))
+        return nullptr;
+    if (code[0] == 't') {
+        PyPtr ret = parse_cutile_python_calling_convention(code + 1);
+        if (ret) return ret.release();
+    }
+    return PyErr_Format(PyExc_ValueError, "Unknown calling convention code '%s'", code);
+}
+
+
+static PyMethodDef CallingConvention_methods[] = {
+    {"from_code", CallingConvention_from_code, METH_VARARGS | METH_STATIC, nullptr},
+    {"cutile_python_v1", CallingConvention_cutile_python_v1, METH_NOARGS | METH_STATIC,
+       "cutile_python_v1()\n"
+        "--\n\n"
+        "Returns the ``cutile_python_v1`` calling convention.\n\n"
+    },
+    {}  // sentinel
+};
+
+PyTypeObject CallingConvention::pytype = {
+    .tp_name = "cuda.tile.compilation.CallingConvention",
+    .tp_basicsize = sizeof(PythonWrapper<CallingConvention>),
+    .tp_dealloc = pywrapper_dealloc<CallingConvention>,
+    .tp_repr = CallingConvention_repr,
+    .tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+    .tp_richcompare = pywrapper_richcompare_via_operator_equals<CallingConvention>,
+    .tp_methods = CallingConvention_methods,
+    .tp_getset = CallingConvention_getsetters,
+    .tp_new = pywrapper_new<CallingConvention>,
+};
+
 
 // RAII wrapper around CUlibrary
 namespace { class CudaLibrary {
@@ -124,15 +234,15 @@ private:
     CUlibrary lib_;
 }; }
 
-static Result<CudaLibrary> load_cuda_library(const DriverApi* driver, const char* filename) {
+static Result<CudaLibrary> load_cuda_library(const DriverApi* driver, const void* code) {
     CUlibrary lib;
-    CUresult res = driver->cuLibraryLoadFromFile(&lib, filename, nullptr, nullptr, 0,
-                                           nullptr, nullptr, 0);
+    CUresult res = driver->cuLibraryLoadData(&lib, code, nullptr, nullptr, 0,
+                                             nullptr, nullptr, 0);
     if (res == CUDA_SUCCESS)
         return CudaLibrary(driver, lib);
 
-    return raise(PyExc_RuntimeError, "Failed to load CUDA library from %s: %s",
-                 filename, get_cuda_error(driver, res));
+    return raise(PyExc_RuntimeError, "Failed to load CUDA library: %s",
+                 get_cuda_error(driver, res));
 }
 
 struct CudaKernel {
@@ -141,9 +251,12 @@ struct CudaKernel {
 };
 
 static Result<CudaKernel> load_cuda_kernel(const DriverApi* driver,
-                                           const char* filename,
+                                           const char* cubin_data,
+                                           size_t cubin_size,
                                            const char* func_name) {
-    Result<CudaLibrary> lib = load_cuda_library(driver, filename);
+    (void) cubin_size;
+
+    Result<CudaLibrary> lib = load_cuda_library(driver, cubin_data);
     if (!lib.is_ok()) return ErrorRaised;
 
     CUkernel kernel;
@@ -151,8 +264,8 @@ static Result<CudaKernel> load_cuda_kernel(const DriverApi* driver,
     if (res == CUDA_SUCCESS)
         return CudaKernel{std::move(*lib), kernel};
 
-    return raise(PyExc_RuntimeError, "Failed to get kernel %s from library %s: %s",
-                 func_name, filename, get_cuda_error(driver, res));
+    return raise(PyExc_RuntimeError, "Failed to get kernel %s from library: %s",
+                 func_name, get_cuda_error(driver, res));
 }
 
 
@@ -175,9 +288,9 @@ struct TileKernel {
     CudaKernel cukernel;
 };
 
-struct KernelFamily : SimpleRefcount<KernelFamily> {
-    using KernelMap = HashMap<Vec<int64_t>, TileKernel>;
+using KernelMap = HashMap<Vec<int64_t>, TileKernel>;
 
+struct KernelFamily : SimpleRefcount<KernelFamily> {
     KernelMap kernels_by_constants;
 };
 
@@ -228,6 +341,14 @@ static LaunchHelperPtr launch_helper_get() {
     }
 }
 
+enum class ParameterKind {
+    Array,
+    Boolean,
+    Integer,
+    Float,
+    List,
+};
+
 enum class PythonArgKind {
     // A torch.Tensor that we can access via torch._C._to_dlpack
     TorchTensorDlpack,
@@ -235,6 +356,8 @@ enum class PythonArgKind {
     DlpackArray,
     // An object with __cuda_array_interface__
     CudaArray,
+    // Python `bool`,
+    PyBool,
     // Python `int`,
     PyLong,
     // Python `float`
@@ -243,39 +366,47 @@ enum class PythonArgKind {
     PyList
 };
 
-enum class ParameterKind {
-    Array,
-    Integer,
-    Float,
-    List,
-};
+static ParameterKind param_kind_from_pyarg_kind(PythonArgKind k) {
+    switch (k) {
+    case PythonArgKind::TorchTensorDlpack: return ParameterKind::Array;
+    case PythonArgKind::DlpackArray: return ParameterKind::Array;
+    case PythonArgKind::CudaArray: return ParameterKind::Array;
+    case PythonArgKind::PyBool: return ParameterKind::Boolean;
+    case PythonArgKind::PyLong: return ParameterKind::Integer;
+    case PythonArgKind::PyFloat: return ParameterKind::Float;
+    case PythonArgKind::PyList: return ParameterKind::List;
+    }
+    CHECK(false);
+}
 
-static Result<std::pair<PythonArgKind, ParameterKind>> classify_arg(PyObject* arg) {
+static Result<PythonArgKind> classify_arg(PyObject* arg) {
+    if (PyBool_Check(arg))
+        return PythonArgKind::PyBool;
+
     if (PyLong_Check(arg))
-        return {{PythonArgKind::PyLong, ParameterKind::Integer}};
+        return PythonArgKind::PyLong;
 
     if (PyFloat_Check(arg))
-        return {{PythonArgKind::PyFloat, ParameterKind::Float}};
+        return PythonArgKind::PyFloat;
 
     if (PyList_Check(arg))
-        return {{PythonArgKind::PyList, ParameterKind::List}};
+        return PythonArgKind::PyList;
 
     if (g_torch_Tensor_type && PyObject_TypeCheck(arg, g_torch_Tensor_type)) {
         // Calling torch._C._to_dlpack(arg) is much faster than calling arg.__dlpack__()
         // because it goes straight into C++ code, with no Python in between.
         // So we always prefer that.
         if (g_torch_to_dlpack_func)
-            return {{PythonArgKind::TorchTensorDlpack, ParameterKind::Array}};
+            return PythonArgKind::TorchTensorDlpack;
     }
 
     if (PyObject_HasAttr(arg, g___dlpack___pyunicode))
-        return {{PythonArgKind::DlpackArray, ParameterKind::Array}};
+        return PythonArgKind::DlpackArray;
 
     if (PyObject_HasAttr(arg, g___cuda_array_interface___pyunicode))
-        return {{PythonArgKind::CudaArray, ParameterKind::Array}};
+        return PythonArgKind::CudaArray;
 
-    PyErr_Format(PyExc_TypeError, "Unsupported argument type %s", Py_TYPE(arg)->tp_name);
-    return ErrorRaised;
+    return raise(PyExc_TypeError, "Unsupported argument type %s", Py_TYPE(arg)->tp_name);
 }
 
 
@@ -285,12 +416,11 @@ struct PythonArgProfile {
 };
 
 // Concatenate values of two chars in a single unsigned integer
-#define CHAR_PAIR(x, y) \
-    (\
-        (static_cast<unsigned>(static_cast<unsigned char>((x))) << 16) \
-        | (static_cast<unsigned>(static_cast<unsigned char>((y)))) \
-    )
-
+static constexpr unsigned char_pair(char x, char y) {
+    unsigned xu = static_cast<unsigned char>(x);
+    unsigned yu = static_cast<unsigned char>(y);
+    return ((xu << 8) | yu);
+}
 
 static Result<DLDataType> parse_typestr(PyObject* typestr) {
     if (!PyUnicode_Check(typestr)) {
@@ -330,12 +460,12 @@ static Result<DLDataType> parse_typestr(PyObject* typestr) {
     }
 
     // str[3] is safe to index because there is always a NUL byte at the end
-    switch (CHAR_PAIR(str[2], str[3])) {
-    case CHAR_PAIR('1', '\0'): ret.bits = 8; break;
-    case CHAR_PAIR('2', '\0'): ret.bits = 16; break;
-    case CHAR_PAIR('4', '\0'): ret.bits = 32; break;
-    case CHAR_PAIR('8', '\0'): ret.bits = 64; break;
-    case CHAR_PAIR('1', '6'):
+    switch (char_pair(str[2], str[3])) {
+    case char_pair('1', '\0'): ret.bits = 8; break;
+    case char_pair('2', '\0'): ret.bits = 16; break;
+    case char_pair('4', '\0'): ret.bits = 32; break;
+    case char_pair('8', '\0'): ret.bits = 64; break;
+    case char_pair('1', '6'):
         if (!str[4]) {
             ret.bits = 64;
             break;
@@ -361,11 +491,72 @@ static inline uint32_t dtype_as_uint(DLDataType dtype) {
         | (static_cast<uint32_t>(dtype.lanes) << 16);
 }
 
+static inline DLDataType dtype_from_uint(uint32_t u) {
+    return DLDataType{
+        .code = static_cast<uint8_t>(u & 0xff),
+        .bits = static_cast<uint8_t>((u >> 8) & 0xff),
+        .lanes = static_cast<uint16_t>((u >> 16) & 0xffff),
+    };
+}
+
+static constexpr int u8_pair(uint8_t x, uint8_t y) {
+    return x | (y << 8);
+}
+
+static Result<const char*> dtype_name(DLDataType dtype) {
+    if (dtype.lanes != 1)
+        return raise(PyExc_TypeError, "Array dtypes with multiple lanes are not supported");
+
+    switch (u8_pair(dtype.code, dtype.bits)) {
+    case u8_pair(kDLBool, 8): return "bool_";
+
+    case u8_pair(kDLInt, 8): return "int8";
+    case u8_pair(kDLInt, 16): return "int16";
+    case u8_pair(kDLInt, 32): return "int32";
+    case u8_pair(kDLInt, 64): return "int64";
+
+    case u8_pair(kDLUInt, 8): return "uint8";
+    case u8_pair(kDLUInt, 16): return "uint16";
+    case u8_pair(kDLUInt, 32): return "uint32";
+    case u8_pair(kDLUInt, 64): return "uint64";
+
+    case u8_pair(kDLFloat, 16): return "float16";
+    case u8_pair(kDLFloat, 32): return "float32";
+    case u8_pair(kDLFloat, 64): return "float64";
+
+    case u8_pair(kDLBfloat, 16): return "bfloat16";
+
+    case u8_pair(kDLFloat8_e4m3fn, 8): return "float8_e4m3fn";
+    case u8_pair(kDLFloat8_e5m2, 8): return "float8_e5m2";
+    case u8_pair(kDLFloat8_e8m0fnu, 8): return "float8_e8m0fnu";
+
+    default:
+        return raise(PyExc_TypeError, "Unsupported array dtype");
+    }
+}
+
+static PyPtr dtype_to_python(DLDataType dtype) {
+    PyObject* dtype_module = get_datatype_module();
+    if (!dtype_module) return {};
+
+    Result<const char*> name = dtype_name(dtype);
+    if (!name.is_ok()) return {};
+
+    return getattr(dtype_module, *name);
+}
+
 // Pack data type and array rank in a single int64_t so it could be used
 // as a single constant for looking up the kernel in a family
 static int64_t pack_array_type(ArrayType a) {
     uint64_t dtype_u = static_cast<uint64_t>(dtype_as_uint(a.dtype));
     return static_cast<int64_t>(dtype_u | (static_cast<uint64_t>(a.ndim) << 32));
+}
+
+static ArrayType unpack_array_type(int64_t c) {
+    uint64_t u = c;
+    uint32_t dtype = u & 0xffffffff;
+    uint32_t ndim = (u >> 32) & 0xffffffff;
+    return {dtype_from_uint(dtype), ndim};
 }
 
 static Status extract_compact_row_major_strides(size_t ndim, size_t shape_offset, Vec<Word>& dst) {
@@ -449,6 +640,19 @@ static ArraySpecializationBits compute_array_specialization_bits(
     return ret;
 }
 
+
+struct ConstantCursor {
+    const int64_t* data;
+    size_t len;
+
+    int64_t next() {
+        CHECK(len);
+        int64_t ret = *data;
+        ++data, --len;
+        return ret;
+    }
+};
+
 static void extract_array_specialization_constants(const DriverApi* driver,
                                                    ArrayType arrtype,
                                                    const Word* array_repr,
@@ -476,6 +680,77 @@ static void extract_array_specialization_constants(const DriverApi* driver,
     helper.constants.push_back(special_bits);
 }
 
+// Parse the constants generated by extract_array_specialization_constants()
+// into an ArrayConstraint object.
+static PyPtr parse_array_constraint(ConstantCursor& cursor) {
+    ArrayType arrty = unpack_array_type(cursor.next());
+    ArraySpecializationBits special_bits;
+    special_bits.u64 = cursor.next();
+
+    PyObject* signature_module = get_signature_module();
+    if (!signature_module) return {};
+
+    PyPtr constraint_class = getattr(signature_module, "ArrayConstraint");
+    if (!constraint_class) return {};
+
+    PyPtr args = steal(PyTuple_New(0));
+    if (!args) return {};
+
+    PyPtr dtype = dtype_to_python(arrty.dtype);
+    if (!dtype) return {};
+
+    PyPtr static_strides = steal(PyTuple_New(arrty.ndim));
+    if (!static_strides) return {};
+
+    PyPtr stride_divisible_by = steal(PyTuple_New(arrty.ndim));
+    if (!stride_divisible_by) return {};
+
+    PyPtr shape_divisible_by = steal(PyTuple_New(arrty.ndim));
+    if (!shape_divisible_by) return {};
+
+    PyPtr zero = steal(PyLong_FromLong(0));
+    if (!zero) return {};
+
+    PyPtr one = steal(PyLong_FromLong(1));
+    if (!one) return {};
+
+    PyPtr sixteen = steal(PyLong_FromLong(DIVISOR_16));
+    if (!sixteen) return {};
+
+    PyPtr stride_divisor = one;
+    constexpr unsigned divisor16_bits = DIVISOR_16 * BYTE_BITWIDTH;
+    if (divisor16_bits % arrty.dtype.bits == 0) {
+        stride_divisor = steal(PyLong_FromLong(divisor16_bits / arrty.dtype.bits));
+        if (!stride_divisor) return {};
+    }
+
+    for (size_t i = 0; i < arrty.ndim; ++i) {
+        PyObject* obj = special_bits.is_stride_one(i) ? one.get() : Py_None;
+        PyTuple_SET_ITEM(static_strides.get(), i, Py_NewRef(obj));
+
+        obj = special_bits.is_stride_16byte_divisible(i) ? stride_divisor.get() : one.get();
+        PyTuple_SET_ITEM(stride_divisible_by.get(), i, Py_NewRef(obj));
+
+        obj = special_bits.is_shape_divisible_by_16(i) ? sixteen.get() : one.get();
+        PyTuple_SET_ITEM(shape_divisible_by.get(), i, Py_NewRef(obj));
+    }
+
+    PyPtr kwargs = steal(Py_BuildValue(
+            "{sO sI sO sO s() sO sO sO sO}",
+            "dtype", dtype.get(),
+            "ndim", static_cast<unsigned>(arrty.ndim),
+            "stride_static", static_strides.get(),
+            "stride_lower_bound_incl", zero.get(),
+            "alias_groups",
+            "may_alias_internally", special_bits.disjoint_elements ? Py_False : Py_True,
+            "stride_divisible_by", stride_divisible_by.get(),
+            "shape_divisible_by", shape_divisible_by.get(),
+            "base_addr_divisible_by",
+                special_bits.baseptr_16byte_aligned ? sixteen.get() : one.get()));
+    if (!kwargs) return {};
+
+    return steal(PyObject_Call(constraint_class.get(), args.get(), kwargs.get()));
+}
 
 #define UNPACK_ARRAY_INTERFACE(dict, key) \
     PyObject* key = PyDict_GetItemWithError((dict).get(), g_##key##_pyunicode); \
@@ -748,20 +1023,62 @@ static Status extract_array(const DriverApi* driver, PyObject* pyobj, LaunchHelp
     return OK;
 }
 
+enum class PylongConstantEncoding : int64_t {
+    I64,
+    U64
+};
+
+static inline Status extract_py_bool(PyObject* pyobj, bool is_constant, LaunchHelper& helper) {
+    int val = PyObject_IsTrue(pyobj);
+    if (val < 0) return ErrorRaised;
+
+    if (is_constant)
+        helper.constants.push_back(val);
+    else
+        helper.cuargs.push_back({.i32 = val});
+    return OK;
+}
+
+static PyPtr make_scalar_constraint(DLDataType dtype) {
+    PyObject* signature_module = get_signature_module();
+    if (!signature_module) return {};
+
+    PyPtr py_dtype = dtype_to_python(dtype);
+    if (!py_dtype) return {};
+
+    return steal(PyObject_CallMethod(
+                signature_module, "ScalarConstraint", "(O)", py_dtype.get()));
+}
+
+static PyPtr make_constant_constraint(PyObject* value) {
+    PyObject* signature_module = get_signature_module();
+    if (!signature_module) return {};
+
+    return steal(PyObject_CallMethod(signature_module, "ConstantConstraint", "(O)", value));
+}
+
+static PyPtr parse_pybool_constraint(ConstantCursor& cursor, bool is_constant) {
+    if (is_constant) {
+        int64_t val = cursor.next();
+        return make_constant_constraint(val ? Py_True : Py_False);
+    } else {
+        return make_scalar_constraint(DLDataType{kDLBool, 8, 1});
+    }
+}
 
 static inline Status extract_py_long(PyObject* pyobj, bool is_constant, LaunchHelper& helper) {
     if (is_constant) {
         int overflow;
-        long long value = PyLong_AsLongLongAndOverflow(pyobj, &overflow);
+        int64_t value = pylong_as_overflow_and<int64_t>(pyobj, &overflow);
         if (PyErr_Occurred()) return ErrorRaised;
         if (overflow) {
             // TODO: support big values by extracting all digits
-            helper.constants.push_back(1);
-            unsigned long long uval = PyLong_AsUnsignedLongLong(pyobj);
+            helper.constants.push_back(static_cast<int64_t>(PylongConstantEncoding::U64));
+            uint64_t uval = pylong_as<uint64_t>(pyobj);
             if (PyErr_Occurred()) return ErrorRaised;
             helper.constants.push_back(uval);
         } else {
-            helper.constants.push_back(0);
+            helper.constants.push_back(static_cast<int64_t>(PylongConstantEncoding::I64));
             helper.constants.push_back(value);
         }
     } else {
@@ -770,6 +1087,24 @@ static inline Status extract_py_long(PyObject* pyobj, bool is_constant, LaunchHe
         helper.cuargs.push_back({.i32 = value});
     }
     return OK;
+}
+
+static PyPtr parse_pylong_constraint(ConstantCursor& cursor, bool is_constant) {
+    if (is_constant) {
+        int64_t format = cursor.next();
+        PyPtr value;
+        if (format == static_cast<int64_t>(PylongConstantEncoding::I64)) {
+            value = steal(PyLong_FromLongLong(cursor.next()));
+        } else if (format == static_cast<int64_t>(PylongConstantEncoding::U64)) {
+            value = steal(PyLong_FromUnsignedLongLong(cursor.next()));
+        } else {
+            CHECK(false);
+        }
+        if (!value) return {};
+        return make_constant_constraint(value.get());
+    } else {
+        return make_scalar_constraint(DLDataType{kDLInt, 32, 1});
+    }
 }
 
 static void extract_py_float(PyObject* pyobj, bool is_constant, LaunchHelper& helper) {
@@ -781,6 +1116,17 @@ static void extract_py_float(PyObject* pyobj, bool is_constant, LaunchHelper& he
         helper.constants.push_back(i64_val);
     } else {
         helper.cuargs.push_back({.f32 = static_cast<float>(value)});
+    }
+}
+
+static PyPtr parse_pyfloat_constraint(ConstantCursor& cursor, bool is_constant) {
+    if (is_constant) {
+        union { int64_t i64; double f64; } u;
+        u.i64 = cursor.next();
+        PyPtr value = steal(PyFloat_FromDouble(u.f64));
+        return make_constant_constraint(value.get());
+    } else {
+        return make_scalar_constraint(DLDataType{kDLFloat, 32, 1});
     }
 }
 
@@ -816,15 +1162,15 @@ static Status extract_py_list(const DriverApi* driver, PyObject* pyobj, LaunchHe
     // Handle the first item separately in order to determine the item type
 
     PyObject* first_item = PyList_GET_ITEM(pyobj, 0);
-    Result<std::pair<PythonArgKind, ParameterKind>> first_item_res = classify_arg(first_item);
+    Result<PythonArgKind> first_item_res = classify_arg(first_item);
     if (!first_item_res.is_ok()) return ErrorRaised;
 
-    if (first_item_res->second != ParameterKind::Array) {
+    if (param_kind_from_pyarg_kind(*first_item_res) != ParameterKind::Array) {
         return raise(PyExc_TypeError, "Expected list items to be arrays, got %s",
                      Py_TYPE(first_item)->tp_name);
     }
 
-    PythonArgKind first_arg_kind = first_item_res->first;
+    PythonArgKind first_arg_kind = *first_item_res;
     PyTypeObject* first_item_type = first_item->ob_type;
 
     size_t offset = helper.nested_arrays.size();
@@ -839,9 +1185,9 @@ static Status extract_py_list(const DriverApi* driver, PyObject* pyobj, LaunchHe
 
         // Avoid calling classify_arg() if the object type is the same
         if (first_item_type != item->ob_type) {
-             Result<std::pair<PythonArgKind, ParameterKind>> res = classify_arg(item);
+             Result<PythonArgKind> res = classify_arg(item);
              if (!res.is_ok()) return ErrorRaised;
-             kind = res->first;
+             kind = *res;
         }
 
         ArrayType arrtype;
@@ -863,6 +1209,31 @@ static Status extract_py_list(const DriverApi* driver, PyObject* pyobj, LaunchHe
                                            helper);
     return OK;
 }
+
+static PyPtr parse_list_constraint(ConstantCursor& cursor) {
+    PyPtr element = parse_array_constraint(cursor);
+    if (!element) return {};
+
+    PyObject* signature_module = get_signature_module();
+    if (!signature_module) return {};
+
+    PyPtr constraint_class = getattr(signature_module, "ListConstraint");
+    if (!constraint_class) return {};
+
+    PyPtr args = steal(PyTuple_New(0));
+    if (!args) return {};
+
+    PyPtr kwargs = steal(Py_BuildValue(
+            "{sO s() sO}",
+            "element", element.get(),
+            "alias_groups",
+            "elements_may_alias", Py_True
+            ));
+    if (!kwargs) return {};
+
+    return steal(PyObject_Call(constraint_class.get(), args.get(), kwargs.get()));
+}
+
 
 static Status extract_cuda_args(const DriverApi* driver,
                                 PyObject* const* pyargs, size_t num_pyargs,
@@ -898,12 +1269,67 @@ static Status extract_cuda_args(const DriverApi* driver,
         case PythonArgKind::PyFloat:
             extract_py_float(pyobj, is_constant, helper);
             break;
+        case PythonArgKind::PyBool:
+            if (!extract_py_bool(pyobj, is_constant, helper)) return ErrorRaised;
+            break;
         case PythonArgKind::PyList:
             if (!extract_py_list(driver, pyobj, helper)) return ErrorRaised;
             break;
         }
     }
     return OK;
+}
+
+static PyPtr parse_parameter_constraints(const Vec<int64_t>& constants,
+                                         const Vec<ParameterKind>& param_kinds,
+                                         const Vec<bool>& constant_arg_flags) {
+    size_t num_args = param_kinds.size();
+    CHECK(num_args == constant_arg_flags.size());
+    ConstantCursor cursor = {constants.data(), constants.size()};
+    PyPtr param_constraints = steal(PyList_New(0));
+    if (!param_constraints) return {};
+    for (size_t i = 0; i < num_args; ++i) {
+        PyPtr constraint;
+        switch (param_kinds[i]) {
+        case ParameterKind::Array:
+            constraint = parse_array_constraint(cursor);
+            break;
+        case ParameterKind::Boolean:
+            constraint = parse_pybool_constraint(cursor, constant_arg_flags[i]);
+            break;
+        case ParameterKind::Integer:
+            constraint = parse_pylong_constraint(cursor, constant_arg_flags[i]);
+            break;
+        case ParameterKind::Float:
+            constraint = parse_pyfloat_constraint(cursor, constant_arg_flags[i]);
+            break;
+        case ParameterKind::List:
+            constraint = parse_list_constraint(cursor);
+            break;
+        }
+        if (!constraint) return {};
+        if (PyList_Append(param_constraints.get(), constraint.get()))
+            return {};
+    }
+    CHECK(cursor.len == 0);
+    return param_constraints;
+}
+
+static PyPtr make_signature(const Vec<int64_t>& constants,
+                            const Vec<ParameterKind>& param_kinds,
+                            const Vec<bool>& constant_arg_flags,
+                            const PyPtr& calling_convention) {
+    PyPtr parameters = parse_parameter_constraints(constants, param_kinds, constant_arg_flags);
+    if (!parameters) return {};
+
+    PyObject* signature_module = get_signature_module();
+    if (!signature_module) return {};
+
+    PyPtr signature_class = getattr(signature_module, "KernelSignature");
+    if (!signature_class) return {};
+
+    return steal(PyObject_CallFunctionObjArgs(
+            signature_class.get(), parameters.get(), calling_convention.get(), nullptr));
 }
 
 using ProfileMap = HashMap<Vec<PyPtr>, PythonArgProfile>;
@@ -922,24 +1348,27 @@ struct CompareKey <Vec<PyTypeObject*>, Vec<PyPtr>> {
     }
 };
 
-struct TileContext {
+namespace { struct TileContext {
     PyPtr config;
     PyPtr autotune_cache;
-};
 
+    static PyTypeObject pytype;
+}; }
+
+using FamilyMap = HashMap<Vec<ParameterKind>, RefPtr<KernelFamily>>;
 
 struct TileContextDispatcher {
-    using FamilyMap = HashMap<Vec<ParameterKind>, RefPtr<KernelFamily>>;
     ProfileMap arg_profiles;
     FamilyMap kernel_families;
 };
 
 
-struct TileDispatcher {
+namespace { struct TileDispatcher {
     Vec<bool> constant_arg_flags;
-    PyPtr compile_func;
     TileContextDispatcher default_context_dispatcher;
-};
+
+    static PyTypeObject pytype;
+}; }
 
 
 static void get_pyarg_types(PyObject* const* pyargs, Py_ssize_t num_pyargs,
@@ -950,18 +1379,12 @@ static void get_pyarg_types(PyObject* const* pyargs, Py_ssize_t num_pyargs,
 }
 
 static Result<TileKernel> compile(const DriverApi* driver,
-                                  TileDispatcher& dispatcher,
-                                  PyObject* const* pyargs,
-                                  Py_ssize_t num_pyargs,
+                                  PyObject* dispatcher_pyobj,
+                                  PyObject* signature,
                                   PyObject* py_tile_context) {
-    PyPtr pyargs_tuple = steal(PyTuple_New(num_pyargs));
-    if (!pyargs_tuple) return ErrorRaised;
-
-    for (Py_ssize_t i = 0; i < num_pyargs; ++i)
-        PyTuple_SET_ITEM(pyargs_tuple.get(), i, Py_NewRef(pyargs[i]));
-
-    PyPtr compile_result = steal(PyObject_CallFunctionObjArgs(
-            dispatcher.compile_func.get(), pyargs_tuple.get(), py_tile_context, nullptr));
+    PyPtr compile_result = steal(PyObject_CallMethod(
+            dispatcher_pyobj, "_compile", "(OO)",
+            signature, py_tile_context));
     if (!compile_result) return ErrorRaised;
 
     if (!PyTuple_Check(compile_result.get()))
@@ -972,23 +1395,26 @@ static Result<TileKernel> compile(const DriverApi* driver,
         return raise(PyExc_TypeError, "Expected compile() to return a 2-tuple, got length %zd",
                      PyTuple_GET_SIZE(compile_result.get()));
 
-    PyObject* py_cubin_filename = PyTuple_GET_ITEM(compile_result.get(), 0);
+    PyObject* py_cubin_bytes = PyTuple_GET_ITEM(compile_result.get(), 0);
     PyObject* py_cufunc_name = PyTuple_GET_ITEM(compile_result.get(), 1);
 
-    if (!PyUnicode_Check(py_cubin_filename) || !PyUnicode_Check(py_cufunc_name))
+    if (!PyBytes_Check(py_cubin_bytes) || !PyUnicode_Check(py_cufunc_name))
         return raise(PyExc_TypeError,
-                     "Expected compile() to return two strings (cubin_filename, func_name),"
+                     "Expected compile() to return (bytes, str),"
                      " got %s, %s",
-                     Py_TYPE(py_cubin_filename)->tp_name,
+                     Py_TYPE(py_cubin_bytes)->tp_name,
                      Py_TYPE(py_cufunc_name)->tp_name);
 
-    const char* cubin_filename = PyUnicode_AsUTF8(py_cubin_filename);
-    if (!cubin_filename) return ErrorRaised;
+
+    char* cubin_data;
+    Py_ssize_t cubin_size;
+    if (PyBytes_AsStringAndSize(py_cubin_bytes, &cubin_data, &cubin_size) < 0)
+        return ErrorRaised;
 
     const char* cufunc_name = PyUnicode_AsUTF8(py_cufunc_name);
     if (!cufunc_name) return ErrorRaised;
 
-    Result<CudaKernel> cukernel = load_cuda_kernel(driver, cubin_filename, cufunc_name);
+    Result<CudaKernel> cukernel = load_cuda_kernel(driver, cubin_data, cubin_size, cufunc_name);
     if (!cukernel.is_ok()) return ErrorRaised;
 
     return TileKernel{std::move(*cukernel)};
@@ -1074,9 +1500,9 @@ static Result<StreamBufferPool*> get_stream_buffer_pool(const DriverApi* driver,
         return raise(PyExc_RuntimeError,
                      "Failed to get CUDA context ID: %s", get_cuda_error(driver, res));
 
-    StreamBufferPool** pp = g_stream_buffer_pool_by_ctx_id->find(ctx_id);
-    if (pp) {
-        return *pp;
+    StreamBufferPoolMap::Item* item = g_stream_buffer_pool_by_ctx_id->find(ctx_id);
+    if (item) {
+        return item->value;
     } else {
         StreamBufferPool* pool = stream_buffer_pool_new();
         g_stream_buffer_pool_by_ctx_id->insert(ctx_id, pool);
@@ -1190,25 +1616,30 @@ static Status launch(const DriverApi* driver,
 
     TileDispatcher& dispatcher = py_unwrap<TileDispatcher>(dispatcher_pyobj);
     TileContextDispatcher& ctx_dispatcher = dispatcher.default_context_dispatcher;
-    PythonArgProfile* profile = ctx_dispatcher.arg_profiles.find(helper->pyarg_types);
-    if (!profile) {
+    ProfileMap::Item* profile_item = ctx_dispatcher.arg_profiles.find(helper->pyarg_types);
+    if (!profile_item) {
         // Slower path
+        if (static_cast<size_t>(num_pyargs) != dispatcher.constant_arg_flags.size()) {
+            return raise(PyExc_TypeError, "Kernel expects %zu arguments but %zd %s given",
+                    dispatcher.constant_arg_flags.size(), num_pyargs,
+                    num_pyargs == 1 ? "was" : "were");
+        }
 
         Vec<PythonArgKind> arg_kinds;
         arg_kinds.reserve(num_pyargs);
         Vec<ParameterKind> param_kinds;
         param_kinds.reserve(num_pyargs);
         for (Py_ssize_t i = 0; i < num_pyargs; ++i) {
-            Result<std::pair<PythonArgKind, ParameterKind>> c = classify_arg(pyargs[i]);
+            Result<PythonArgKind> c = classify_arg(pyargs[i]);
             if (!c.is_ok()) return ErrorRaised;
-            arg_kinds.push_back(c->first);
-            param_kinds.push_back(c->second);
+            arg_kinds.push_back(*c);
+            param_kinds.push_back(param_kind_from_pyarg_kind(*c));
         }
 
-        RefPtr<KernelFamily>* family_pp = ctx_dispatcher.kernel_families.find(param_kinds);
-        if (!family_pp) {
+        FamilyMap::Item* family_item = ctx_dispatcher.kernel_families.find(param_kinds);
+        if (!family_item) {
             RefPtr<KernelFamily> new_family = steal(new KernelFamily());
-            family_pp = ctx_dispatcher.kernel_families.insert(
+            family_item = ctx_dispatcher.kernel_families.insert(
                     std::move(param_kinds), std::move(new_family));
         }
 
@@ -1217,12 +1648,12 @@ static Status launch(const DriverApi* driver,
         for (PyTypeObject* typeobj : helper->pyarg_types)
             typeobj_refs.push_back(newref(reinterpret_cast<PyObject*>(typeobj)));
 
-        profile = ctx_dispatcher.arg_profiles.insert(
+        profile_item = ctx_dispatcher.arg_profiles.insert(
                     std::move(typeobj_refs),
-                    PythonArgProfile{*family_pp, std::move(arg_kinds)});
+                    PythonArgProfile{family_item->value, std::move(arg_kinds)});
     }
 
-    if (!extract_cuda_args(driver, pyargs, num_pyargs, profile->arg_kinds,
+    if (!extract_cuda_args(driver, pyargs, num_pyargs, profile_item->value.arg_kinds,
                            dispatcher.constant_arg_flags, *helper)) {
         return ErrorRaised;
     }
@@ -1231,15 +1662,26 @@ static Status launch(const DriverApi* driver,
     if (!maybe_switch_context(driver, helper->cuda_context, ctx_guard))
         return ErrorRaised;
 
-    KernelFamily::KernelMap& kernel_map = profile->family->kernels_by_constants;
-    TileKernel* kernel = kernel_map.find(helper->constants);
-    if (!kernel) {
+    KernelMap& kernel_map = profile_item->value.family->kernels_by_constants;
+    KernelMap::Item* kernel_item = kernel_map.find(helper->constants);
+    if (!kernel_item) {
         // Slowest path: need to compile a new kernel
-        Result<TileKernel> res = compile(driver, dispatcher, pyargs, num_pyargs,
+        Vec<ParameterKind> param_kinds;
+        for (PythonArgKind k : profile_item->value.arg_kinds)
+            param_kinds.push_back(param_kind_from_pyarg_kind(k));
+
+        PyPtr cconv = get_cconv(CallConvVersion::CutilePython_V1);
+        if (!cconv) return ErrorRaised;
+
+        PyPtr signature = make_signature(
+                helper->constants, param_kinds, dispatcher.constant_arg_flags, cconv);
+        if (!signature) return ErrorRaised;
+
+        Result<TileKernel> res = compile(driver, dispatcher_pyobj, signature.get(),
                                          g_default_tile_context);
         if (!res.is_ok()) return ErrorRaised;
 
-        kernel = kernel_map.insert(std::move(helper->constants), std::move(*res));
+        kernel_item = kernel_map.insert(std::move(helper->constants), std::move(*res));
     }
 
     StreamBufferTransaction tx;
@@ -1286,7 +1728,7 @@ static Status launch(const DriverApi* driver,
         helper->cuarg_pointers.push_back(&arg);
 
     CUresult res = driver->cuLaunchKernel(
-            reinterpret_cast<CUfunction>(kernel->cukernel.kernel),
+            reinterpret_cast<CUfunction>(kernel_item->value.cukernel.kernel),
             grid.dims[0], grid.dims[1], grid.dims[2],
             1, 1, 1, // block size set by driver
             0, // shared memory size set by driver
@@ -1372,7 +1814,7 @@ static PyGetSetDef TileContext_getsetters[] = {
 };
 
 
-static PyTypeObject TileContext_type = {
+PyTypeObject TileContext::pytype = {
     .tp_name = "cuda.tile._cext.TileContext",
     .tp_basicsize = sizeof(PythonWrapper<TileContext>),
     .tp_dealloc = pywrapper_dealloc<TileContext>,
@@ -1384,11 +1826,10 @@ static PyTypeObject TileContext_type = {
 
 
 static int TileDispatcher_init(PyObject* self, PyObject* args, PyObject* kwargs) {
-    const char* keywords[] = {"", "", nullptr};
+    const char* keywords[] = {"", nullptr};
     PyObject* py_constant_arg_flags = nullptr;
-    PyObject* compile_func = nullptr;
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "OO", const_cast<char**>(keywords),
-                                     &py_constant_arg_flags, &compile_func))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O", const_cast<char**>(keywords),
+                                     &py_constant_arg_flags))
         return -1;
 
     Result<Vec<bool>> constant_arg_flags = parse_constant_arg_flags(py_constant_arg_flags);
@@ -1396,12 +1837,10 @@ static int TileDispatcher_init(PyObject* self, PyObject* args, PyObject* kwargs)
 
     TileDispatcher& dispatcher = py_unwrap<TileDispatcher>(self);
     dispatcher.constant_arg_flags = std::move(*constant_arg_flags);
-    dispatcher.compile_func = newref(compile_func);
-
     return 0;
 }
 
-static PyTypeObject TileDispatcher_type = {
+PyTypeObject TileDispatcher::pytype = {
     .tp_name = "cuda.tile._cext.TileDispatcher",
     .tp_basicsize = sizeof(PythonWrapper<TileDispatcher>),
     .tp_dealloc = pywrapper_dealloc<TileDispatcher>,
@@ -1409,6 +1848,45 @@ static PyTypeObject TileDispatcher_type = {
     .tp_init = TileDispatcher_init,
     .tp_new = pywrapper_new<TileDispatcher>,
 };
+
+static PyObject* get_parameter_constraints_from_pyargs(PyObject* self, PyObject* args) {
+    PyObject* dispatcher_pyobj = nullptr;
+    PyObject* pyargs = nullptr;
+    PyObject* cconv = nullptr;
+    if (!PyArg_ParseTuple(args, "O!O!O!",
+                          &TileDispatcher::pytype, &dispatcher_pyobj,
+                          &PyTuple_Type, &pyargs,
+                          &CallingConvention::pytype, &cconv)) {
+        return nullptr;
+    }
+
+    TileDispatcher& dispatcher = py_unwrap<TileDispatcher>(dispatcher_pyobj);
+
+    PyObject** kernel_args = reinterpret_cast<PyTupleObject*>(pyargs)->ob_item;
+    Py_ssize_t num_kernel_args = PyTuple_GET_SIZE(pyargs);
+
+    Vec<PythonArgKind> kinds;
+    Vec<ParameterKind> param_kinds;
+    for (Py_ssize_t i = 0; i < num_kernel_args; ++i) {
+        Result<PythonArgKind> c = classify_arg(kernel_args[i]);
+        if (!c.is_ok()) return nullptr;
+        kinds.push_back(*c);
+        param_kinds.push_back(param_kind_from_pyarg_kind(*c));
+    }
+
+    LaunchHelperPtr helper = launch_helper_get();
+
+    Result<const DriverApi*> driver = get_driver_api();
+    if (!driver.is_ok()) return nullptr;
+
+    if (!extract_cuda_args(*driver, kernel_args, num_kernel_args, kinds,
+                           dispatcher.constant_arg_flags, *helper)) {
+        return nullptr;
+    }
+
+    return parse_parameter_constraints(
+            helper->constants, param_kinds, dispatcher.constant_arg_flags).release();
+}
 
 static Result<Grid> parse_grid(PyObject* tuple) {
     if (!PyTuple_Check(tuple))
@@ -1454,7 +1932,7 @@ static PyObject* cuda_tile_launch(PyObject* mod, PyObject* const* args, Py_ssize
     if (!grid_res.is_ok()) return nullptr;
 
     PyObject* dispatcher_pyobj = args[2];
-    if (!PyObject_TypeCheck(dispatcher_pyobj, &TileDispatcher_type)) {
+    if (!PyObject_TypeCheck(dispatcher_pyobj, &TileDispatcher::pytype)) {
         return PyErr_Format(PyExc_TypeError,
                 LAUNCH_SIGNATURE " expects a tile kernel as the third argument, got %s",
                 Py_TYPE(dispatcher_pyobj)->tp_name);
@@ -1477,195 +1955,6 @@ static PyObject* cuda_tile_launch(PyObject* mod, PyObject* const* args, Py_ssize
     return Py_NewRef(Py_None);
 }
 
-
-struct ArraySpecialization {
-    size_t ndim;
-    int32_t dtype_bitwidth;
-    ArraySpecializationBits bits;
-};
-
-
-static int ArraySpecialization_init(PyObject* self, PyObject* args, PyObject* kwargs) {
-    const char* keywords[] = {"base_ptr", "dtype_bitwidth", "shape", "strides", nullptr};
-    PyObject* base_ptr = nullptr;
-    PyObject* dtype_bitwidth = nullptr;
-    PyObject* shape = nullptr;
-    PyObject* strides = nullptr;
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "OOOO", const_cast<char**>(keywords),
-                                    &base_ptr, &dtype_bitwidth, &shape, &strides))
-        return -1;
-
-    // Parse base_ptr
-    if (!PyLong_Check(base_ptr)) {
-        PyErr_SetString(PyExc_TypeError, "base_ptr must be an integer");
-        return -1;
-    }
-
-    intptr_t base_ptr_int = pylong_as<intptr_t>(base_ptr);
-    if (base_ptr_int < 0) {
-        PyErr_SetString(PyExc_ValueError, "base_ptr must be non-negative");
-        return -1;
-    }
-
-    // Parse dtype_bitwidth
-    if (!PyLong_Check(dtype_bitwidth)) {
-        PyErr_SetString(PyExc_TypeError, "dtype_bitwidth must be an integer");
-        return -1;
-    }
-
-    int32_t dtype_bitwidth_int = pylong_as<int32_t>(dtype_bitwidth);
-    if (dtype_bitwidth_int < 0) {
-        PyErr_SetString(PyExc_ValueError, "dtype_bitwidth must be non-negative");
-        return -1;
-    }
-
-    // Parse shape and strides
-    if (!PyTuple_Check(shape)) {
-        PyErr_SetString(PyExc_TypeError, "shape must be a tuple");
-        return -1;
-    }
-
-    if (!PyTuple_Check(strides)) {
-        PyErr_SetString(PyExc_TypeError, "strides must be a tuple");
-        return -1;
-    }
-
-    Py_ssize_t shape_len = PyTuple_Size(shape);
-    if (shape_len == -1) return -1;
-
-    Py_ssize_t strides_len = PyTuple_Size(strides);
-    if (strides_len == -1) return -1;
-
-    if (shape_len != strides_len) {
-        PyErr_SetString(PyExc_ValueError, "shape and strides must have the same length");
-        return -1;
-    }
-
-    Vec<Word> shape_stride;
-    for (Py_ssize_t i = 0; i < shape_len; ++i) {
-        // Parse shape at dim i
-        PyObject* shape_item = PyTuple_GetItem(shape, i);
-        if (!PyLong_Check(shape_item)) {
-            PyErr_SetString(PyExc_TypeError, "shape must be a tuple of integers");
-            return -1;
-        }
-        int32_t shape_int = pylong_as<int32_t>(shape_item);
-        if (shape_int < 0) {
-            PyErr_SetString(PyExc_ValueError, "shape must be non-negative");
-            return -1;
-        }
-        shape_stride.push_back({.i32 = shape_int});
-    }
-
-    for (Py_ssize_t i = 0; i < shape_len; ++i) {
-        // Parse stride at dim i
-        PyObject* stride = PyTuple_GetItem(strides, i);
-        if (!PyLong_Check(stride)) {
-            PyErr_SetString(PyExc_TypeError, "strides must be a tuple of integers");
-            return -1;
-        }
-        int32_t stride_int = pylong_as<int32_t>(stride);
-        if (stride_int < 0) {
-            PyErr_SetString(PyExc_ValueError, "strides must be non-negative");
-            return -1;
-        }
-        shape_stride.push_back({.i32 = stride_int});
-    }
-
-    // Compute array specialization bits
-    ArraySpecializationBits arr_special_bits = compute_array_specialization_bits(
-        reinterpret_cast<void*>(base_ptr_int), shape_len,
-        dtype_bitwidth_int, shape_stride.data());
-
-    ArraySpecialization& arr_special = py_unwrap<ArraySpecialization>(self);
-    arr_special.bits = arr_special_bits;
-    arr_special.ndim = shape_len;
-    arr_special.dtype_bitwidth = dtype_bitwidth_int;
-    return 0;
-}
-
-static PyObject* ArraySpecialization_get_elements_disjoint(PyObject* self, void*) {
-    ArraySpecialization& arr_special = py_unwrap<ArraySpecialization>(self);
-    return Py_NewRef(arr_special.bits.disjoint_elements ? Py_True : Py_False);
-}
-
-PyObject* ArraySpecialization_get_base_ptr_div_by(PyObject* self, void* Py_UNUSED(ignored)) {
-    ArraySpecialization& arr_special = py_unwrap<ArraySpecialization>(self);
-    if (!arr_special.bits.baseptr_16byte_aligned)
-        return Py_NewRef(Py_None);
-
-    return PyLong_FromLong(DIVISOR_16);
-}
-
-PyObject* ArraySpecialization_get_stride_div_by(PyObject* self, void* Py_UNUSED(ignored)) {
-    ArraySpecialization& arr_special = py_unwrap<ArraySpecialization>(self);
-    PyPtr tuple = steal(PyTuple_New(arr_special.ndim));
-    if (!tuple) return nullptr;
-    for (size_t i = 0; i < arr_special.ndim; ++i) {
-        if (!arr_special.bits.is_stride_16byte_divisible(i)) {
-            PyTuple_SET_ITEM(tuple.get(), i, Py_NewRef(Py_None));
-        } else {
-            int stride_div_by_int = DIVISOR_16 * BYTE_BITWIDTH / arr_special.dtype_bitwidth;
-            PyPtr stride_div_by = steal(PyLong_FromLong(stride_div_by_int));
-            if (!stride_div_by) return nullptr;
-            PyTuple_SET_ITEM(tuple.get(), i, Py_NewRef(stride_div_by.get()));
-        }
-    }
-    return tuple.release();
-}
-
-static PyObject* ArraySpecialization_get_shape_div_by(PyObject* self, void* Py_UNUSED(ignored)) {
-    ArraySpecialization& arr_special = py_unwrap<ArraySpecialization>(self);
-    PyPtr tuple = steal(PyTuple_New(arr_special.ndim));
-    if (!tuple) return nullptr;
-    for (size_t i = 0; i < arr_special.ndim; ++i) {
-        if (!arr_special.bits.is_shape_divisible_by_16(i)) {
-            PyTuple_SET_ITEM(tuple.get(), i, Py_NewRef(Py_None));
-        } else {
-            PyPtr shape_div_by = steal(PyLong_FromLong(DIVISOR_16));
-            if (!shape_div_by) return nullptr;
-            PyTuple_SET_ITEM(tuple.get(), i, Py_NewRef(shape_div_by.get()));
-        }
-    }
-    return tuple.release();
-}
-
-static PyObject* ArraySpecialization_get_stride_is_static(PyObject* self, void*) {
-    ArraySpecialization& arr_special = py_unwrap<ArraySpecialization>(self);
-    PyPtr tuple = steal(PyTuple_New(arr_special.ndim));
-    if (!tuple) return nullptr;
-    for (size_t i = 0; i < arr_special.ndim; ++i) {
-        PyTuple_SET_ITEM(tuple.get(), i,
-            Py_NewRef(arr_special.bits.is_stride_one(i) ? Py_True : Py_False));
-    }
-    return tuple.release();
-}
-
-static PyGetSetDef ArraySpecialization_getset[] = {
-    {"elements_disjoint", ArraySpecialization_get_elements_disjoint, nullptr,
-     "check if array elements are disjoint", nullptr},
-    {"base_ptr_div_by", ArraySpecialization_get_base_ptr_div_by, nullptr,
-     "get base_ptr_div_by", nullptr},
-    {"stride_div_by", ArraySpecialization_get_stride_div_by, nullptr,
-     "get stride_div_by", nullptr},
-    {"shape_div_by", ArraySpecialization_get_shape_div_by, nullptr,
-     "get shape_div_by", nullptr},
-    {"stride_is_static", ArraySpecialization_get_stride_is_static, nullptr,
-     "get stride_is_static", nullptr},
-    {nullptr}
-};
-
-static PyTypeObject ArraySpecialization_type = {
-    .tp_name = "cuda.tile._cext.ArraySpecialization",
-    .tp_basicsize = sizeof(PythonWrapper<ArraySpecialization>),
-    .tp_dealloc = pywrapper_dealloc<ArraySpecialization>,
-    .tp_flags = Py_TPFLAGS_DEFAULT,
-    .tp_getset = ArraySpecialization_getset,
-    .tp_init = ArraySpecialization_init,
-    .tp_new = pywrapper_new<ArraySpecialization>,
-};
-
-
 static Status init_default_tile_context() {
     PyPtr context_module = steal(PyImport_ImportModule("cuda.tile._context"));
     if (!context_module) return ErrorRaised;
@@ -1675,7 +1964,7 @@ static Status init_default_tile_context() {
     );
     if (!default_context_config) return ErrorRaised;
 
-    g_default_tile_context = pywrapper_new<TileContext>(&TileContext_type, nullptr, nullptr);
+    g_default_tile_context = pywrapper_new<TileContext>(&TileContext::pytype, nullptr, nullptr);
     if (!g_default_tile_context) return ErrorRaised;
     TileContext& tile_context = py_unwrap<TileContext>(g_default_tile_context);
     tile_context.config = default_context_config;
@@ -1767,7 +2056,9 @@ static PyMethodDef functions[] = {
         "   kernel: The |kernel| to execute.\n"
         "   kernel_args: Positional arguments to pass to the kernel.\n"
     },
-    NULL
+    {"get_parameter_constraints_from_pyargs", get_parameter_constraints_from_pyargs,
+      METH_VARARGS, ""},
+    nullptr
 };
 
 
@@ -1791,25 +2082,25 @@ Status tile_kernel_init(PyObject* m) {
 
     try_get_numba_globals();
 
-    if (PyType_Ready(&TileContext_type) < 0)
+    if (PyType_Ready(&CallingConvention::pytype) < 0)
         return ErrorRaised;
 
-    if (PyType_Ready(&TileDispatcher_type) < 0)
+    if (PyType_Ready(&TileContext::pytype) < 0)
+        return ErrorRaised;
+
+    if (PyType_Ready(&TileDispatcher::pytype) < 0)
+        return ErrorRaised;
+
+    if (PyModule_AddObjectRef(m, "CallingConvention",
+                reinterpret_cast<PyObject*>(&CallingConvention::pytype)) < 0)
         return ErrorRaised;
 
     if (PyModule_AddObjectRef(m, "TileContext",
-                reinterpret_cast<PyObject*>(&TileContext_type)) < 0)
+                reinterpret_cast<PyObject*>(&TileContext::pytype)) < 0)
         return ErrorRaised;
 
     if (PyModule_AddObjectRef(m, "TileDispatcher",
-                reinterpret_cast<PyObject*>(&TileDispatcher_type)) < 0)
-        return ErrorRaised;
-
-    if (PyType_Ready(&ArraySpecialization_type) < 0)
-        return ErrorRaised;
-
-    if (PyModule_AddObjectRef(m, "ArraySpecialization",
-                reinterpret_cast<PyObject*>(&ArraySpecialization_type)) < 0)
+                reinterpret_cast<PyObject*>(&TileDispatcher::pytype)) < 0)
         return ErrorRaised;
 
     if (PyModule_AddFunctions(m, functions) < 0)

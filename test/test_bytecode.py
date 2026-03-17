@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) <2025> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 #
 # SPDX-License-Identifier: Apache-2.0
-from dataclasses import dataclass
+from pathlib import Path
 from tempfile import NamedTemporaryFile
 
 import torch.cuda
@@ -90,9 +90,9 @@ def test_write_simple_module():
         f.write(buf)
         f.flush()
         cubin_path = compile_cubin(f.name, CompilerOptions(), get_sm_arch(), None)
+        cubin = Path(cubin_path).read_bytes()
 
-    compile = HackCompileCallback(str(cubin_path), "foo")
-    kernel = _cext.TileDispatcher((False, False, False), compile)
+    kernel = _HackKernel(cubin, "foo")
     x_tensor = torch.tensor([3.0], dtype=torch.float32, device="cuda")
     y_tensor = torch.tensor([5.0], dtype=torch.float32, device="cuda")
     result = torch.tensor([0.0], dtype=torch.float32, device="cuda")
@@ -100,14 +100,15 @@ def test_write_simple_module():
     assert result.cpu().item() == 8.0
 
 
-@dataclass
-class HackCompileCallback:
-    cubin_path: str
-    func_name: str
+class _HackKernel(_cext.TileDispatcher):
+    def __init__(self, cubin: bytes, func_name: str):
+        self._cubin = cubin
+        self._func_name = func_name
+        super().__init__((False, False, False))
 
-    def __call__(self, args, ctx):
-        assert len(args) == 3
-        for x in args:
-            assert x.shape == (1,)
-            assert x.dtype == torch.float32
-        return self.cubin_path, self.func_name
+    def _compile(self, signature, ctx):
+        assert len(signature.parameters) == 3
+        for x in signature.parameters:
+            assert x.ndim == 1
+            assert x.dtype == ct.float32
+        return self._cubin, self._func_name

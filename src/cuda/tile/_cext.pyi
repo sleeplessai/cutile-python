@@ -4,7 +4,6 @@
 
 from typing import Any, Sequence
 
-from torch.autograd.function import AUTOGRAD_FUNCTION_COUNTER
 from cuda.tile._context import TileContextConfig
 
 
@@ -16,8 +15,28 @@ def launch(stream,
     ...
 
 
+def get_compute_capability():
+    ...
+
+
+def get_driver_version():
+    ...
+
+
+def _get_max_grid_size(device_id, /):
+    ...
+
+
+def get_parameter_constraints_from_pyargs(dispatcher, pyargs, calling_convention, /):
+    ...
+
+
+def dev_features_enabled():
+    ...
+
+
 class TileDispatcher:
-    def __init__(self, arg_constant_flags: Sequence[bool], compile_func):
+    def __init__(self, arg_constant_flags: Sequence[bool]):
         ...
 
 
@@ -35,6 +54,24 @@ class TileContext:
 
     @autotune_cache.setter
     def autotune_cache(self, value: Any | None):
+        ...
+
+
+class CallingConvention:
+    @staticmethod
+    def cutile_python_v1() -> "CallingConvention":
+        ...
+
+    @staticmethod
+    def from_code(code: str, /) -> "CallingConvention":
+        ...
+
+    @property
+    def name(self) -> str:
+        ...
+
+    @property
+    def code(self) -> str:
         ...
 
 

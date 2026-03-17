@@ -30,6 +30,17 @@ class HashMap {
     static constexpr size_t kInitialBuckets = 4;
 
 public:
+    struct Item {
+        const K key;
+        V value;
+
+        Item(K&& k, V&& v) : key(std::move(k)), value(std::move(v)) {}
+        Item(Item&&) = default;
+
+        Item(const Item&) = delete;
+        void operator=(const Item&) = delete;
+    };
+
     HashMap()
       : nbuckets_(kInitialBuckets),
         size_(0),
@@ -50,17 +61,17 @@ public:
     }
 
     template <typename Q>
-    V* find(Q&& key) {
+    Item* find(Q&& key) {
         uint64_t needle = compute_hash(key) | kOccupiedBit;
         auto [found, pos] = lookup(key, needle);
-        return found ? &items_[pos].value : nullptr;
+        return found ? &items_[pos] : nullptr;
     }
 
-    V* insert(K key, V value) {
+    Item* insert(K key, V value) {
         uint64_t needle = compute_hash(key) | kOccupiedBit;
         auto [found, pos] = lookup(key, needle);
         if (found) {
-            return &items_[pos].value;
+            return &items_[pos];
         } else {
             if (size_ >= nbuckets_ / 2) {
                 rehash();
@@ -70,18 +81,11 @@ public:
             }
             ++size_;
             hashes_[pos] = needle;
-            Item* new_item = new (&items_[pos]) Item(std::move(key), std::move(value));
-            return &new_item->value;
+            return new (&items_[pos]) Item(std::move(key), std::move(value));
         }
     }
 
 private:
-    struct Item {
-        K key;
-        V value;
-
-        Item(K&& k, V&& v) : key(std::move(k)), value(std::move(v)) {}
-    };
 
     size_t nbuckets_;  // power of two
     size_t size_;

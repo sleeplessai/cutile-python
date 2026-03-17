@@ -21,22 +21,22 @@ from cuda.tile._ir.type import Type, InvalidType
 from cuda.tile._exception import (
     TileTypeError, Loc, TileInternalError
 )
-from .._context import TileContextConfig
 from cuda.tile._bytecode.version import BytecodeVersion
+
 
 if TYPE_CHECKING:
     from cuda.tile._ir2bytecode import BytecodeContext
 
 
 class IRContext:
-    def __init__(self, config: TileContextConfig, tileiras_version: BytecodeVersion):
+    def __init__(self, log_ir_on_error: bool, tileiras_version: BytecodeVersion):
         self._all_vars: Dict[str, str] = {}
         self._counter_by_name: Dict[str, Iterator[int]] = defaultdict(itertools.count)
         self._temp_counter = itertools.count()
         self.typemap: Dict[str, Type] = dict()
         self.constants: Dict[str, Any] = dict()
         self._loose_typemap: Dict[str, Type] = dict()
-        self.config: TileContextConfig = config
+        self.log_ir_on_error = log_ir_on_error
         self._aggregate_values: Dict[str, Any] = dict()
         self.tileiras_version: BytecodeVersion = tileiras_version
 
@@ -432,7 +432,7 @@ class Builder:
 
     def add_operation(self, op_class,
                       result_ty: Type | None | Tuple[Type | None, ...],
-                      attrs_and_operands,
+                      attrs_and_operands: Mapping,
                       result: Var | Sequence[Var] | None = None) -> Var | Tuple[Var, ...]:
         if self.block_restriction is not None:
             self.block_restriction.validate_operation(op_class)
@@ -853,17 +853,3 @@ class Block:
 
     def __str__(self) -> str:
         return self.to_string()
-
-
-@dataclass
-class Function:
-    body: Block
-    name: str
-    loc: Loc
-
-
-@dataclass
-class KernelArgument:
-    type: Type
-    is_const: bool = False
-    const_value: Any = None

@@ -57,6 +57,7 @@ version = {file = "src/cuda/tile/VERSION"}
 where = ["src"]
 include = [
     "cuda.tile",
+    "cuda.tile.compilation",
     "cuda.tile._ir",
     "cuda.tile._passes",
     "cuda.tile._bytecode",

@@ -13,18 +13,18 @@ int main() {
 
     hm.insert(0, 0);
     CHECK(hm.find(0));
-    CHECK(*hm.find(0) == 0);
+    CHECK(hm.find(0)->value == 0);
 
     // Insert doesn't overwrite existing values
     hm.insert(0, 20);
-    CHECK(*hm.find(0) == 0);
+    CHECK(hm.find(0)->value == 0);
 
     for (int i = 1; i < 1000; ++i) {
         hm.insert(i * 16, i * 10);
         for (int j = 0; j <= i; ++j) {
-            int* v = hm.find(j * 16);
-            CHECK(v);
-            CHECK(*v == j * 10);
+            auto* item = hm.find(j * 16);
+            CHECK(item);
+            CHECK(item->value == j * 10);
         }
     }
 

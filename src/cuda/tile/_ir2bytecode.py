@@ -14,7 +14,7 @@ from cuda.tile import DType
 import cuda.tile._bytecode as bc
 from cuda.tile._compiler_options import CompilerOptions
 from cuda.tile._exception import TileInternalError, TileError, FunctionDesc
-from cuda.tile._ir.ir import Block, Loc, Var, IRContext, Function
+from cuda.tile._ir.ir import Block, Loc, Var, IRContext
 from cuda.tile._ir.ops_utils import (
     padding_mode_to_bytecode, rounding_mode_to_bytecode,
     get_default_rounding_mode,
@@ -400,7 +400,8 @@ def generate_bytecode_for_block(ctx: BytecodeContext, block: Block):
                 raise TileInternalError(f"Internal error: {e}") from e
 
 
-def generate_bytecode_for_kernel(func_ir: Function,
+def generate_bytecode_for_kernel(func_body: Block,
+                                 symbol: str,
                                  compiler_options: CompilerOptions,
                                  sm_arch: str,
                                  writer: bc.BytecodeWriter,
@@ -408,13 +409,12 @@ def generate_bytecode_for_kernel(func_ir: Function,
     target_options = compiler_options.specialize_for_target(sm_arch)
     entry_hints = bc.EntryHints(num_cta_in_cga=target_options.num_ctas,
                                 occupancy=target_options.occupancy)
-    root_block = func_ir.body
 
-    param_type_ids = [typeid(writer.type_table, p.get_type()) for p in root_block.params]
-    debug_attr_map = DebugAttrMap(writer.debug_attr_table, func_ir.name, anonymize_debug_attr)
-    func_debug_attr = debug_attr_map.get_debugattr(root_block.loc)
+    param_type_ids = [typeid(writer.type_table, p.get_type()) for p in func_body.params]
+    debug_attr_map = DebugAttrMap(writer.debug_attr_table, symbol, anonymize_debug_attr)
+    func_debug_attr = debug_attr_map.get_debugattr(func_body.loc)
 
-    with writer.function(name=func_ir.name,
+    with writer.function(name=symbol,
                          parameter_types=param_type_ids,
                          result_types=(),
                          entry_point=True,
@@ -424,10 +424,10 @@ def generate_bytecode_for_kernel(func_ir: Function,
                               type_table=writer.type_table,
                               debug_attr_map=debug_attr_map,
                               global_section=writer.global_section,
-                              ir_ctx=root_block.ctx,
+                              ir_ctx=func_body.ctx,
                               sm_arch=sm_arch)
 
-        for var, value in zip(root_block.params, param_values, strict=True):
+        for var, value in zip(func_body.params, param_values, strict=True):
             ctx.set_value(var, value)
 
-        generate_bytecode_for_block(ctx, root_block)
+        generate_bytecode_for_block(ctx, func_body)

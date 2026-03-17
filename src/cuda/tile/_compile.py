@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import importlib.metadata
-import inspect
 import math
 import re
 import warnings
@@ -20,22 +19,22 @@ import sys
 import tempfile
 import threading
 import traceback
-from typing import Callable, Optional, Any, Set, Sequence
+from types import FunctionType
+from typing import Optional, Sequence
 import zipfile
 
+from cuda.tile._annotated_function import AnnotatedFunction, get_annotated_function
 from cuda.tile._bytecode.version import BytecodeVersion
 from cuda.tile._cext import get_compute_capability, TileContext, default_tile_context
 from cuda.tile._compiler_options import CompilerOptions
-from cuda.tile._const_utils import get_constant_annotations
-from cuda.tile._context import TileContextConfig
 from cuda.tile._exception import (
-    Loc,
     TileCompilerError,
     TileCompilerExecutionError,
-    TileCompilerTimeoutError, TileValueError, TileTypeError
+    TileCompilerTimeoutError, FunctionDesc, Loc
 )
 from cuda.tile._ir import ir, hir
-from cuda.tile._ir.typing_support import typeof_pyval, get_constant_value
+from cuda.tile._ir.ops import loosely_typed_const, flatten_block_parameters
+from cuda.tile._ir.type import TileTy, ArrayTy, ListTy
 from cuda.tile._passes.ast2hir import get_function_hir
 from cuda.tile._passes.code_motion import hoist_loop_invariants
 from cuda.tile._passes.unhoist_partition_views import unhoist_partition_views
@@ -50,7 +49,7 @@ from cuda.tile._debug import (
     CUDA_TILE_DUMP_TILEIR,
 )
 
-from cuda.tile._passes.alias_analysis import alias_analysis_pass
+from cuda.tile._passes.dataflow_analysis import dataflow_analysis
 from cuda.tile._passes.check_dtype_support import check_dtype_support
 from cuda.tile._passes.dce import dead_code_elimination_pass
 from cuda.tile._passes.token_order import token_order_pass
@@ -58,17 +57,18 @@ from cuda.tile._cache import cache_key, cache_lookup, cache_store, evict_lru
 from cuda.tile._ir2bytecode import generate_bytecode_for_kernel
 from cuda.tile._version import __version__ as cutile_version
 import cuda.tile._bytecode as bc
-
+from cuda.tile.compilation._signature import KernelSignature, ParameterConstraint, \
+    ScalarConstraint, ArrayConstraint, ListConstraint, ConstantConstraint
 
 logger = logging.getLogger(__name__)
 
 
-class TileLibrary:
-    def __init__(self, func_name, fname_cubin, bytecode, final_ir: ir.Block):
-        self.func_name = func_name
-        self.fname_cubin = fname_cubin
-        self.bytecode = bytecode
-        self.final_ir = final_ir
+@dataclass
+class CompilationResult:
+    kernel_signatures: Sequence[KernelSignature]
+    cubin: bytes | None = None
+    bytecode: bytearray | None = None
+    final_ir: Sequence[ir.Block] | None = None
 
 
 # Create a global lock
@@ -83,20 +83,15 @@ def global_compiler_lock(func):
     return wrapper
 
 
-def _get_final_ir(pyfunc,
-                  args: Sequence[ir.KernelArgument],
-                  config: TileContextConfig,
-                  tileiras_version: BytecodeVersion = BytecodeVersion.V_13_1) -> ir.Function:
-    func_hir: hir.Function = get_function_hir(pyfunc, entry_point=True)
-
-    ir_ctx = ir.IRContext(config, tileiras_version)
-    func_body = hir2ir(func_hir, args, ir_ctx)
+def _transform_ir(func_body: ir.Block,
+                  bytecode_version: bc.BytecodeVersion,
+                  param_constraints: Sequence[tuple[tuple[ir.Var, ...], ParameterConstraint]]):
     eliminate_assign_ops(func_body)
     dead_code_elimination_pass(func_body)
+    dataflow_result = dataflow_analysis(func_body, param_constraints)
 
     if not CUDA_TILE_TESTING_DISABLE_TOKEN_ORDER:
-        alias_result = alias_analysis_pass(func_body)
-        token_order_pass(func_body, alias_result)
+        token_order_pass(func_body, dataflow_result)
 
     rewrite_patterns(func_body)
 
@@ -106,38 +101,71 @@ def _get_final_ir(pyfunc,
 
     # For version < V_13_3, MakePartitionView must be emitted inline before its consumer.
     # Code motion may hoist it to an outer block; copy it back where needed.
-    if tileiras_version < BytecodeVersion.V_13_3:
+    if bytecode_version < BytecodeVersion.V_13_3:
         unhoist_partition_views(func_body)
 
     split_loops(func_body)
     dead_code_elimination_pass(func_body)
-    return ir.Function(func_body, func_hir.desc.name, func_hir.body.loc)
 
 
-def _bind_kernel_arguments(param_names: tuple[str, ...],
-                           args: tuple[Any, ...],
-                           constant_args: Set[str]) -> tuple[ir.KernelArgument, ...]:
-    # TODO: unify this logic with dispatcher from c extension
-    # Refactor "extract_cuda_args" to return type descriptor
-    # that can be wrapped as IR Type for type inference.
-    if len(args) != len(param_names):
-        msg = f"Expected {len(param_names)} arguments, got {len(args)}"
-        raise TileValueError(msg)
+@dataclass
+class _KernelParameters:
+    aggregate_vars: Sequence[ir.Var]
+    nonconstant_flat_vars: Sequence[tuple[tuple[ir.Var, ...], ParameterConstraint]]
 
-    ir_args = []
-    for param_name, arg_value in zip(param_names, args, strict=True):
-        const_val = None
-        is_const = param_name in constant_args
-        ty = typeof_pyval(arg_value, kernel_arg=not is_const)
+
+def _create_kernel_parameters(parameter_constraints: Sequence[ParameterConstraint],
+                              constant_parameter_mask: Sequence[bool],
+                              parameter_names: Sequence[str],
+                              parameter_locations: Sequence[Loc],
+                              ir_ctx: ir.IRContext) -> _KernelParameters:
+    aggregate_vars = []
+    nonconstant_flat_vars = []
+    for pos, (constraint, is_const, name, loc) in enumerate(
+            zip(parameter_constraints, constant_parameter_mask,
+                parameter_names, parameter_locations, strict=True)):
         if is_const:
-            try:
-                const_val = get_constant_value(arg_value)
-            except TileTypeError:
-                raise TileTypeError(
-                    f"Argument `{param_name}` is a constexpr, "
-                    f"but the value is not a supported constant.")
-        ir_args.append(ir.KernelArgument(type=ty, is_const=is_const, const_value=const_val))
-    return tuple(ir_args)
+            if not isinstance(constraint, ConstantConstraint):
+                raise TypeError(f"Expected a ConstantConstraint for the constant parameter"
+                                f" {name} at position {pos}, got '{type(constraint).__name__}'")
+            var = loosely_typed_const(constraint.value, name=name)
+        else:
+            if isinstance(constraint, ScalarConstraint):
+                ty = TileTy(constraint.dtype, ())
+            elif isinstance(constraint, ArrayConstraint):
+                ty = _get_array_ty(constraint)
+            elif isinstance(constraint, ListConstraint):
+                assert isinstance(constraint.element, ArrayConstraint)
+                array_ty = _get_array_ty(constraint.element)
+                ty = ListTy(array_ty)
+            else:
+                raise TypeError(f"Unexpected parameter descriptor type"
+                                f" '{type(constraint).__name__}'"
+                                f" for non-constant parameter `{name}` at position {pos}")
+            var = ir_ctx.make_var(name, loc)
+            var.set_type(ty)
+            [flat_vars] = flatten_block_parameters([var])
+            nonconstant_flat_vars.append((flat_vars, constraint))
+        aggregate_vars.append(var)
+    return _KernelParameters(aggregate_vars, nonconstant_flat_vars)
+
+
+def _get_array_ty(param: ArrayConstraint):
+    for static_stride, bound in zip(param.stride_static, param.stride_lower_bound_incl,
+                                    strict=True):
+        if static_stride is not None:
+            continue
+        if bound is None or bound < 0:
+            raise NotImplementedError("Negative strides are currently not supported:"
+                                      " please specify stride_lower_bound_incl=0")
+
+    return ArrayTy(param.dtype,
+                   shape=(None,) * param.ndim,
+                   strides=param.stride_static,
+                   elements_disjoint=not param.may_alias_internally,
+                   base_ptr_div_by=param.base_addr_divisible_by,
+                   stride_div_by=param.stride_divisible_by,
+                   shape_div_by=param.shape_divisible_by)
 
 
 def _log_mlir(bytecode_buf):
@@ -158,12 +186,12 @@ def _log_mlir(bytecode_buf):
     print(f"Lowering\n==== TILEIR MLIR module ====\n\n{text}", file=sys.stderr)
 
 
-def _compiler_crash_dump(func_ir: ir.Function,
-                         bytecode_generator,
+def _compiler_crash_dump(final_ir: Sequence[ir.Block],
+                         func_name: str,
+                         anonymized_bytecode: bytearray,
                          error_msg,
                          compiler_flags,
-                         compiler_version,
-                         bytecode_version: BytecodeVersion):
+                         compiler_version):
     debug_info = (
         f"error:\n{error_msg}\n\n"
         f"compiler flags:\n{compiler_flags}\n\n"
@@ -171,19 +199,16 @@ def _compiler_crash_dump(func_ir: ir.Function,
         f"cutile version:\n{cutile_version}\n"
     )
 
-    # Anonymize debug attributes in the bytecode
-    bytecode_buf = bytearray()
-    with bc.write_bytecode(num_functions=1, buf=bytecode_buf, version=bytecode_version) as writer:
-        bytecode_generator(writer, anonymize_debug_attr=True)
-
     artifacts = {
-        f"{func_ir.name}.bytecode": bytes(bytecode_buf),
-        f"{func_ir.name}.cutileir": f"{func_ir.body.to_string(include_loc=False)}\n",
+        f"{func_name}.bytecode": bytes(anonymized_bytecode),
         "debug_info.txt": debug_info,
     }
 
+    for i, func_ir in enumerate(final_ir):
+        artifacts[f"{func_name}.{i}.cutileir"] = f"{func_ir.body.to_string(include_loc=False)}\n"
+
     timestamp = datetime.datetime.now().timestamp()
-    zip_filename = os.path.abspath(f"crash_dump_{func_ir.name}_{timestamp}.zip")
+    zip_filename = os.path.abspath(f"crash_dump_{func_name}_{timestamp}.zip")
     print(f"Dumping crash artifacts to {zip_filename}\n", file=sys.stderr)
 
     with zipfile.ZipFile(zip_filename, "w") as z:
@@ -192,55 +217,151 @@ def _compiler_crash_dump(func_ir: ir.Function,
 
 
 @contextlib.contextmanager
-def unique_path_from_loc(base_dir: str, loc: Loc, suffix: str, mode: str = "wb"):
+def unique_path_from_func_desc(base_dir: str, desc: FunctionDesc, suffix: str, mode: str = "wb"):
     prefix = []
-    if loc.function is not None:
-        if loc.function.name is not None:
-            prefix.append(loc.function.name)
-        else:
-            prefix.append("lambda")
-        prefix.append(Path(loc.function.filename).stem)
-        prefix.append(f"ln{loc.function.line}")
+    if desc.name is not None:
+        prefix.append(desc.name)
+    else:
+        prefix.append("lambda")
+    prefix.append(Path(desc.filename).stem)
+    prefix.append(f"ln{desc.line}")
     prefix = ".".join(prefix) + "."
     with tempfile.NamedTemporaryFile(suffix=suffix, prefix=prefix, dir=base_dir,
                                      delete=False, mode=mode) as f:
         yield f
 
 
-@global_compiler_lock
-def compile_tile(pyfunc,
-                 args,
-                 compiler_options: CompilerOptions,
-                 context: TileContext = default_tile_context) -> TileLibrary:
-    bytecode_version = _get_max_supported_bytecode_version(context.config.temp_dir,
-                                                           allow_dev=dev_features_enabled())
+class _IrKeeper:
+    def __init__(self,
+                 ann_func: AnnotatedFunction,
+                 func_hir: hir.Function,
+                 signatures: Sequence[KernelSignature],
+                 bytecode_version: bc.BytecodeVersion,
+                 sm_arch: str,
+                 log_cutile_ir: bool,
+                 keep_all: bool):
+        self.ann_func = ann_func
+        self._func_hir = func_hir
+        self.signatures = signatures
+        self.bytecode_version = bytecode_version
+        self.sm_arch = sm_arch
+        self._log_cutile_ir = log_cutile_ir
+        self.final_ir: list[ir.Block | None] | None = [None] * len(signatures) if keep_all else None
 
-    param_names = tuple(inspect.signature(pyfunc).parameters.keys())
-    ir_args = _bind_kernel_arguments(param_names, args, get_constant_annotations(pyfunc))
-    func_ir = _get_final_ir(pyfunc, ir_args, context.config, bytecode_version)
+    @property
+    def num_signatures(self):
+        return len(self.signatures)
 
-    if 'CUTILEIR' in context.config.log_keys:
-        code = (f"==== CuTile IR for {func_ir.name}==== \n\n"
-                f"{func_ir.body.to_string(include_loc=False)}\n\n")
-        print(f'\n{code}', file=sys.stderr)
+    def get_final_ir(self, signature_index: int) -> ir.Block:
+        if self.final_ir is None or self.final_ir[signature_index] is None:
+            sig = self.signatures[signature_index]
+            param_names = tuple(self.ann_func.pysig.parameters.keys())
+            ir_ctx = ir.IRContext(log_ir_on_error=self._log_cutile_ir,
+                                  tileiras_version=self.bytecode_version)
+            with ir.Builder(ir_ctx, self._func_hir.body.loc) as ir_builder:
+                params = _create_kernel_parameters(sig.parameters,
+                                                   self.ann_func.constant_parameter_mask,
+                                                   param_names,
+                                                   self._func_hir.param_locs,
+                                                   ir_ctx)
+                hir2ir(self._func_hir, params.aggregate_vars, ir_ctx)
 
-    sm_arch = get_sm_arch()
-    check_dtype_support(func_ir.body, sm_arch, bytecode_version)
+            func_body = ir.Block(ir_ctx, self._func_hir.body.loc)
+            func_body.params = sum((vars for vars, _ in params.nonconstant_flat_vars), ())
+            func_body.extend(ir_builder.ops)
 
-    bytecode_generator = functools.partial(generate_bytecode_for_kernel,
-                                           func_ir, compiler_options, sm_arch)
+            _transform_ir(func_body, self.bytecode_version, params.nonconstant_flat_vars)
 
+            if self._log_cutile_ir:
+                code = (f"==== CuTile IR for {self._func_hir.desc.name}==== \n\n"
+                        f"{func_body.to_string(include_loc=False)}\n\n")
+                print(f'\n{code}', file=sys.stderr)
+            check_dtype_support(func_body, self.sm_arch, self.bytecode_version)
+            if self.final_ir is not None:
+                self.final_ir[signature_index] = func_body
+            return func_body
+        else:
+            return self.final_ir[signature_index]
+
+
+def _get_bytecode(ir_keeper: _IrKeeper,
+                  compiler_options: CompilerOptions,
+                  anonymize_debug_info: bool) -> bytearray:
     bytecode_buf = bytearray()
-    with bc.write_bytecode(num_functions=1, buf=bytecode_buf, version=bytecode_version) as writer:
-        bytecode_generator(writer, anonymize_debug_attr=False)
 
-    if 'TILEIR' in context.config.log_keys:
+    with bc.write_bytecode(num_functions=ir_keeper.num_signatures,
+                           buf=bytecode_buf, version=ir_keeper.bytecode_version) as writer:
+        for i in range(ir_keeper.num_signatures):
+            func_body = ir_keeper.get_final_ir(i)
+            symbol = ir_keeper.signatures[i].symbol
+            generate_bytecode_for_kernel(func_body, symbol, compiler_options, ir_keeper.sm_arch,
+                                         writer, anonymize_debug_attr=anonymize_debug_info)
+    return bytecode_buf
+
+
+def parse_bytecode_version(version_str: str) -> bc.BytecodeVersion:
+    for v in _all_bytecode_versions(dev_features_enabled()):
+        if v.as_string() == version_str:
+            return v
+    supported_versions_str = ", ".join(v.as_string() for v in _SUPPORTED_VERSIONS)
+    raise ValueError(f"Unsupported bytecode version '{version_str}'."
+                     f" Supported versions are: {supported_versions_str}")
+
+
+@global_compiler_lock
+def compile_tile(ann_func: AnnotatedFunction | FunctionType,
+                 signatures: Sequence[KernelSignature],
+                 sm_arch: str | None = None,
+                 compiler_options: CompilerOptions = CompilerOptions(),
+                 context: TileContext = default_tile_context,
+                 bytecode_version: bc.BytecodeVersion | None = None,
+                 return_final_ir: bool = False,
+                 return_bytecode: bool = False,
+                 return_cubin: bool = True) -> CompilationResult:
+    if isinstance(ann_func, FunctionType):
+        ann_func = get_annotated_function(ann_func)
+    elif not isinstance(ann_func, AnnotatedFunction):
+        raise TypeError(f"Expected a Python function or an AnnotatedFunction"
+                        f" for `ann_func`, got {type(ann_func)}")
+
+    signatures = list(signatures)
+    for i in range(len(signatures)):
+        if signatures[i].symbol is None:
+            signatures[i] = signatures[i].with_mangled_symbol(ann_func.pyfunc.__name__)
+
+    if sm_arch is None:
+        sm_arch = get_sm_arch()
+
+    if bytecode_version is None:
+        bytecode_version = _get_max_supported_bytecode_version(context.config.temp_dir,
+                                                               allow_dev=dev_features_enabled())
+
+    func_hir = get_function_hir(ann_func.pyfunc, entry_point=True)
+    func_desc = func_hir.desc
+    ir_keeper = _IrKeeper(ann_func=ann_func,
+                          func_hir=func_hir,
+                          signatures=signatures,
+                          bytecode_version=bytecode_version,
+                          sm_arch=sm_arch,
+                          log_cutile_ir=context.config.log_cutile_ir,
+                          keep_all=context.config.enable_crash_dump or return_final_ir)
+
+    need_bytecode = return_bytecode or return_cubin
+    if not need_bytecode:
+        for i in range(ir_keeper.num_signatures):
+            ir_keeper.get_final_ir(i)
+        return CompilationResult(signatures, final_ir=ir_keeper.final_ir)
+
+    bytecode_buf = _get_bytecode(ir_keeper, compiler_options, anonymize_debug_info=False)
+
+    if context.config.log_tileir:
         _log_mlir(bytecode_buf)
 
     if CUDA_TILE_DUMP_BYTECODE is not None:
         if not os.path.isdir(CUDA_TILE_DUMP_BYTECODE):
             os.makedirs(CUDA_TILE_DUMP_BYTECODE)
-        with unique_path_from_loc(CUDA_TILE_DUMP_BYTECODE, func_ir.loc, '.tileirbc') as f:
+        with unique_path_from_func_desc(CUDA_TILE_DUMP_BYTECODE,
+                                        func_desc, '.tileirbc') as f:
             print(f"Dumping TILEIR bytecode to file: {f.name}", file=sys.stderr)
             f.write(bytecode_buf)
 
@@ -251,12 +372,19 @@ def compile_tile(pyfunc,
             mlir_text = bytecode_to_mlir_text(bytecode_buf)
             if not os.path.isdir(CUDA_TILE_DUMP_TILEIR):
                 os.makedirs(CUDA_TILE_DUMP_TILEIR)
-            with unique_path_from_loc(CUDA_TILE_DUMP_TILEIR, func_ir.loc, '.tileir', mode="w") as f:
+            with unique_path_from_func_desc(CUDA_TILE_DUMP_TILEIR,
+                                            func_desc, '.tileir', mode="w") as f:
                 print(f"Dumping TILEIR MLIR module to file: {f.name}", file=sys.stderr)
                 f.write(mlir_text)
         except ImportError:
             print("Can't print MLIR because the internal extension is missing. "
                   "This is currently not a public feature.", file=sys.stderr)
+
+    ret = CompilationResult(signatures,
+                            bytecode=bytecode_buf if return_bytecode else None,
+                            final_ir=ir_keeper.final_ir)
+    if not return_cubin:
+        return ret
 
     # Check disk cache before invoking tileiras
     cache_dir = context.config.cache_dir
@@ -269,12 +397,13 @@ def compile_tile(pyfunc,
     else:
         opt_level = compiler_options.specialize_for_target(sm_arch).opt_level
         key = cache_key(compiler_ver, sm_arch, opt_level, bytecode_buf)
-        cubin_path = cache_lookup(cache_dir, key, context.config.temp_dir)
-        if cubin_path is not None:
-            return TileLibrary(func_ir.name, cubin_path, bytecode_buf, func_ir.body)
+        cubin = cache_lookup(cache_dir, key)
+        if cubin is not None:
+            ret.cubin = cubin
+            return ret
 
     # Compile MLIR module and generate cubin
-    with tempfile.NamedTemporaryFile(suffix='.bytecode', prefix=func_ir.name,
+    with tempfile.NamedTemporaryFile(suffix='.bytecode', prefix=func_desc.name,
                                      dir=context.config.temp_dir, delete=False) as f:
         f.write(bytecode_buf)
         f.flush()
@@ -284,28 +413,21 @@ def compile_tile(pyfunc,
                                        timeout_sec=context.config.compiler_timeout_sec)
         except TileCompilerError as e:
             if context.config.enable_crash_dump:
-                _compiler_crash_dump(func_ir, bytecode_generator, e.message,
-                                     e.compiler_flags, e.compiler_version,
-                                     bytecode_version)
+                anonymized_bytecode = _get_bytecode(ir_keeper, compiler_options,
+                                                    anonymize_debug_info=True)
+
+                _compiler_crash_dump(ir_keeper.final_ir, func_desc.name,
+                                     anonymized_bytecode, e.message,
+                                     e.compiler_flags, e.compiler_version)
 
             raise e
+        ret.cubin = Path(cubin_file).read_bytes()
 
     if cache_dir is not None and key is not None:
-        cache_store(cache_dir, key, cubin_file)
+        cache_store(cache_dir, key, ret.cubin)
         evict_lru(cache_dir, context.config.cache_size_limit)
 
-    return TileLibrary(func_ir.name, cubin_file, bytecode_buf, func_ir.body)
-
-
-# Adapter between compile_tile() and kernel/TileDispatcher
-@dataclass
-class CompileCallback:
-    pyfunc: Callable
-    compiler_options: CompilerOptions
-
-    def __call__(self, pyfunc_args, tile_context):
-        lib = compile_tile(self.pyfunc, pyfunc_args, self.compiler_options, tile_context)
-        return str(lib.fname_cubin), lib.func_name
+    return ret
 
 
 def is_windows() -> bool:
@@ -446,12 +568,15 @@ _SUPPORTED_VERSIONS = [
 ]
 
 
+def _all_bytecode_versions(allow_dev: bool = False) -> Sequence[BytecodeVersion]:
+    return BytecodeVersion if allow_dev else _SUPPORTED_VERSIONS
+
+
 @cache
 def _get_max_supported_bytecode_version(temp_dir: str, allow_dev: bool = False) -> BytecodeVersion:
     binary = _find_compiler_bin()
     flags = ["--gpu-name", "sm_120"]
-    to_probe = BytecodeVersion if allow_dev else _SUPPORTED_VERSIONS
-    for version in reversed(to_probe):
+    for version in reversed(_all_bytecode_versions(allow_dev)):
         probe = bytearray()
         with bc.write_bytecode(num_functions=0, buf=probe, version=version):
             pass

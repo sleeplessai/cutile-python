@@ -24,12 +24,6 @@ def test_cache_key_differs():
     assert cache_key("v1", "sm_90", 3, b"other") != base
 
 
-def make_cubin(tmp_path, name, content):
-    src = tmp_path / name
-    src.write_bytes(content)
-    return src
-
-
 @pytest.fixture
 def cache_env(tmp_path):
     cache_dir = str(tmp_path / "cache")
@@ -41,18 +35,18 @@ def test_store_then_lookup(cache_env):
     key = cache_key("v1", "sm_90", 3, b"data")
     content = b"\x7fELF_fake_cubin_data"
 
-    cache_store(cache_dir, key, make_cubin(tmp_path, "kernel.cubin", content))
+    cache_store(cache_dir, key, content)
 
-    result = cache_lookup(cache_dir, key, str(tmp_path))
+    result = cache_lookup(cache_dir, key)
     assert result is not None
-    assert result.read_bytes() == content
+    assert result == content
 
 
 def test_lookup_updates_atime(cache_env):
     cache_dir, tmp_path = cache_env
     key = cache_key("v1", "sm_90", 3, b"data")
 
-    cache_store(cache_dir, key, make_cubin(tmp_path, "kernel.cubin", b"data"))
+    cache_store(cache_dir, key, b"data")
 
     # Manually set old atime in DB
     import os
@@ -63,7 +57,7 @@ def test_lookup_updates_atime(cache_env):
     conn.commit()
     conn.close()
 
-    cache_lookup(cache_dir, key, str(tmp_path))
+    cache_lookup(cache_dir, key)
 
     conn = sqlite3.connect(db_path)
     atime = conn.execute(
@@ -76,7 +70,7 @@ def test_lookup_updates_atime(cache_env):
 def test_lookup_miss(cache_env):
     cache_dir, _ = cache_env
 
-    result = cache_lookup(cache_dir, "a" * 64, str(cache_dir))
+    result = cache_lookup(cache_dir, "a" * 64)
     assert result is None
 
 
@@ -90,8 +84,7 @@ def test_evict_lru(cache_env):
     for i in range(5):
         key = cache_key(str(i), "sm_90", 3, b"data")
         keys.append(key)
-        cache_store(cache_dir, key,
-                    make_cubin(tmp_path, f"k{i}.cubin", b"x" * 1000))
+        cache_store(cache_dir, key, b"x" * 1000)
 
     # Set controlled atimes so eviction order is deterministic
     conn = sqlite3.connect(db_path)
@@ -107,5 +100,5 @@ def test_evict_lru(cache_env):
     evict_lru(cache_dir, 3000)
 
     remaining = [k for k in keys
-                 if cache_lookup(cache_dir, k, str(tmp_path)) is not None]
+                 if cache_lookup(cache_dir, k) is not None]
     assert remaining == keys[2:]

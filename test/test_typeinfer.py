@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) <2025> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 #
 # SPDX-License-Identifier: Apache-2.0
+from io import BytesIO
 
 from cuda.tile._bytecode.version import BytecodeVersion
 import pytest
@@ -8,9 +9,9 @@ import torch
 import cuda.tile as ct
 import re
 
-from cuda.tile._compiler_options import CompilerOptions
+from cuda.tile._cext import CallingConvention
 from cuda.tile._exception import TileTypeError, TileValueError
-from cuda.tile._compile import compile_tile
+from cuda.tile._compile import get_sm_arch
 
 from util import is_hopper_or_newer, is_blackwell_or_newer, raises_if
 from conftest import get_tileiras_version
@@ -26,7 +27,11 @@ def nd_tensor(nd: int, dtype=None):
 
 
 def compile(pyfunc, args):
-    return compile_tile(pyfunc, args, CompilerOptions())
+    kernel = ct.kernel(pyfunc)
+    sig = ct.compilation.KernelSignature.from_kernel_args(
+            kernel, args, CallingConvention.cutile_python_v1())
+    ct.compilation.export_kernel(kernel, [sig], output_file=BytesIO(),
+                                 gpu_code=get_sm_arch(), output_format="cubin")
 
 
 # ===== Failure cases ==========
