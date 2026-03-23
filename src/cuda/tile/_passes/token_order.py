@@ -107,7 +107,6 @@ def token_order_pass(root_block: Block, alias_result: AliasResult):
     root_tok = _make_token_var(root_block.ctx, root_block.loc)
     token_map = defaultdict(lambda: root_tok)
     _to_token_order_in_block(root_block, context, token_map)
-    # Ensures Operation.parent_block is correctly set
     root_block[:0] = (MakeToken(result_vars=(root_tok,), loc=root_block.loc),)
 
 
@@ -164,7 +163,8 @@ def _to_token_order_in_block(block: Block,
             last_store_key = _last_store_key(alias_set)
 
             input_tok, maybe_input_tok_join_op = _get_input_token(last_store_key, op,
-                                                                  token_map, None)
+                                                                  token_map, None,
+                                                                  block.ctx)
             if maybe_input_tok_join_op:
                 operations.append(maybe_input_tok_join_op)
 
@@ -185,7 +185,8 @@ def _to_token_order_in_block(block: Block,
             if (
                 isinstance(op, TileStore)
                 and (parallel_store_ops := _try_loop_parallel_store(op, context.alias_result,
-                                                                    token_map, innermost_loop_info))
+                                                                    token_map, innermost_loop_info,
+                                                                    block.ctx))
             ):
                 operations.extend(parallel_store_ops)
                 continue
@@ -195,7 +196,7 @@ def _to_token_order_in_block(block: Block,
             last_store_key = _last_store_key(alias_set)
 
             input_tok, maybe_input_tok_join_op = _get_input_token(last_op_key, op, token_map,
-                                                                  None)
+                                                                  None, block.ctx)
             if maybe_input_tok_join_op:
                 operations.append(maybe_input_tok_join_op)
 
@@ -211,7 +212,7 @@ def _to_token_order_in_block(block: Block,
             last_store_key = _last_store_key(alias_set)
 
             input_tok, maybe_input_tok_join_op = _get_input_token(last_op_key, op, token_map,
-                                                                  op.memory_order)
+                                                                  op.memory_order, block.ctx)
             if maybe_input_tok_join_op:
                 operations.append(maybe_input_tok_join_op)
 
@@ -389,13 +390,14 @@ def _collect_join_tokens(token_key: TokenKey,
 def _get_input_token(token_key: TokenKey,
                      op: Operation,
                      token_map: Dict[TokenKey, Var],
-                     memory_order: MemoryOrder | None) -> Tuple[Var, Operation | None]:
+                     memory_order: MemoryOrder | None,
+                     ctx: IRContext) -> Tuple[Var, Operation | None]:
     tokens_to_join = _collect_join_tokens(token_key, token_map, memory_order)
 
     if len(tokens_to_join) == 1:
         return tokens_to_join[0], None
 
-    ret_tok = _make_token_var(op.parent_block.ctx, op.loc)
+    ret_tok = _make_token_var(ctx, op.loc)
     ret_op = JoinTokens(tokens=tuple(tokens_to_join), result_vars=(ret_tok,), loc=op.loc)
     return ret_tok, ret_op
 
@@ -498,7 +500,8 @@ def _try_loop_parallel_store(
     store_op: TileStore,
     alias_result: AliasResult,
     token_map: Dict[TokenKey, Var],
-    innermost_loop_info: Optional[InnermostLoopInfo]
+    innermost_loop_info: Optional[InnermostLoopInfo],
+    ctx: IRContext,
 ) -> Optional[Tuple[Operation, ...] | Operation]:
 
     if (not innermost_loop_info or
@@ -515,7 +518,7 @@ def _try_loop_parallel_store(
 
     if (ACQUIRE_TOKEN_KEY in token_map and
             before_loop_last_op_tok is not token_map[ACQUIRE_TOKEN_KEY]):
-        input_tok = _make_token_var(store_op.parent_block.ctx, store_op.loc)
+        input_tok = _make_token_var(ctx, store_op.loc)
         maybe_input_tok_join_op = JoinTokens(
             tokens=(before_loop_last_op_tok, token_map[ACQUIRE_TOKEN_KEY]),
             result_vars=(input_tok,), loc=store_op.loc)
@@ -528,7 +531,7 @@ def _try_loop_parallel_store(
 
     # Eagerly join with loop_last_op_tok
     loop_last_op_tok = token_map[last_op_key]
-    new_last_op_tok = _make_token_var(store_op.parent_block.ctx, store_op.loc)
+    new_last_op_tok = _make_token_var(ctx, store_op.loc)
     join_op = JoinTokens(tokens=(loop_last_op_tok, result_tok),
                          result_vars=(new_last_op_tok,), loc=store_op.loc)
 

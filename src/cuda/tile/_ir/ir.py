@@ -679,14 +679,6 @@ class Operation:
             raise ValueError(f"Operation {self.op} has {len(self.result_vars)} results")
         return self.result_vars[0]
 
-    @property
-    def parent_block(self) -> Block:
-        return self._parent_block
-
-    @parent_block.setter
-    def parent_block(self, block: Block):
-        self._parent_block = block
-
     def generate_bytecode(self, ctx: "BytecodeContext"):
         raise NotImplementedError(f"Operation {self.op} must implement generate_bytecode")
 
@@ -788,12 +780,9 @@ class Block:
 
     def append(self, op: Operation):
         self._operations.append(op)
-        op.parent_block = self
 
     def extend(self, ops: Sequence[Operation]):
         self._operations.extend(ops)
-        for op in ops:
-            op.parent_block = self
 
     def __len__(self):
         return len(self._operations)
@@ -814,14 +803,10 @@ class Block:
         self._replace(i if isinstance(i, slice) else slice(i, i + 1), ())
 
     def _replace(self, s: slice, new_ops: Sequence[Operation]):
-        for op in new_ops:
-            op.parent_block = self
         self._operations[s] = new_ops
 
     def detach_all(self):
         ret, self._operations = self._operations, []
-        for op in ret:
-            op.parent_block = None
         return ret
 
     @property
@@ -830,14 +815,7 @@ class Block:
 
     @operations.setter
     def operations(self, ops: Sequence[Operation]):
-        # Clear parent links on the old ops
-        for old in self._operations:
-            old.parent_block = None
-
-        # Replace list and re-link parents
         self._operations = list(ops)
-        for op in self._operations:
-            op.parent_block = self
 
     def make_temp_var(self, loc: Loc) -> Var:
         return self.ctx.make_temp(loc)
