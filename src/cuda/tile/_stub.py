@@ -492,8 +492,11 @@ class TiledView:
              allow_tma: Optional[bool] = None) -> Tile:
         """Loads a tile from the |tiled view| at the given tile `index`.
 
-        The returned tile has shape :attr:`tile_shape`. Out-of-bounds elements
+        The returned tile has shape :attr:`tile_shape`.
+
+        For a tile that partially extends beyond the tiled view boundaries, out-of-bound elements
         are filled according to the view's padding mode.
+        If the tile lies entirely outside the tiled view, the behavior is undefined.
 
         Args:
             index (tuple[int,...]): An index in the |tiled view|'s tile space.
@@ -523,6 +526,10 @@ class TiledView:
 
         The `tile`'s shape must be broadcastable to :attr:`tile_shape`.
         If the `tile`'s dtype differs from the view's dtype, an implicit cast is performed.
+
+        For a tile that partially extends beyond the tiled view boundaries, out-of-bound elements
+        are ignored.
+        If the tile lies entirely outside the tiled view, the behavior is undefined.
 
         Args:
             index (tuple[int,...]): An index in the |tiled view|'s tile space.
@@ -660,7 +667,9 @@ def load(array: Array, /,
 
         t[x, y] = array[i * tm + x, j * tn + y]  (for all 0<=x<tm, 0<=y<tn)
 
-    For access that is out of bound, the value will be determined by `padding_mode`.
+    For a tile that partially extends beyond the array boundaries, out-of-bound elements
+    are filled according to `padding_mode`.
+    If the tile lies entirely outside the array, the behavior is undefined.
 
     `order` is used to map the tile axis to the array axis. The transposed example of the above call
     to `load` would be:
@@ -732,7 +741,9 @@ def store(array: Array, /,
 
         array[i * tm + x, i * tn + y] = t[x, y]  (for 0<=x<tm, 0<=y<tn)
 
-    Access which falls out of the boundary of the `array` will be ignored.
+    For a tile that partially extends beyond the array boundaries, out-of-bound elements
+    are ignored.
+    If the tile lies entirely outside the array, the behavior is undefined.
 
     Args:
         array (Array): The |array| to store to.
