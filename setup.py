@@ -16,11 +16,13 @@ is_windows = sys.platform == "win32"
 class BuildExtWithCmake(build_ext):
     user_options = build_ext.user_options + [
         ('disable-internal', None, 'Disable building internal extension'),
+        ('enable-dev-features', None, 'Enable development-only features'),
     ]
 
     def initialize_options(self):
         super().initialize_options()
         self.disable_internal = False
+        self.enable_dev_features = False
 
     def finalize_options(self):
         super().finalize_options()
@@ -43,6 +45,8 @@ class BuildExtWithCmake(build_ext):
                      "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"]
         if self.disable_internal:
             cmake_cmd.append("-DDISABLE_INTERNAL=1")
+        if self.enable_dev_features:
+            cmake_cmd.append("-DENABLE_DEV_FEATURES=1")
         self.spawn(cmake_cmd)
 
     def run(self):

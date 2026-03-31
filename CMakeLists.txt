@@ -30,6 +30,8 @@ else()
     endif()
 endif()
 
+option(ENABLE_DEV_FEATURES "Enable development-only features" OFF)
+
 option(ENABLE_COVERAGE_FOR_TESTS "Enable code coverage for tests" OFF)
 set(test_coverage_options)
 
