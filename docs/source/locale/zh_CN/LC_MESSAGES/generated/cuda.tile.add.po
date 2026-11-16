@@ -1,0 +1,73 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.add.rst:2
+msgid "cuda.tile.add"
+msgstr "cuda.tile.add"
+
+#: cuda.tile._stub.add:1 of
+msgid "Elementwise add on two tiles."
+msgstr "对两个 Tile 执行逐元素加法。"
+
+#: cuda.tile._stub.add:3 of
+msgid "Can also use builtin operation `x + y`."
+msgstr "也可使用内置运算 ``x + y`` 。"
+
+#: ../../source/generated/cuda.tile.add.rst
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile._stub.add:5 of
+msgid "LHS tile."
+msgstr "左操作数（LHS）Tile。"
+
+#: cuda.tile._stub.add:7 of
+msgid ""
+"RHS tile. rounding_mode (RoundingMode): The rounding mode for the "
+"operation, only supported for float types, default is RoundingMode.RN "
+"when applicable. flush_to_zero (const bool): If True, flushes subnormal "
+"inputs and results to sign-preserving zero, default is False."
+msgstr ""
+"右操作数（RHS）Tile。 ``rounding_mode`` (RoundingMode)：该操作的舍入模式，仅支持浮点类型；适用时默认为 "
+"``RoundingMode.RN`` 。 ``flush_to_zero`` (const bool)：若为 "
+"True，则将次正规（subnormal）输入和结果刷零（保留符号），默认为 False。"
+
+#: cuda.tile._stub.add:12 of
+msgid ""
+"The `shape` of `x` and `y` will be broadcasted and `dtype` promoted to "
+"common dtype."
+msgstr "``x`` 和 ``y`` 的 ``shape`` 将会进行广播，且 ``dtype`` 会提升为公共数据类型（common dtype）。"
+
+#: ../../source/generated/cuda.tile.add.rst
+msgid "Return type"
+msgstr "返回类型"
+
+#: cuda.tile._stub.add:18 of
+msgid "Examples"
+msgstr "示例"
+
+#: cuda.tile._stub.add:27 of
+msgid "Output"
+msgstr "输出"
+

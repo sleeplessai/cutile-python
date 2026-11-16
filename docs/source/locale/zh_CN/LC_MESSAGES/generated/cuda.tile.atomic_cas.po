@@ -1,0 +1,104 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.atomic_cas.rst:2
+msgid "cuda.tile.atomic\\_cas"
+msgstr "cuda.tile.atomic\\_cas"
+
+#: cuda.tile._stub.atomic_cas:1 of
+msgid "Bulk atomic compare-and-swap on array elements with given indices."
+msgstr "对指定索引处的数组元素执行批量原子比较并交换（CAS）。"
+
+#: cuda.tile._stub.atomic_cas:3 of
+msgid ""
+"For each specified index, `atomic_cas()` compares the corresponding array"
+" element to the `expected` value. If it matches, it is then overwritten "
+"with the `desired` value; otherwise, no update is performed. In either "
+"case, the old value of the element is returned. For each individual "
+"element, the described compare-and-swap operation is performed "
+"atomically, but the operation as a whole is not atomic, and the order of "
+"individual updates is unspecified."
+msgstr ""
+"对于每个指定索引， ``atomic_cas()`` 会将对应的数组元素与 ``expected`` 值进行比较。若相等，则将其覆盖为 "
+"``desired`` "
+"值；否则不执行更新。无论哪种情况，均会返回该元素的旧值。对于单个元素而言，上述比较并交换操作是原子执行的，但整体操作并不具备跨元素原子性，且各个元素的更新顺序未指定。"
+
+#: cuda.tile._stub.atomic_cas:9 of
+msgid ""
+"`atomic_cas()` follows the same convention as :py:func:`gather()` and "
+":py:func:`scatter()`: `indices` must be a tuple whose length equals the "
+"`array` rank. All elements of this tuple must be integer tiles or scalars"
+" of the same shape, or different shapes that are broadcastable to a "
+"common shape. If the array is 1-dimensional, `indices` can be passed as a"
+" single tile rather than a tuple of length 1."
+msgstr ""
+"``atomic_cas()`` 遵循与 :py:func:`gather()` 和 :py:func:`scatter()` 相同的约定： "
+"``indices`` 必须为长度等于 ``array`` "
+"秩（rank）的元组。该元组的所有元素都必须是具有相同形状（或可广播到同一公共形状的）整数 Tile 或标量。若数组为一维， "
+"``indices`` 可直接作为单个 Tile 传入，而无需包装为长度为 1 的元组。"
+
+#: cuda.tile._stub.atomic_cas:16 of
+msgid ""
+"`expected` and `desired` must be scalars or tiles whose shapes are "
+"broadcastable to the common shape of `indices`."
+msgstr "``expected`` 和 ``desired`` 必须为标量或 Tile，其形状需可广播到 ``indices`` 的公共形状。"
+
+#: cuda.tile._stub.atomic_cas:19 of
+msgid ""
+"By default, `atomic_cas()` checks that indices are within the bounds of "
+"the array. For indices that are out of bounds, no operation is performed,"
+" and a corresponding `expected` value is returned. To disable bounds "
+"checking, set `check_bounds` to ``False``. In this mode, the caller is "
+"responsible for ensuring that all indices are within the bounds of the "
+"array, and any out-of-bounds access will result in undefined behavior."
+msgstr ""
+"默认情况下， ``atomic_cas()`` 会检查索引是否在数组边界内。对于越界索引，不会执行任何操作，并返回对应的 ``expected``"
+" 值。若要禁用边界检查，请将 ``check_bounds`` 设为 ``False`` "
+"。在此模式下，调用方须负责确保所有索引均在数组边界内，任何越界访问都将导致未定义行为。"
+
+#: cuda.tile._stub.atomic_cas:25 of
+msgid ""
+"As an example, consider a 2-dimensional array. In this case, indices must"
+" be a tuple of length 2. Suppose that ``ind0`` and ``ind1`` are integer "
+"tiles of shapes ``(M, N, 1)`` and ``(M, 1, K)``, and both ``expected`` "
+"and ``desrired`` are tiles of shape of ``(N, K)``::"
+msgstr ""
+"例如，考虑一个二维数组。此时 ``indices`` 必须是长度为 2 的元组。假设 ``ind0`` 和 ``ind1`` 分别是形状为 "
+"``(M, N, 1)`` 和 ``(M, 1, K)`` 的整数 Tile，且 ``expected`` 和 ``desired`` 均为形状为"
+" ``(N, K)`` 的 Tile： ::"
+
+#: cuda.tile._stub.atomic_cas:33 of
+msgid ""
+"The above call to `atomic_cas` will behave similarly to the following "
+"pseudocode::"
+msgstr "上述对 ``atomic_cas`` 的调用行为类似于以下伪代码： ::"
+
+#: cuda.tile._stub.atomic_cas:47 of
+msgid "Examples"
+msgstr "示例"
+
+#: cuda.tile._stub.atomic_cas:66 of
+msgid "Output"
+msgstr "输出"
+

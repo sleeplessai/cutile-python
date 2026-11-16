@@ -1,0 +1,153 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/debugging.rst:8
+msgid "Debugging"
+msgstr "调试"
+
+#: ../../source/debugging.rst:11
+msgid "Exception Types"
+msgstr "异常类型"
+
+#: ../../source/debugging.rst:22
+msgid "Compiler Timeout"
+msgstr "编译器超时"
+
+#: cuda.tile._context.compiler_timeout:1 of
+msgid "Context manager that temporarily sets the compiler timeout."
+msgstr "临时设置编译器超时时间的上下文管理器。"
+
+#: cuda.tile._context.compiler_timeout:4 of
+msgid ""
+"This function is not thread-safe. It modifies global state shared by all "
+"threads."
+msgstr "此函数不是线程安全的。它会修改由所有线程共享的全局状态。"
+
+#: cuda.tile._context.compiler_timeout:7 of
+msgid "Example::"
+msgstr "示例::"
+
+#: ../../source/debugging.rst:28
+msgid "Environment Variables"
+msgstr "环境变量"
+
+#: ../../source/debugging.rst:30
+msgid ""
+"The following environment variables are useful when the above exceptions "
+"are encountered during kernel development."
+msgstr "在内核开发过程中遇到上述异常时，以下环境变量会非常有用。"
+
+#: ../../source/debugging.rst:34
+msgid ""
+"Set ``CUDA_TILE_ENABLE_CRASH_DUMP=1`` to enable dumping an archive "
+"including the TileIR bytecode for submitting a bug report on "
+":class:`TileCompilerExecutionError` or :class:`TileCompilerTimeoutError`."
+msgstr ""
+"设置 ``CUDA_TILE_ENABLE_CRASH_DUMP=1`` 以在发生 "
+":class:`TileCompilerExecutionError` 或 :class:`TileCompilerTimeoutError` "
+"时转储包含 TileIR 字节码的归档文件，便于提交错误报告。"
+
+#: ../../source/debugging.rst:39
+msgid ""
+"Set ``CUDA_TILE_COMPILER_TIMEOUT_SEC`` to limit the time the TileIR "
+"compiler `tileiras` can take."
+msgstr ""
+"设置 ``CUDA_TILE_COMPILER_TIMEOUT_SEC`` 以限制 TileIR 编译器 ``tileiras`` "
+"允许消耗的最长时间。"
+
+#: ../../source/debugging.rst:42
+msgid ""
+"Set ``CUDA_TILE_LOGS=CUTILEIR`` to print cuTile Python IR during "
+"compilation to stderr. This is useful when debugging "
+":class:`TileTypeError`."
+msgstr ""
+"设置 ``CUDA_TILE_LOGS=CUTILEIR`` 以在编译期间将 cuTile Python IR 打印到 stderr。这在调试 "
+":class:`TileTypeError` 时很有帮助。"
+
+#: ../../source/debugging.rst:46
+msgid ""
+"Set ``CUDA_TILE_LOGS=TILEIR`` to print TileIR text to stderr. Requires "
+"CUDA Toolkit 13.4 or later."
+msgstr ""
+"设置 ``CUDA_TILE_LOGS=TILEIR`` 以将 TileIR 文本打印到 stderr。需要 CUDA Toolkit 13.4 "
+"或更高版本。"
+
+#: ../../source/debugging.rst:49
+msgid ""
+"Set ``CUDA_TILE_DUMP_TILEIR`` to a directory to save TILEIR text to "
+"files. Requires CUDA Toolkit 13.4 or later."
+msgstr ""
+"将 ``CUDA_TILE_DUMP_TILEIR`` 设置为某个目录，可将 TILEIR 文本保存到文件中。需要 CUDA Toolkit "
+"13.4 或更高版本。"
+
+#: ../../source/debugging.rst:52
+msgid ""
+"Set ``CUDA_TILE_TEMP_DIR`` to configure the directory for storing "
+"temporary files."
+msgstr "设置 ``CUDA_TILE_TEMP_DIR`` 以配置用于存放临时文件的目录。"
+
+#: ../../source/debugging.rst:55
+msgid ""
+"Set ``CUDA_TILE_CACHE_DIR`` to configure the directory for the bytecode-"
+"to-cubin disk cache. Compiled cubins are cached here to avoid "
+"recompilation of unchanged kernels. Set to ``0``, ``off``, ``none``, or "
+"an empty string to disable caching. Defaults to ``~/.cache/cutile-"
+"python``."
+msgstr ""
+"设置 ``CUDA_TILE_CACHE_DIR`` 以配置字节码到 cubin 的磁盘缓存目录。编译后的 cubin "
+"会缓存在此目录中，以避免重复编译未修改的内核。将其设为 ``0`` 、 ``off`` 、 ``none`` 或空字符串可禁用缓存。默认路径为 "
+"``~/.cache/cutile-python`` 。"
+
+#: ../../source/debugging.rst:62
+msgid ""
+"Set ``CUDA_TILE_CACHE_SIZE`` to configure the maximum disk cache size in "
+"bytes. Oldest entries are evicted when the cache exceeds this limit. "
+"Defaults to 2 GB (2147483648)."
+msgstr ""
+"设置 ``CUDA_TILE_CACHE_SIZE`` 以配置磁盘缓存的最大字节数。当缓存超出此上限时，将淘汰最旧的条目。默认值为 2 "
+"GB（2147483648）。"
+
+#: ../../source/debugging.rst:69
+msgid "Inspecting the Compilation Cache"
+msgstr "查看编译缓存"
+
+#: ../../source/debugging.rst:71
+msgid ""
+"Use the ``cutile-cache log`` command to page through cached compilations "
+"in most-recently-accessed order. Each entry shows the kernel's mangled "
+"name, compiler version, compilation date and duration, CUBIN size, and "
+"optimization remarks::"
+msgstr ""
+"使用 ``cutile-cache log`` 命令按最近访问顺序分页查看缓存的编译记录。每条记录都会显示内核的修饰名（mangled "
+"name）、编译器版本、编译日期与耗时、CUBIN 大小以及优化说明（remarks）::"
+
+#: ../../source/debugging.rst:78
+msgid ""
+"Compilation remarks are captured in YAML format when using ``tileiras`` "
+"13.4 or newer. Entries produced by earlier cuTile Python or compiler "
+"versions remain readable but may show metadata as unavailable."
+msgstr ""
+"使用 ``tileiras`` 13.4 及更新版本时，编译优化说明会以 YAML 格式记录。早期 cuTile Python "
+"或编译器版本生成的缓存记录仍可读取，但部分元数据可能会显示为不可用。"
+

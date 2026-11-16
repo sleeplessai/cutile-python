@@ -1,0 +1,278 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/data/tile.rst:10
+msgid "cuda.tile.Tile"
+msgstr "cuda.tile.Tile"
+
+#: cuda.tile.Tile:1 of
+msgid "Class for |tile| objects."
+msgstr "表示 |tile| 对象的类。"
+
+#: cuda.tile.Tile.__add__:1 of
+msgid "Return self+value."
+msgstr "返回 self+value。"
+
+#: cuda.tile.Tile.__and__:1 of
+msgid "Return self&value."
+msgstr "返回 self&value。"
+
+#: cuda.tile.Tile.__bool__:1 of
+msgid "True if self else False"
+msgstr "若 self 为真则返回 True，否则返回 False。"
+
+#: cuda.tile.Tile.__delitem__:1 of
+msgid "Delete self[key]."
+msgstr "删除 self[key]。"
+
+#: cuda.tile.Tile.__divmod__:1 of
+msgid "Return divmod(self, value)."
+msgstr "返回 divmod(self, value)。"
+
+#: cuda.tile.Tile.__eq__:1 of
+msgid "Return self==value."
+msgstr "返回 self==value。"
+
+#: cuda.tile.Tile.__float__:1 of
+msgid "float(self)"
+msgstr ""
+
+#: cuda.tile.Tile.__floordiv__:1 of
+msgid "Return self//value."
+msgstr "返回 self//value。"
+
+#: cuda.tile.Tile.__ge__:1 of
+msgid "Return self>=value."
+msgstr "返回 self>=value。"
+
+#: cuda.tile.Tile.__getitem__:1 of
+msgid "Return self[key]."
+msgstr "返回 self[key]。"
+
+#: cuda.tile.Tile.__gt__:1 of
+msgid "Return self>value."
+msgstr "返回 self>value。"
+
+#: cuda.tile.Tile.__index__:1 of
+msgid ""
+"Return self converted to an integer, if self is suitable for use as an "
+"index into a list."
+msgstr "如果 self 适合用作列表索引，则返回转换为整数后的 self。"
+
+#: cuda.tile.Tile.__int__:1 of
+msgid "int(self)"
+msgstr ""
+
+#: cuda.tile.Tile.__invert__:1 of
+msgid "~self"
+msgstr ""
+
+#: cuda.tile.Tile.__le__:1 of
+msgid "Return self<=value."
+msgstr "返回 self<=value。"
+
+#: cuda.tile.Tile.__lshift__:1 of
+msgid "Return self<<value."
+msgstr "返回 self<<value。"
+
+#: cuda.tile.Tile.__lt__:1 of
+msgid "Return self<value."
+msgstr "返回 self<value。"
+
+#: cuda.tile.Tile.__matmul__:1 of
+msgid "Return self@value."
+msgstr "返回 self@value。"
+
+#: cuda.tile.Tile.__mod__:1 of
+msgid "Return self%value."
+msgstr "返回 self%value。"
+
+#: cuda.tile.Tile.__mul__:1 of
+msgid "Return self*value."
+msgstr "返回 self*value。"
+
+#: cuda.tile.Tile.__ne__:1 of
+msgid "Return self!=value."
+msgstr "返回 self!=value。"
+
+#: cuda.tile.Tile.__neg__:1 of
+msgid "-self"
+msgstr ""
+
+#: cuda.tile.Tile.__or__:1 of
+msgid "Return self|value."
+msgstr "返回 self|value。"
+
+#: cuda.tile.Tile.__pos__:1 of
+msgid "+self"
+msgstr ""
+
+#: cuda.tile.Tile.__pow__:1 of
+msgid "Return pow(self, value, mod)."
+msgstr "返回 pow(self, value, mod)。"
+
+#: cuda.tile.Tile.__radd__:1 of
+msgid "Return value+self."
+msgstr "返回 value+self。"
+
+#: cuda.tile.Tile.__rand__:1 of
+msgid "Return value&self."
+msgstr "返回 value&self。"
+
+#: cuda.tile.Tile.__rdivmod__:1 of
+msgid "Return divmod(value, self)."
+msgstr "返回 divmod(value, self)。"
+
+#: cuda.tile.Tile.__repr__:1 of
+msgid "Return repr(self)."
+msgstr "返回 repr(self)。"
+
+#: cuda.tile.Tile.__rfloordiv__:1 of
+msgid "Return value//self."
+msgstr "返回 value//self。"
+
+#: cuda.tile.Tile.__rlshift__:1 of
+msgid "Return value<<self."
+msgstr "返回 value<<self。"
+
+#: cuda.tile.Tile.__rmatmul__:1 of
+msgid "Return value@self."
+msgstr "返回 value@self。"
+
+#: cuda.tile.Tile.__rmod__:1 of
+#, python-format
+msgid "Return value%self."
+msgstr "返回 value%self。"
+
+#: cuda.tile.Tile.__rmul__:1 of
+msgid "Return value*self."
+msgstr "返回 value*self。"
+
+#: cuda.tile.Tile.__ror__:1 of
+msgid "Return value|self."
+msgstr "返回 value|self。"
+
+#: cuda.tile.Tile.__rpow__:1 of
+msgid "Return pow(value, self, mod)."
+msgstr "返回 pow(value, self, mod)。"
+
+#: cuda.tile.Tile.__rrshift__:1 of
+msgid "Return value>>self."
+msgstr "返回 value>>self。"
+
+#: cuda.tile.Tile.__rshift__:1 of
+msgid "Return self>>value."
+msgstr "返回 self>>value。"
+
+#: cuda.tile.Tile.__rsub__:1 of
+msgid "Return value-self."
+msgstr "返回 value-self。"
+
+#: cuda.tile.Tile.__rtruediv__:1 of
+msgid "Return value/self."
+msgstr "返回 value/self。"
+
+#: cuda.tile.Tile.__rxor__:1 of
+msgid "Return value^self."
+msgstr "返回 value^self。"
+
+#: cuda.tile.Tile.__setitem__:1 of
+msgid "Set self[key] to value."
+msgstr "将 self[key] 设为 value。"
+
+#: cuda.tile.Tile.__sub__:1 of
+msgid "Return self-value."
+msgstr "返回 self-value。"
+
+#: cuda.tile.Tile.__truediv__:1 of
+msgid "Return self/value."
+msgstr "返回 self/value。"
+
+#: cuda.tile.Tile.__xor__:1 of
+msgid "Return self^value."
+msgstr "返回 self^value。"
+
+#: cuda.tile.Tile.astype:1 of
+msgid "See :py:func:`astype`."
+msgstr "参见 :py:func:`astype` 。"
+
+#: ../../../docstring
+#: cuda.tile.Tile.dtype:1 of
+msgid "The |data type| of the |tile|'s elements."
+msgstr "|tile| 中元素的 |data type| 。"
+
+#: ../../source/data/tile.rst
+msgid "Return type"
+msgstr "返回类型"
+
+#: cuda.tile.Tile.extract:1 of
+msgid "See :py:func:`extract`."
+msgstr "参见 :py:func:`extract` 。"
+
+#: cuda.tile.Tile.insert:1 of
+msgid "See :py:func:`insert`."
+msgstr "参见 :py:func:`insert` 。"
+
+#: cuda.tile.Tile.item:1 of
+msgid "Equivalent to self.reshape(())."
+msgstr "等价于 self.reshape(())。"
+
+#: ../../source/data/tile.rst
+msgid "Returns"
+msgstr "返回值"
+
+#: cuda.tile.Tile.item:3 of
+msgid "A scalar tile."
+msgstr "标量 Tile。"
+
+#: cuda.tile.Tile.item:7 of
+msgid "Examples"
+msgstr "示例"
+
+#: cuda.tile.Tile.item:22 of
+msgid "Output"
+msgstr "输出"
+
+#: ../../../docstring
+#: cuda.tile.Tile.ndim:1 of
+msgid "The number of dimensions in the |tile|."
+msgstr "|tile| 的维度数。"
+
+#: cuda.tile.Tile.permute:1 of
+msgid "See :py:func:`permute`."
+msgstr "参见 :py:func:`permute` 。"
+
+#: cuda.tile.Tile.reshape:1 of
+msgid "See :py:func:`reshape`."
+msgstr "参见 :py:func:`reshape` 。"
+
+#: ../../../docstring
+#: cuda.tile.Tile.shape:1 of
+msgid "The number of elements in each of the |tile|'s dimensions."
+msgstr "|tile| 在各个维度上的元素数量。"
+
+#: cuda.tile.Tile.transpose:1 of
+msgid "See :py:func:`transpose`."
+msgstr "参见 :py:func:`transpose` 。"
+

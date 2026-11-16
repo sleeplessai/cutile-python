@@ -1,0 +1,67 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.printf.rst:2
+msgid "cuda.tile.printf"
+msgstr "cuda.tile.printf"
+
+#: cuda.tile._stub.printf:1 of
+msgid "Print the values at runtime from the device"
+msgstr "在运行时从设备端打印数值。"
+
+#: cuda.tile._stub.printf of
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile._stub.printf:3 of
+msgid ""
+"a c-printf style format string in the form of "
+"``%[flags][width][.precision][length]specifier``, where specifier is "
+"limited to integer and float for now, i.e. ``[diuoxXeEfFgGaA]``"
+msgstr ""
+"C 语言 printf 风格的格式字符串，形式为 ``%[flags][width][.precision][length]specifier``"
+" ，其中格式说明符目前仅限整数和浮点数，即 ``[diuoxXeEfFgGaA]`` 。"
+
+#: cuda.tile._stub.printf:8 of
+msgid "Only tile input is supported."
+msgstr "仅支持 Tile 输入。"
+
+#: cuda.tile._stub.printf:12 of
+msgid "Examples"
+msgstr "示例"
+
+#: cuda.tile._stub.printf:22 of
+msgid "Output"
+msgstr "输出"
+
+#: cuda.tile._stub.printf:24 of
+msgid "Notes"
+msgstr "备注"
+
+#: cuda.tile._stub.printf:25 of
+msgid ""
+"This operation has significant overhead, and should only be used for "
+"debugging purpose."
+msgstr "该操作开销较大，仅应用于调试目的。"
+

@@ -1,0 +1,309 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/data/tiled_view.rst:10
+msgid "cuda.tile.TiledView"
+msgstr "cuda.tile.TiledView"
+
+#: cuda.tile._stub.TiledView:1 of
+msgid "Class for |tiled view| objects."
+msgstr "表示 |tiled view| 对象的类。"
+
+#: cuda.tile.TiledView.dtype:1 of
+msgid "The data type of the elements in the |tiled view|."
+msgstr "|tiled view| 中元素的数据类型。"
+
+#: ../../source/data/tiled_view.rst
+msgid "Return type"
+msgstr "返回类型"
+
+#: cuda.tile.TiledView.tile_shape:1 of
+msgid "The shape of tiles produced by each indexed access."
+msgstr "每次按索引访问所生成 Tile 的形状。"
+
+#: cuda.tile._stub.TiledView.num_tiles:1 of
+msgid "The number of tiles along a |tiled view|'s given axis."
+msgstr "|tiled view| 沿给定轴包含的 Tile 数量。"
+
+#: ../../source/data/tiled_view.rst
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile._stub.TiledView.num_tiles:3 of
+msgid "The axis of the tile index space."
+msgstr "Tile 索引空间的轴序号。"
+
+#: cuda.tile.TiledView.traversal_steps:1 of
+msgid "Number of elements between consecutive tile origins along each axis."
+msgstr "沿每个轴相邻 Tile 原点之间相隔的元素数。"
+
+#: cuda.tile.TiledView.traversal_steps:3 of
+msgid ""
+"Defaults to :attr:`tile_shape` when not explicitly provided. If "
+"tile_shape is (), traversal_steps is (1,) * tiled view's rank."
+msgstr ""
+"未显式指定时默认为 :attr:`tile_shape` 。如果 ``tile_shape`` 为 ``()`` ，则 "
+"``traversal_steps`` 为 ``(1,) * rank`` （视图的秩）。"
+
+#: cuda.tile._stub.TiledView.load:1 of
+msgid "Loads a tile from the |tiled view| at the given tile `index`."
+msgstr "从 |tiled view| 的指定 Tile 索引处加载一个 Tile。"
+
+#: cuda.tile._stub.TiledView.load:3 of
+msgid "The returned tile has shape :attr:`tile_shape`."
+msgstr "返回的 Tile 形状为 :attr:`tile_shape` 。"
+
+#: cuda.tile._stub.TiledView.load:5 of
+msgid ""
+"For a tile that partially extends beyond the tiled view boundaries, out-"
+"of-bound elements are filled according to the view's padding mode. If the"
+" tile lies entirely outside the tiled view, the behavior is undefined."
+msgstr ""
+"如果 Tile 部分超出分块视图边界，越界元素将按照该视图的填充模式（padding mode）进行填充。如果整个 Tile "
+"完全位于分块视图边界之外，则行为未定义。"
+
+#: cuda.tile._stub.TiledView.atomic_store_add:22
+#: cuda.tile._stub.TiledView.atomic_store_and:22
+#: cuda.tile._stub.TiledView.atomic_store_max:23
+#: cuda.tile._stub.TiledView.atomic_store_min:23
+#: cuda.tile._stub.TiledView.atomic_store_or:22
+#: cuda.tile._stub.TiledView.atomic_store_xor:22
+#: cuda.tile._stub.TiledView.load:9 cuda.tile._stub.TiledView.store:10 of
+msgid "An index in the |tiled view|'s tile space."
+msgstr "|tiled view| 的 Tile 空间中的一个索引。"
+
+#: cuda.tile._stub.TiledView.load:11 of
+msgid ""
+"Whether to bounds-check the tile against the view boundaries. When "
+"``False``, the tile is assumed to stay fully within bounds and the out-"
+"of-bounds check is skipped, producing a faster load; violating this "
+"assumption is undefined behavior. Defaults to ``True``. Setting it to "
+"``False`` requires tileiras 13.4+."
+msgstr ""
+"是否针对视图边界对 Tile 进行越界检查。设为 ``False`` 时，编译器假定 Tile "
+"完全位于有效边界内并跳过越界检查，从而获得更快的加载速度；若违背该假设，则行为未定义。默认为 ``True`` 。将其设为 ``False`` "
+"需要 ``tileiras`` 13.4+。"
+
+#: cuda.tile._stub.TiledView.load:17 cuda.tile._stub.TiledView.store:20 of
+msgid ""
+"A hint indicating how heavy DRAM traffic will be. It shall be an integer "
+"between 1 (low) and 10 (high). By default, the compiler will infer the "
+"latency."
+msgstr "指示 DRAM 访存负载强度的提示值，应为 1（低）到 10（高）之间的整数。默认由编译器自动推断。"
+
+#: cuda.tile._stub.TiledView.load:21 of
+msgid "If False, the load will not use TMA. By default, TMA is allowed."
+msgstr "若为 False，该加载操作不会使用 TMA。默认允许使用 TMA。"
+
+#: cuda.tile._stub.TiledView.atomic_store_add:30
+#: cuda.tile._stub.TiledView.atomic_store_and:30
+#: cuda.tile._stub.TiledView.atomic_store_max:31
+#: cuda.tile._stub.TiledView.atomic_store_min:31
+#: cuda.tile._stub.TiledView.atomic_store_or:30
+#: cuda.tile._stub.TiledView.atomic_store_xor:30
+#: cuda.tile._stub.TiledView.load:28 cuda.tile._stub.TiledView.store:29 of
+msgid "Examples"
+msgstr "示例"
+
+#: cuda.tile._stub.TiledView.atomic_store_add:46
+#: cuda.tile._stub.TiledView.atomic_store_and:46
+#: cuda.tile._stub.TiledView.atomic_store_max:47
+#: cuda.tile._stub.TiledView.atomic_store_min:47
+#: cuda.tile._stub.TiledView.atomic_store_or:46
+#: cuda.tile._stub.TiledView.atomic_store_xor:46
+#: cuda.tile._stub.TiledView.load:43 cuda.tile._stub.TiledView.store:45 of
+msgid "Output"
+msgstr "输出"
+
+#: cuda.tile._stub.TiledView.store:1 of
+msgid "Stores a `tile` into the |tiled view| at the given tile `index`."
+msgstr "将 ``tile`` 存储到 |tiled view| 的指定 Tile 索引处。"
+
+#: cuda.tile._stub.TiledView.store:3 of
+msgid ""
+"The `tile`'s shape must be broadcastable to :attr:`tile_shape`. If the "
+"`tile`'s dtype differs from the view's dtype, an implicit cast is "
+"performed."
+msgstr ""
+"``tile`` 的形状必须能够广播到 :attr:`tile_shape` 。如果 ``tile`` 的 dtype 与视图的 dtype "
+"不同，将执行隐式类型转换。"
+
+#: cuda.tile._stub.TiledView.atomic_store_add:14
+#: cuda.tile._stub.TiledView.atomic_store_and:14
+#: cuda.tile._stub.TiledView.atomic_store_max:15
+#: cuda.tile._stub.TiledView.atomic_store_min:15
+#: cuda.tile._stub.TiledView.atomic_store_or:14
+#: cuda.tile._stub.TiledView.atomic_store_xor:14
+#: cuda.tile._stub.TiledView.store:6 of
+msgid ""
+"For a tile that partially extends beyond the tiled view boundaries, out-"
+"of-bound elements are ignored. If the tile lies entirely outside the "
+"tiled view, the behavior is undefined."
+msgstr "如果 Tile 部分超出分块视图边界，越界元素将被忽略。如果整个 Tile 完全位于分块视图边界之外，则行为未定义。"
+
+#: cuda.tile._stub.TiledView.store:12 of
+msgid "The tile to store."
+msgstr "要存储的 Tile。"
+
+#: cuda.tile._stub.TiledView.store:14 of
+msgid ""
+"Whether to bounds-check the tile against the view boundaries. When "
+"``False``, the tile is assumed to stay fully within bounds and the out-"
+"of-bounds check is skipped, producing a faster store; violating this "
+"assumption is undefined behavior. Defaults to ``True``. Setting it to "
+"``False`` requires tileiras 13.4+."
+msgstr ""
+"是否针对视图边界对 Tile 进行越界检查。设为 ``False`` 时，编译器假定 Tile "
+"完全位于有效边界内并跳过越界检查，从而获得更快的存储速度；若违背该假设，则行为未定义。默认为 ``True`` 。将其设为 ``False`` "
+"需要 ``tileiras`` 13.4+。"
+
+#: cuda.tile._stub.TiledView.store:24 of
+msgid "If False, the store will not use TMA. By default, TMA is allowed."
+msgstr "若为 False，该存储操作不会使用 TMA。默认允许使用 TMA。"
+
+#: cuda.tile._stub.TiledView.atomic_store_add:1 of
+msgid "Atomically adds `update` to the |tiled view| at the given tile `index`."
+msgstr "在 |tiled view| 的指定 Tile 索引处对 ``update`` 执行原子加法。"
+
+#: cuda.tile._stub.TiledView.atomic_store_add:3
+#: cuda.tile._stub.TiledView.atomic_store_max:4
+#: cuda.tile._stub.TiledView.atomic_store_min:4 of
+msgid ""
+"If `update`'s dtype differs from the view's dtype, an implicit cast is "
+"performed."
+msgstr "如果 ``update`` 的 dtype 与视图的 dtype 不同，将执行隐式类型转换。"
+
+#: cuda.tile._stub.TiledView.atomic_store_add:6
+#: cuda.tile._stub.TiledView.atomic_store_and:6
+#: cuda.tile._stub.TiledView.atomic_store_max:7
+#: cuda.tile._stub.TiledView.atomic_store_min:7
+#: cuda.tile._stub.TiledView.atomic_store_or:6
+#: cuda.tile._stub.TiledView.atomic_store_xor:6 of
+msgid "This method does not return a value."
+msgstr "此方法不返回值。"
+
+#: cuda.tile._stub.TiledView.atomic_store_add:8
+#: cuda.tile._stub.TiledView.atomic_store_and:8
+#: cuda.tile._stub.TiledView.atomic_store_max:9
+#: cuda.tile._stub.TiledView.atomic_store_min:9
+#: cuda.tile._stub.TiledView.atomic_store_or:8
+#: cuda.tile._stub.TiledView.atomic_store_xor:8 of
+msgid ""
+"For each individual element, the operation is performed atomically, but "
+"the operation as a whole is not atomic, and the order of individual "
+"writes is unspecified."
+msgstr "对于单个元素而言该操作是原子的，但整体操作并不具备跨元素原子性，且各个元素的写入顺序未指定。"
+
+#: cuda.tile._stub.TiledView.atomic_store_add:12
+#: cuda.tile._stub.TiledView.atomic_store_and:12
+#: cuda.tile._stub.TiledView.atomic_store_max:13
+#: cuda.tile._stub.TiledView.atomic_store_min:13
+#: cuda.tile._stub.TiledView.atomic_store_or:12
+#: cuda.tile._stub.TiledView.atomic_store_xor:12 of
+msgid "`update`'s shape must be broadcastable to :attr:`tile_shape`."
+msgstr "``update`` 的形状必须能够广播到 :attr:`tile_shape` 。"
+
+#: cuda.tile._stub.TiledView.atomic_store_add:19 of
+msgid ""
+"Use this operation instead of ct.atomic_add for better performance when "
+"modified value is not needed."
+msgstr "当不需要获取修改前的旧值时，使用此操作替代 ``ct.atomic_add`` 可获得更好的性能。"
+
+#: cuda.tile._stub.TiledView.atomic_store_add:24
+#: cuda.tile._stub.TiledView.atomic_store_and:24
+#: cuda.tile._stub.TiledView.atomic_store_max:25
+#: cuda.tile._stub.TiledView.atomic_store_min:25
+#: cuda.tile._stub.TiledView.atomic_store_or:24
+#: cuda.tile._stub.TiledView.atomic_store_xor:24 of
+msgid "The update values."
+msgstr "用于更新的值。"
+
+#: cuda.tile._stub.TiledView.atomic_store_max:1 of
+msgid ""
+"Atomically applies element-wise maximum with update to the |tiled view| "
+"at the given tile `index`."
+msgstr "在 |tiled view| 的指定 Tile 索引处执行逐元素原子取最大值（max）更新。"
+
+#: cuda.tile._stub.TiledView.atomic_store_max:20 of
+msgid ""
+"Use this operation instead of ct.atomic_max for better performance when "
+"modified value is not needed."
+msgstr "当不需要获取修改前的旧值时，使用此操作替代 ``ct.atomic_max`` 可获得更好的性能。"
+
+#: cuda.tile._stub.TiledView.atomic_store_min:1 of
+msgid ""
+"Atomically applies element-wise minimum with update to the |tiled view| "
+"at the given tile `index`."
+msgstr "在 |tiled view| 的指定 Tile 索引处执行逐元素原子取最小值（min）更新。"
+
+#: cuda.tile._stub.TiledView.atomic_store_min:20 of
+msgid ""
+"Use this operation instead of ct.atomic_min for better performance when "
+"modified value is not needed."
+msgstr "当不需要获取修改前的旧值时，使用此操作替代 ``ct.atomic_min`` 可获得更好的性能。"
+
+#: cuda.tile._stub.TiledView.atomic_store_and:1 of
+msgid ""
+"Atomically applies bitwise AND of `update` to the |tiled view| at the "
+"given tile `index`."
+msgstr "在 |tiled view| 的指定 Tile 索引处对 ``update`` 执行原子按位与（AND）。"
+
+#: cuda.tile._stub.TiledView.atomic_store_and:3
+#: cuda.tile._stub.TiledView.atomic_store_or:3
+#: cuda.tile._stub.TiledView.atomic_store_xor:3 of
+msgid ""
+"`update`'s dtype must exactly match the view's dtype; no implicit cast is"
+" performed."
+msgstr "``update`` 的 dtype 必须与视图的 dtype 完全一致；不会执行隐式类型转换。"
+
+#: cuda.tile._stub.TiledView.atomic_store_and:19 of
+msgid ""
+"Use this operation instead of ct.atomic_and for better performance when "
+"modified value is not needed."
+msgstr "当不需要获取修改前的旧值时，使用此操作替代 ``ct.atomic_and`` 可获得更好的性能。"
+
+#: cuda.tile._stub.TiledView.atomic_store_or:1 of
+msgid ""
+"Atomically applies bitwise OR of `update` to the |tiled view| at the "
+"given tile `index`."
+msgstr "在 |tiled view| 的指定 Tile 索引处对 ``update`` 执行原子按位或（OR）。"
+
+#: cuda.tile._stub.TiledView.atomic_store_or:19 of
+msgid ""
+"Use this operation instead of ct.atomic_or for better performance when "
+"modified value is not needed."
+msgstr "当不需要获取修改前的旧值时，使用此操作替代 ``ct.atomic_or`` 可获得更好的性能。"
+
+#: cuda.tile._stub.TiledView.atomic_store_xor:1 of
+msgid ""
+"Atomically applies bitwise XOR of `update` to the |tiled view| at the "
+"given tile `index`."
+msgstr "在 |tiled view| 的指定 Tile 索引处对 ``update`` 执行原子按位异或（XOR）。"
+
+#: cuda.tile._stub.TiledView.atomic_store_xor:19 of
+msgid ""
+"Use this operation instead of ct.atomic_xor for better performance when "
+"modified value is not needed."
+msgstr "当不需要获取修改前的旧值时，使用此操作替代 ``ct.atomic_xor`` 可获得更好的性能。"
+

@@ -1,0 +1,69 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.astile.rst:2
+msgid "cuda.tile.astile"
+msgstr "cuda.tile.astile"
+
+#: cuda.tile._stub.astile:1 of
+msgid "Creates a tile from a value."
+msgstr "从给定值创建 Tile。"
+
+#: ../../source/generated/cuda.tile.astile.rst
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile._stub.astile:3 of
+msgid ""
+"A scalar (yielding a 0-d tile), or a (possibly nested) tuple of scalars "
+"whose nesting determines the tile's shape. Every tuple's length must be a"
+" power of two, and sibling tuples at each level must have uniform length."
+msgstr ""
+"标量（将生成零维 Tile），或由标量组成的（可嵌套）元组，其嵌套结构决定 Tile 的形状。每个元组的长度都必须为 2 "
+"的幂，且同一层级中各个同级元组的长度必须一致。"
+
+#: cuda.tile._stub.astile:8 of
+msgid "The |Data type| of the tile."
+msgstr "Tile 的 |Data type| 。"
+
+#: ../../source/generated/cuda.tile.astile.rst
+msgid "Returns"
+msgstr "返回值"
+
+#: cuda.tile._stub.astile:11 of
+msgid "A tile shaped from ``value``, with elements cast to ``dtype``."
+msgstr "根据 ``value`` 构造的 Tile，其元素会转换为 ``dtype`` 类型。"
+
+#: ../../source/generated/cuda.tile.astile.rst
+msgid "Return type"
+msgstr "返回类型"
+
+#: cuda.tile._stub.astile:15 of
+msgid "Examples"
+msgstr "示例"
+
+#: cuda.tile._stub.astile:24 of
+msgid "Output"
+msgstr "输出"
+

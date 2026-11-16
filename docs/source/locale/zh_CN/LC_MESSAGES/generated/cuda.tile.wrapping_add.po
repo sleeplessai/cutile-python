@@ -1,0 +1,79 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.wrapping_add.rst:2
+msgid "cuda.tile.wrapping\\_add"
+msgstr "cuda.tile.wrapping\\_add"
+
+#: cuda.tile._stub.wrapping_add:1 of
+msgid "Elementwise integer addition that wraps around on overflow."
+msgstr "溢出时回绕的逐元素整数加法。"
+
+#: ../../source/generated/cuda.tile.wrapping_add.rst
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile._stub.wrapping_add:3 of
+msgid "LHS tile."
+msgstr "左操作数（LHS）Tile。"
+
+#: cuda.tile._stub.wrapping_add:5 of
+msgid "RHS tile."
+msgstr "右操作数（RHS）Tile。"
+
+#: cuda.tile._stub.wrapping_add:8 of
+msgid ""
+"The `shape` of `x` and `y` will be broadcasted. Unlike :func:`add`, the "
+"dtypes are not promoted: `x` and `y` must have the same integer dtype, "
+"and the result is computed modulo 2**bitwidth of that dtype. A loosely "
+"typed constant is converted to the dtype of the other operand, also "
+"modulo 2**bitwidth: for example, -1 becomes 255 for uint8."
+msgstr ""
+"``x`` 和 ``y`` 的 ``shape`` 将会进行广播。与 :func:`add` 不同，本操作不会进行数据类型提升： ``x`` 和 "
+"``y`` 必须具有相同的整数数据类型，结果将按该数据类型 ``2**bitwidth`` "
+"取模计算。松散类型化常量会转换为另一个操作数的数据类型，并同样按 ``2**bitwidth`` 取模：例如，对于 uint8，-1 将变为 "
+"255。"
+
+#: cuda.tile._stub.wrapping_add:13 of
+msgid ""
+"At least one of the operands must have a concrete dtype, since loosely "
+"typed constants don't have a bit width. For example, ``ct.wrapping_add(1,"
+" 2)`` is an error, but ``ct.wrapping_add(ct.uint8(150), 110)`` is "
+"``ct.uint8(4)``."
+msgstr ""
+"至少有一个操作数必须具有具体的数据类型（dtype），因为松散类型化常量没有位宽。例如， ``ct.wrapping_add(1, 2)`` "
+"会报错，而 ``ct.wrapping_add(ct.uint8(150), 110)`` 的结果为 ``ct.uint8(4)`` 。"
+
+#: ../../source/generated/cuda.tile.wrapping_add.rst
+msgid "Return type"
+msgstr "返回类型"
+
+#: cuda.tile._stub.wrapping_add:20 of
+msgid "Examples"
+msgstr "示例"
+
+#: cuda.tile._stub.wrapping_add:29 of
+msgid "Output"
+msgstr "输出"
+

@@ -1,0 +1,76 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.atan2.rst:2
+msgid "cuda.tile.atan2"
+msgstr "cuda.tile.atan2"
+
+#: cuda.tile._stub.atan2:1 of
+msgid "Elementwise atan2 of two tiles."
+msgstr "计算两个 Tile 的逐元素反正切 ``atan2`` 。"
+
+#: cuda.tile._stub.atan2:3 of
+msgid ""
+"Computes the element-wise arc tangent of ``x1/x2`` choosing the quadrant "
+"correctly."
+msgstr "逐元素计算 ``x1/x2`` 的反正切值，并正确选择象限。"
+
+#: ../../source/generated/cuda.tile.atan2.rst
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile._stub.atan2:5 of
+msgid "Numerator tile (y-coordinate)."
+msgstr "分子 Tile（y 坐标）。"
+
+#: cuda.tile._stub.atan2:7 of
+msgid "Denominator tile (x-coordinate)."
+msgstr "分母 Tile（x 坐标）。"
+
+#: cuda.tile._stub.atan2:10 of
+msgid ""
+"The `shape` of `x1` and `x2` will be broadcasted and `dtype` promoted to "
+"common dtype."
+msgstr "``x1`` 和 ``x2`` 的 ``shape`` 将会进行广播，且 ``dtype`` 会提升为公共数据类型（common dtype）。"
+
+#: ../../source/generated/cuda.tile.atan2.rst
+msgid "Returns"
+msgstr "返回值"
+
+#: cuda.tile._stub.atan2:13 of
+msgid "The angles in radians, in the range [-pi, pi]."
+msgstr "以弧度表示的角度，范围为 [-pi, pi]。"
+
+#: ../../source/generated/cuda.tile.atan2.rst
+msgid "Return type"
+msgstr "返回类型"
+
+#: cuda.tile._stub.atan2:17 of
+msgid "Examples"
+msgstr "示例"
+
+#: cuda.tile._stub.atan2:27 of
+msgid "Output"
+msgstr "输出"
+

@@ -1,0 +1,106 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/interoperability.rst:6
+msgid "Interoperability"
+msgstr "互操作性"
+
+#: ../../source/interoperability.rst:11
+msgid "Machine Representation"
+msgstr "机器表示"
+
+#: ../../source/interoperability.rst:13
+msgid ""
+"cuTile executes Python |tile code| on NVIDIA GPUs by translating the "
+"Python code into a *machine representation* that can be executed by CUDA "
+"devices. Functions, types, and objects all have a machine representation."
+msgstr ""
+"cuTile 通过将 Python |tile code| 翻译为可由 CUDA 设备执行的 *机器表示* （machine "
+"representation），从而在 NVIDIA GPU 上执行它们。函数、类型和对象均具有各自的机器表示。"
+
+#: ../../source/interoperability.rst:16
+msgid ""
+"Machine representations are defined in terms of corresponding CUDA C++ "
+"entities. Example: ``cuda.tile.float16`` has the same machine "
+"representation as ``__half`` in CUDA C++."
+msgstr ""
+"机器表示依据对应的 CUDA C++ 实体来定义。例如： ``cuda.tile.float16`` 与 CUDA C++ 中的 "
+"``__half`` 具有相同的机器表示。"
+
+#: ../../source/interoperability.rst:21
+msgid "Interoperability with SIMT"
+msgstr "与 SIMT 的互操作性"
+
+#: ../../source/interoperability.rst:24
+msgid "Inter-Kernel"
+msgstr "跨内核互操作"
+
+#: ../../source/interoperability.rst:26
+msgid ""
+"Inter-kernel interoperability refers to all interoperability concerns "
+"that do not cross the kernel boundary - everything except mixing tile and"
+" SIMT code in a kernel. This includes:"
+msgstr "跨内核互操作性指所有不跨越单个内核边界的互操作场景——即除在同一内核内混用 Tile 与 SIMT 代码之外的所有情况。这包括："
+
+#: ../../source/interoperability.rst:29
+msgid "Writing tile and SIMT kernels in the same source file."
+msgstr "在同一个源文件中编写 Tile 内核和 SIMT 内核。"
+
+#: ../../source/interoperability.rst:30
+msgid "Linking tile and SIMT kernels into the same binary."
+msgstr "将 Tile 内核与 SIMT 内核链接到同一个二进制文件中。"
+
+#: ../../source/interoperability.rst:31
+msgid "Passing the same kinds of arrays to both tile and SIMT kernels."
+msgstr "向 Tile 内核和 SIMT 内核传递相同类型的数组。"
+
+#: ../../source/interoperability.rst:33
+msgid "Intra-kernel interoperability will be supported in the future."
+msgstr "内核内部（Intra-kernel）互操作性将在未来版本中提供支持。"
+
+#: ../../source/interoperability.rst:37
+msgid "JAX FFI"
+msgstr "JAX FFI"
+
+#: ../../source/interoperability.rst:39
+msgid ""
+"cuTile kernels can be launched from JAX-traced graphs via "
+":func:`cuda.tile.jax.cutile_call`, which threads buffers, scalar, and "
+"tuple arguments through the JAX FFI call site so the kernel runs as a "
+"regular op inside a ``jax.jit``\\-compiled graph."
+msgstr ""
+"cuTile 内核可以通过 :func:`cuda.tile.jax.cutile_call` 从 JAX 追踪计算图中启动。该函数通过 JAX "
+"FFI 调用点传递缓冲区、标量和元组参数，使内核能够作为常规算子在 ``jax.jit`` 编译的图中运行。"
+
+#: ../../source/interoperability.rst:44
+msgid ""
+"See :func:`cuda.tile.jax.cutile_call` for the full argument convention, "
+"along with :class:`cuda.tile.jax.OutputPlaceholder` and "
+":class:`cuda.tile.jax.InputOutput` for declaring outputs and in-place "
+"updates."
+msgstr ""
+"完整参数约定请参见 :func:`cuda.tile.jax.cutile_call` ，有关声明输出和原地更新的用法，请参见 "
+":class:`cuda.tile.jax.OutputPlaceholder` 和 "
+":class:`cuda.tile.jax.InputOutput` 。"
+

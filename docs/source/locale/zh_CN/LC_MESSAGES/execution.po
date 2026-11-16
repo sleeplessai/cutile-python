@@ -1,0 +1,610 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/execution.rst:6
+msgid "Execution Model"
+msgstr "执行模型"
+
+#: ../../source/execution.rst:9
+msgid "Abstract Machine"
+msgstr "抽象机模型"
+
+#: ../../source/execution.rst:13
+msgid ""
+"A *tile kernel* is executed by logical thread |blocks| organized in a 1D,"
+" 2D, or 3D *grid*."
+msgstr "*Tile 内核* 由组织在一维、二维或三维 *网格（grid）* 中的逻辑线程 |blocks| 执行。"
+
+#: ../../source/execution.rst:18
+msgid ""
+"Each *block* runs on a subset of a GPU defined by the underlying compiler"
+" implementation. Every |block| executes the body of the |kernel|: scalar "
+"operations run serially on a single thread, while array operations run "
+"collectively in parallel across all threads of the |block|."
+msgstr ""
+"每个 *block* 在底层编译器实现所划分的 GPU 资源子集上运行。每个 |block| 都会执行 |kernel| "
+"主体：标量操作以逻辑单线程语义顺序执行，而 Tile/数组操作则在 |block| 内的所有线程上协同并行执行。"
+
+#: ../../source/execution.rst:23
+msgid ""
+"Tile programs express |block|-level parallelism only with no exposure to "
+"individual threads within the block."
+msgstr "Tile 程序仅表达 |block| 级并行性，不会将 block 内部的单个线程暴露给编程模型。"
+
+#: ../../source/execution.rst:26
+msgid ""
+"Explicit synchronization or communication within a |block| is not "
+"permitted, but is allowed between different |blocks|."
+msgstr "不允许在 |block| 内部进行显式线程同步或通信，但允许在不同 |blocks| 之间进行同步与通信。"
+
+#: ../../source/execution.rst:29
+msgid ""
+"A |block| defines the unit of execution and a |tile| defines unit of "
+"data, which shall not be confused. A single block may operate on multiple"
+" |tiles| with different shapes originating from different |global "
+"arrays|."
+msgstr ""
+"|block| 定义的是执行单元，而 |tile| 定义的是数据单元，切勿混淆。单个 block 可以处理来自不同 |global arrays|"
+" 、具有不同形状的多个 |tiles| 。"
+
+#: ../../source/execution.rst:37
+msgid "Execution Spaces"
+msgstr "执行空间"
+
+#: ../../source/execution.rst:39
+msgid ""
+"cuTile code runs on one or more *targets*. A target is an execution "
+"environment defined by its hardware resources and programming model."
+msgstr "cuTile 代码运行在一个或多个 *目标（targets）* 上。目标是按硬件资源和编程模型定义的执行环境。"
+
+#: ../../source/execution.rst:46
+msgid ""
+"The set of targets where a construct can be used is called its *execution"
+" space*. cuTile defines three execution spaces:"
+msgstr "一个语言结构可被使用的目标集合称为其 *执行空间（execution space）* 。cuTile 定义了三种执行空间："
+
+#: ../../source/execution.rst:49
+msgid "*Host code* --- all CPU targets."
+msgstr "*主机代码（Host code）* --- 所有 CPU 目标。"
+
+#: ../../source/execution.rst:50
+msgid ""
+"*SIMT code* --- all CUDA SIMT targets. (Historically called *device "
+"code*; we avoid that term to prevent ambiguity.)"
+msgstr ""
+"*SIMT 代码（SIMT code）* --- 所有 CUDA SIMT 目标。（历史上曾称为 *设备代码 / device code* "
+"；为避免歧义，此处不再使用该术语。）"
+
+#: ../../source/execution.rst:52
+msgid "*Tile code* --- all CUDA tile targets."
+msgstr "*Tile 代码（Tile code）* --- 所有 CUDA Tile 目标。"
+
+#: ../../source/execution.rst:54
+msgid ""
+"Some constructs span multiple execution spaces. For example, "
+":py:func:`~cuda.tile.cdiv` is usable in both host code and tile code."
+msgstr "部分结构跨越多个执行空间。例如， :py:func:`~cuda.tile.cdiv` 可同时在主机代码和 Tile 代码中使用。"
+
+#: ../../source/execution.rst:57
+msgid ""
+"A function whose decorator explicitly specifies its execution space is "
+"called an *annotated function*."
+msgstr "通过装饰器显式指定了执行空间的函数称为 *注解函数（annotated function）* 。"
+
+#: ../../source/execution.rst:63
+msgid "Tile Functions"
+msgstr "Tile 函数"
+
+#: cuda.tile._execution.function:1 of
+msgid "*Tile functions* are functions that are usable in |tile code|."
+msgstr "*Tile 函数* 是可在 |tile code| 中使用的函数。"
+
+#: cuda.tile._execution.function:3 of
+msgid ""
+"This decorator indicates what |execution spaces| a function can be called"
+" from. With no arguments, it denotes a tile-only function."
+msgstr "该装饰器指明函数可以从哪些 |execution spaces| 中被调用。不带参数时，表示仅限 Tile 代码调用的函数。"
+
+#: cuda.tile._execution.function:6 of
+msgid ""
+"When an unannotated function is called by a |tile function|, tile shall "
+"be added to the unannotated function's execution space. This process is "
+"recursive. No explicit annotation is required."
+msgstr "当未加注解的函数被 |tile function| 调用时，Tile 会自动加入该未注解函数的执行空间。该推导过程是递归进行的，无需显式添加装饰器。"
+
+#: cuda.tile._execution.function:11 of
+msgid ""
+"The types usable as parameters to a |tile function| are described in the "
+"|data model|."
+msgstr "可作为 |tile function| 参数的数据类型详见 |data model| 。"
+
+#: ../../source/execution.rst
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile._execution.function:13 of
+msgid "Whether the function can be called from |host code|. Default is False."
+msgstr "该函数是否可从 |host code| 调用。默认为 False。"
+
+#: cuda.tile._execution.function:16 of
+msgid "Whether the function can be called from |tile code|. Default is True."
+msgstr "该函数是否可从 |tile code| 调用。默认为 True。"
+
+#: ../../source/execution.rst:71
+msgid "Tile Kernels"
+msgstr "Tile 内核"
+
+#: cuda.tile._execution.kernel:1 of
+msgid "A *tile kernel* is a function executed by each |block| in a |grid|."
+msgstr "*Tile 内核* 是由 |grid| 中的每个 |block| 执行的函数。"
+
+#: cuda.tile._execution.kernel:3 of
+msgid "Functions with this decorator are |kernels|."
+msgstr "带有此装饰器的函数即为 |kernels| 。"
+
+#: cuda.tile._execution.kernel:5 of
+msgid ""
+"|Kernels| are the entry points of |tile code|. Their |execution space| "
+"shall be only |tile code|; they cannot be called from |host code|."
+msgstr ""
+"|Kernels| 是 |tile code| 的入口点。它们的 |execution space| 只能是 |tile code| ；不能从 "
+"|host code| 直接调用。"
+
+#: cuda.tile._execution.kernel:8 of
+msgid ""
+"Kernels cannot be called directly. Instead, use :py:func:`launch` to "
+"queue a kernel for execution over a grid."
+msgstr "内核不能被直接调用，而应使用 :py:func:`launch` 将内核排入队列并在网格上执行。"
+
+#: cuda.tile._execution.kernel:11 of
+msgid ""
+"The types usable as parameters to a |kernel| are described in the |data "
+"model|."
+msgstr "可作为 |kernel| 参数的数据类型详见 |data model| 。"
+
+#: cuda.tile._execution.kernel:13 of
+msgid ""
+"Number of thread blocks in a CGA. Must be a power of 2 between 1 and 16, "
+"inclusive. Default: None (auto)."
+msgstr "一个 CGA（簇）中的线程块数量。必须是 1 到 16（含）之间 2 的幂。默认：None（自动）。"
+
+#: cuda.tile._execution.kernel:15 of
+msgid ""
+"Expected number of active thread blocks per SM, [1, 32]. Default: None "
+"(auto)."
+msgstr "每个 SM 预期的活跃线程块数量，范围为 [1, 32]。默认：None（自动）。"
+
+#: cuda.tile._execution.kernel:16 of
+msgid "Optimization level [0, 3], default 3."
+msgstr "优化级别，范围为 [0, 3]，默认为 3。"
+
+#: cuda.tile._execution.kernel:17 of
+msgid ""
+"Number of warps in the CUDA core warp groups in a warp-specialized "
+"kernel. The compiler may add warps (e.g., for asynchronous memory "
+"transfers) that are not counted here. This value does not represent the "
+"total warp count. It's worth tuning when a warp-specialized kernel has "
+"high register pressure that other approaches cannot resolve. "
+"Normalization-style kernels with large tiles are the canonical cases. "
+"Must be a power of 2 between 1 and 32, inclusive. Values other than 4 and"
+" 8 require CTK 13.5 or later. Default: None (auto). Since CTK 13.3. "
+"Ignored with a warning otherwise."
+msgstr ""
+"Warp 特化（warp-specialized）内核中 CUDA 核心 warp 组内的 warp 数量。编译器可能会额外增加 "
+"warp（例如用于异步内存传输），这些不会计入此值，因此该值不代表总 warp 数。当 warp "
+"特化内核面临较高寄存器压力且其他方法难以缓解时，值得调节该参数，使用大 Tile 的归一化（Normalization）类内核是典型场景。必须是 "
+"1 到 32（含）之间 2 的幂；除 4 和 8 以外的值需要 CTK 13.5 或更高版本。默认：None（自动）。自 CTK 13.3 "
+"起支持；在更早版本上将被忽略并发出警告。"
+
+#: cuda.tile._execution.kernel:29 of
+msgid ""
+"Target-specific values for the compiler options above can be provided "
+"using a :py:class:`ByTarget` object."
+msgstr "可使用 :py:class:`ByTarget` 对象为上述编译器选项提供针对特定目标架构的值。"
+
+#: cuda.tile._execution.kernel.replace_hints:1 of
+msgid "Return a new kernel with updated compiler hints."
+msgstr "返回一个带有更新后编译器提示的新内核对象。"
+
+#: cuda.tile._execution.kernel.replace_hints:3 of
+msgid "Notes::"
+msgstr "说明::"
+
+#: cuda.tile._execution.kernel.replace_hints:8 of
+msgid "Examples:"
+msgstr "示例："
+
+#: ../../../docstring
+#: cuda.tile._cext.launch:1 of
+msgid "Launch a cuTile kernel."
+msgstr "启动一个 cuTile 内核。"
+
+#: ../../../docstring
+#: cuda.tile._cext.launch:3 of
+msgid "The CUDA stream to execute the |kernel| on."
+msgstr "用于执行该 |kernel| 的 CUDA 流。"
+
+#: ../../../docstring
+#: cuda.tile._cext.launch:4 of
+msgid "Tuple of up to 3 grid dimensions to execute the |kernel| over."
+msgstr "用于执行该 |kernel| 的网格维度元组（最多包含 3 个维度）。"
+
+#: ../../../docstring
+#: cuda.tile._cext.launch:5 of
+msgid "The |kernel| to execute."
+msgstr "要执行的 |kernel| 。"
+
+#: ../../../docstring
+#: cuda.tile._cext.launch:6 of
+msgid "Positional arguments to pass to the kernel."
+msgstr "传递给内核的位置参数。"
+
+#: ../../source/execution.rst:79
+msgid "Python Subset"
+msgstr "Python 语言子集"
+
+#: ../../source/execution.rst:81
+msgid ""
+"|Tile code| supports a subset of the Python language. There is no Python "
+"runtime within |tile code|."
+msgstr "|Tile code| 支持 Python 语言的一个子集。在 |tile code| 内部不存在 Python 运行时。"
+
+#: ../../source/execution.rst:84
+msgid ""
+"Only Python features explicitly listed in this document are supported. "
+"Many features --- such as exceptions, and coroutines --- are not "
+"supported today."
+msgstr "仅支持本文档明确列出的 Python 特性。目前不支持诸如异常和协程等众多特性。"
+
+#: ../../source/execution.rst:89
+msgid "Object Model & Lifetimes"
+msgstr "对象模型与生命周期"
+
+#: ../../source/execution.rst:91
+msgid ""
+"All objects created within |tile code| are immutable. Any operation that "
+"would conceptually modify an object instead creates and returns a new "
+"object. Attributes cannot be added to objects dynamically."
+msgstr "在 |tile code| 内部创建的所有对象都是不可变的。任何在概念上修改对象的操作都会改为创建并返回一个新对象。无法向对象动态添加属性。"
+
+#: ../../source/execution.rst:95
+msgid ""
+"Global |arrays| are views that can read and write global device memory, "
+"but the views themselves are also immutable."
+msgstr "全局 |arrays| 是可以读写全局设备内存的视图，但视图对象本身同样是不可变的。"
+
+#: ../../source/execution.rst:98
+msgid "The caller of a |kernel| must ensure that:"
+msgstr "|kernel| 的调用方必须确保："
+
+#: ../../source/execution.rst:100
+msgid ""
+"Array arguments obey the aliasing requirements described under :ref"
+":`data-global-arrays`."
+msgstr "数组参数满足 :ref:`data-global-arrays` 中所述的别名（aliasing）要求。"
+
+#: ../../source/execution.rst:102
+msgid "All |arrays| remain valid until the |kernel| completes execution."
+msgstr "所有 |arrays| 在 |kernel| 执行完成之前始终保持有效。"
+
+#: ../../source/execution.rst:105
+msgid "Control Flow"
+msgstr "控制流"
+
+#: ../../source/execution.rst:107
+msgid ""
+"Python control flow statements (``if``, ``for``, ``while``, etc.) are "
+"usable in |tile code| and can be arbitrarily nested."
+msgstr "Python 控制流语句（ ``if`` 、 ``for`` 、 ``while`` 等）均可在 |tile code| 中使用，并且可以任意嵌套。"
+
+#: ../../source/execution.rst:111
+msgid "Current limitations"
+msgstr "当前限制"
+
+#: ../../source/execution.rst:113
+msgid "|Tile code| imposes additional restrictions on control flow:"
+msgstr "|Tile code| 对控制流有以下额外限制："
+
+#: ../../source/execution.rst:115
+msgid "``step`` must be strictly positive."
+msgstr "``step`` 必须严格为正数。"
+
+#: ../../source/execution.rst:117
+msgid ""
+"Negative-step ranges such as ``range(10, 0, -1)`` are not supported "
+"today. Passing a negative step indirectly via a variable may cause "
+"undefined behavior."
+msgstr "目前不支持诸如 ``range(10, 0, -1)`` 的负步长范围。通过变量间接传入负步长可能导致未定义行为。"
+
+#: ../../source/execution.rst:121
+msgid ""
+"The bounds, the step and the induction variable of a ``for`` loop all "
+"share one integer type."
+msgstr "``for`` 循环的上下界、步长和归纳变量共享同一种整数类型。"
+
+#: ../../source/execution.rst:124
+msgid ""
+"The common type is at least ``int32`` and widens to ``int64`` if any "
+"bound or step is ``int64``. This also applies to the implicit lower bound"
+" and step in ``range(n)``. A literal bound too large for ``int32``, such "
+"as ``range(3_000_000_000)``, widens the loop to ``int64`` as well."
+msgstr ""
+"公共类型至少为 ``int32`` ；如果任意边界或步长为 ``int64`` ，则会拓宽为 ``int64`` 。这同样适用于 "
+"``range(n)`` 中隐式的下界和步长。超出 ``int32`` 表示范围的字面量边界（如 ``range(3_000_000_000)``"
+" ）也会使循环类型拓宽为 ``int64`` 。"
+
+#: ../../source/execution.rst:130
+msgid "Tile Parallelism"
+msgstr "Tile 并行性"
+
+#: ../../source/execution.rst:132
+msgid ""
+"When a |block| executes a function that takes |tiles| as parameters, it "
+"may parallelize evaluation across the |block|'s execution resources."
+msgstr "当 |block| 执行接收 |tiles| 作为参数的函数时，可以在 |block| 的执行资源上并行化求值过程。"
+
+#: ../../source/execution.rst:136
+msgid "Constantness"
+msgstr "常量性"
+
+#: ../../source/execution.rst:141
+msgid "Constant Expressions & Objects"
+msgstr "常量表达式与常量对象"
+
+#: ../../source/execution.rst:143
+msgid ""
+"Some facilities require parameters whose values are known at compile "
+"time. *Constant expressions* produce *constant objects* suitable for such"
+" parameters. Constant expressions are:"
+msgstr "部分功能要求参数值在编译期已知。*常量表达式* 会生成适用于此类参数的 *常量对象* 。常量表达式包括："
+
+#: ../../source/execution.rst:147
+msgid "A literal object."
+msgstr "字面量对象。"
+
+#: ../../source/execution.rst:148
+msgid "Integer arithmetic expressions where all the operands are literal objects."
+msgstr "所有操作数均为字面量对象的整数算术表达式。"
+
+#: ../../source/execution.rst:149
+msgid ""
+"A local object or parameter that is assigned from a literal object or "
+"constant expression."
+msgstr "由字面量对象或常量表达式赋值得到的局部变量或参数。"
+
+#: ../../source/execution.rst:150
+msgid "A global object that is defined at the time of compilation or launch."
+msgstr "在编译或启动时已定义的全局对象。"
+
+#: ../../source/execution.rst:152
+msgid ""
+"By default, numeric constants are *loosely typed*: integer constants have"
+" infinite precision and floating-point constants are stored in IEEE 754 "
+"double precision, until used in a context that requires a specific-width "
+"type."
+msgstr ""
+"默认情况下，数值常量是 *松散类型化（loosely typed）* 的：在进入需要特定位宽类型的上下文之前，整数常量具有无限精度，浮点常量以 "
+"IEEE 754 双精度存储。"
+
+#: ../../source/execution.rst:156
+msgid ""
+"A *strictly typed* constant is created by calling a dtype constructor, "
+"e.g. ``ct.int16(5)``. Combining a strictly typed constant with a loosely "
+"typed constant yields a strictly typed constant: ``ct.int16(5) + 2`` "
+"produces a strictly typed ``int16`` constant 7."
+msgstr ""
+"*严格类型化（strictly typed）* 常量通过调用 dtype 构造函数创建，例如 ``ct.int16(5)`` "
+"。将严格类型化常量与松散类型化常量组合运算仍会得到严格类型化常量： ``ct.int16(5) + 2`` 会生成严格类型为 ``int16`` "
+"的常量 7。"
+
+#: ../../source/execution.rst:161
+msgid ""
+"Combining two strictly typed constants also produces a strictly typed "
+"constant, with the regular |type promotion| rules applied. For example, "
+"``ct.int16(5) + ct.int32(7)`` produces a strictly typed ``int32`` "
+"constant 12."
+msgstr ""
+"将两个严格类型化常量组合运算同样会得到严格类型化常量，并应用常规的 |type promotion| 规则。例如， ``ct.int16(5) +"
+" ct.int32(7)`` 会生成严格类型为 ``int32`` 的常量 12。"
+
+#: ../../source/execution.rst:170
+msgid "Constant Embedding"
+msgstr "常量嵌入"
+
+#: ../../source/execution.rst:172
+msgid "If a |kernel| parameter is *constant embedded*, then:"
+msgstr "如果一个 |kernel| 参数是 *常量嵌入（constant embedded）* 的，则："
+
+#: ../../source/execution.rst:174
+msgid "Every use of the parameter behaves as if replaced by its literal value."
+msgstr "对该参数的每一次使用都会等效地视为直接替换为其字面值。"
+
+#: ../../source/execution.rst:175
+msgid ""
+"A distinct |machine representation| of the |kernel| is generated for each"
+" unique value of the parameter. Note: The |kernel| is compiled once per "
+"unique value, even if JIT caching is enabled."
+msgstr ""
+"针对该参数的每一个唯一取值，都会生成一份独立的 |kernel| 的 |machine representation| 。注意：即使启用了 JIT"
+" 缓存，每个唯一取值也会分别触发一次内核编译。"
+
+#: ../../source/execution.rst:178
+msgid "Type Annotations"
+msgstr "类型注解"
+
+#: ../../source/execution.rst:180
+msgid ""
+"Kernel parameter type annotations use ``typing.Annotated`` metadata to "
+"control constant embedding, array shape and index metadata, the integer "
+"dtype of scalar parameters, and list element types."
+msgstr ""
+"内核参数类型注解使用 ``typing.Annotated`` 元数据来控制常量嵌入、数组形状与索引元数据、标量参数的整数 dtype "
+"以及列表元素类型。"
+
+#: ../../source/execution.rst:184
+msgid ""
+"Ordinary type hints such as ``int``, ``float``, or ``ct.int32`` do not "
+"enforce or convert parameter types. Use an explicit conversion such as "
+"``ct.int32(x)`` when a specific scalar dtype is needed. In "
+"``ct.Constant[int]``, ``ct.Constant`` marks the argument as constant; the"
+" inner ``int`` does not validate or convert it."
+msgstr ""
+"诸如 ``int`` 、 ``float`` 或 ``ct.int32`` 等普通类型提示不会强制检查或转换参数类型。当需要特定的标量 dtype"
+" 时，请使用 ``ct.int32(x)`` 等显式转换。在 ``ct.Constant[int]`` 中，``ct.Constant`` "
+"将参数标记为常量；内部的 ``int`` 并不会对其进行校验或转换。"
+
+#: ../../source/execution.rst:189
+msgid ""
+"Tuple annotations describe the argument structure and can apply supported"
+" metadata to individual elements, for example ``tuple[ct.Array, "
+"ct.Constant[int]]``. Ordinary element type hints still do not enforce or "
+"convert element types. Annotations on helper parameters, local variables,"
+" and return values do not control kernel argument conversion."
+msgstr ""
+"元组注解用于描述参数结构，并可对单个元素应用受支持的元数据，例如 ``tuple[ct.Array, ct.Constant[int]]`` "
+"。普通元素类型提示同样不会强制检查或转换元素类型。辅助函数参数、局部变量以及返回值上的注解均不会控制内核参数转换。"
+
+#: ../../source/execution.rst:196
+msgid "Constant Annotations"
+msgstr "常量注解"
+
+#: cuda.tile._stub.ConstantAnnotation:1 of
+msgid ""
+"A ``typing.Annotated`` metadata class indicating that an object shall be "
+"|constant embedded|."
+msgstr "一种 ``typing.Annotated`` 元数据类，用于指明对象应被 |constant embedded| 。"
+
+#: cuda.tile._stub.ConstantAnnotation:3 of
+msgid ""
+"If an object of this class is passed as a metadata argument to a "
+"``typing.Annotated`` type hint on a parameter, then the parameter shall "
+"be a constant embedded."
+msgstr "如果将该类的实例作为元数据参数传递给某参数的 ``typing.Annotated`` 类型提示，则该参数将被常量嵌入。"
+
+#: ../../../docstring of
+#: typing.Annotated:1
+msgid ""
+"A type hint indicating that a value shall be |constant embedded|. It can "
+"be used either with (``Constant[int]``) or without (``Constant``, meaning"
+" a constant of any type) an underlying type hint."
+msgstr ""
+"一种指示值应被 |constant embedded| 的类型提示。它可以附带底层类型提示（ ``Constant[int]`` "
+"），也可以不带底层类型提示（ ``Constant`` ，表示任意类型的常量）。"
+
+#: ../../source/execution.rst:215
+msgid "Array Annotations"
+msgstr "数组注解"
+
+#: cuda.tile._stub.ArrayAnnotation:1 of
+msgid "A ``typing.Annotated`` metadata class for array parameters."
+msgstr "用于数组参数的 ``typing.Annotated`` 元数据类。"
+
+#: cuda.tile._stub.ArrayAnnotation:5 of
+msgid ""
+"Data type for shape and stride values. Must be ``int32`` or ``int64``. "
+"Use ``int64`` to enable support for tensors whose shape or stride values "
+"exceed the range of a 32-bit integer."
+msgstr ""
+"用于表示形状和步长值的数据类型。必须为 ``int32`` 或 ``int64`` 。当张量的形状或步长超出 32 位整数表示范围时，请使用 "
+"``int64`` 。"
+
+#: cuda.tile._stub.ArrayAnnotation cuda.tile._stub.ListAnnotation of
+msgid "type"
+msgstr ""
+
+#: cuda.tile._stub.ArrayAnnotation:9 of
+msgid "cuda.tile.DType"
+msgstr ""
+
+#: cuda.tile._stub.ArrayAnnotation:13 of
+msgid ""
+"Shape dimensions to specialize to their launch-time values, making them "
+"compile-time constants inside the kernel."
+msgstr "需要按启动时取值进行特化的形状维度列表，从而使这些维度在内核内部成为编译期常量。"
+
+#: cuda.tile._stub.ArrayAnnotation:16 cuda.tile._stub.ArrayAnnotation:26 of
+msgid "tuple[int, ...]"
+msgstr ""
+
+#: cuda.tile._stub.ArrayAnnotation:20 of
+msgid ""
+"Stride dimensions to specialize to their launch-time values, making them "
+"compile-time constants inside the kernel. This is the sole source of "
+"static strides for the array: once any dimension is listed, the "
+"dispatcher stops inferring ``stride == 1`` for *every* dimension of it, "
+"so list the contiguous dimension explicitly to keep it a compile-time "
+"constant."
+msgstr ""
+"需要按启动时取值进行特化的步长维度列表，从而使这些步长在内核内部成为编译期常量。这是数组静态步长的唯一来源：一旦列出了任意维度，分发器就会停止为该数组的"
+" *任何* 维度自动推断 ``stride == 1`` ，因此若需保留连续维度为编译期常量，请将其显式列出。"
+
+#: ../../../docstring
+#: cuda.tile._stub.ArrayAnnotation:28 of typing.Annotated:3 typing.Annotated:6
+msgid "Example::"
+msgstr "示例::"
+
+#: ../../../docstring of
+#: typing.Annotated:1
+msgid "A type hint indicating that an array uses i64 for shape and stride."
+msgstr "指示数组使用 i64 表示形状和步长的类型提示。"
+
+#: ../../source/execution.rst:222
+msgid "Scalar Annotations"
+msgstr "标量注解"
+
+#: ../../../docstring of
+#: typing.Annotated:1
+msgid "A type hint indicating that a scalar integer parameter uses int64."
+msgstr "指示标量整数参数使用 int64 的类型提示。"
+
+#: ../../../docstring of
+#: typing.Annotated:3
+msgid ""
+"By default, integer kernel parameters are inferred as int32. Use this "
+"annotation to force int64 inference for parameters that need the wider "
+"range."
+msgstr "默认情况下，整数内核参数会被推断为 int32。对于需要更大数值范围的参数，可使用此注解强制将其推断为 int64。"
+
+#: ../../source/execution.rst:227
+msgid "List Annotations"
+msgstr "列表注解"
+
+#: cuda.tile._stub.ListAnnotation:1 of
+msgid "A ``typing.Annotated`` metadata class for list parameters."
+msgstr "用于列表参数的 ``typing.Annotated`` 元数据类。"
+
+#: cuda.tile._stub.ListAnnotation:5 of
+msgid ""
+"Annotation for the list's element type. Must be an "
+":class:`ArrayAnnotation` or an ``Annotated`` type whose metadata contains"
+" an :class:`ArrayAnnotation` (e.g. :data:`IndexedWithInt64`)."
+msgstr ""
+"用于列表元素类型的注解。必须是 :class:`ArrayAnnotation` ，或是其元数据中包含 "
+":class:`ArrayAnnotation` 的 ``Annotated`` 类型（例如 :data:`IndexedWithInt64` "
+"）。"
+
+#: cuda.tile._stub.ListAnnotation:9 of
+msgid "Any"
+msgstr ""
+

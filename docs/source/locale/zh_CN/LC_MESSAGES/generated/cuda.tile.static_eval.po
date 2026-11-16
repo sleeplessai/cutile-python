@@ -1,0 +1,99 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.static_eval.rst:2
+msgid "cuda.tile.static\\_eval"
+msgstr "cuda.tile.static\\_eval"
+
+#: cuda.tile._stub.static_eval:1 of
+msgid "Evaluates the given Python expression at compile time."
+msgstr "在编译期求值给定的 Python 表达式。"
+
+#: cuda.tile._stub.static_eval:3 of
+msgid ""
+"The surrounded expression is evaluated using standard Python semantics, "
+"not Tile semantics. It can reference global variables and local variables"
+" from the surrounding tile function."
+msgstr "所包裹的表达式将使用标准 Python 语义（而非 Tile 语义）进行求值。它可以引用全局变量以及外围 Tile 函数中的局部变量。"
+
+#: cuda.tile._stub.static_eval:7 of
+msgid ""
+"If a referenced variable is a compile-time constant value, it will be "
+"represented with a corresponding Python object of that value. For "
+"example, a constant integer 3 will be passed as a plain ``int`` object of"
+" value 3."
+msgstr "如果引用的变量是编译期常量值，则会以对应该值的标准 Python 对象表示。例如，常量整数 3 将作为值为 3 的普通 ``int`` 对象传入。"
+
+#: cuda.tile._stub.static_eval:11 of
+msgid ""
+"If a referenced variable has dynamic value, such as a tile or an array, "
+"it will be passed as a proxy object that allows querying compile-time "
+"attributes and building symbolic expressions from it. For example, if "
+"``x`` is a dynamic tile, it will be represented as a ``ct.Tile`` object. "
+"One can then use ``x.shape`` to obtain the tile shape as a tuple of "
+"integers; ``x + 1`` will return a new proxy object that represents the "
+"symbolic expression ``x + 1``, etc."
+msgstr ""
+"如果引用的变量具有动态值（例如 Tile 或数组），则会作为代理对象传入，允许查询编译期属性并基于其构建符号表达式。例如，若 ``x`` 是动态 "
+"Tile，它将以 ``ct.Tile`` 对象的形式表示：此时可使用 ``x.shape`` 获取以整数元组表示的 Tile 形状； ``x + "
+"1`` 将返回一个代表符号表达式 ``x + 1`` 的新代理对象，依此类推。"
+
+#: cuda.tile._stub.static_eval:17 of
+msgid ""
+"The surrounded expression is allowed to return a proxy object for a "
+"dynamic value. For example, this can be used to select one of multiple "
+"dynamic expressions based on a compile-time condition: if ``N`` is an "
+"integer constant and ``x``, ``y`` are dynamic tiles, then one can write "
+"``res = ct.static_eval(x + 1 if N % 2 == 0 else y - 1)`` to select either"
+" ``x + 1`` or ``y - 1`` at compile tile, depending on the parity of the "
+"integer constant ``N``."
+msgstr ""
+"所包裹的表达式允许返回动态值的代理对象。例如，可用于根据编译期条件从多个动态表达式中择一返回：若 ``N`` 为整数常量且 ``x`` 、 "
+"``y`` 为动态 Tile，则可编写 ``res = ct.static_eval(x + 1 if N % 2 == 0 else y - "
+"1)`` ，从而在编译期根据整数常量 ``N`` 的奇偶性选择 ``x + 1`` 或 ``y - 1`` 。"
+
+#: cuda.tile._stub.static_eval:24 of
+msgid ""
+"The symbolic expression building feature is limited to basic arithmetic "
+"operations. For example, ``ct.static_eval(ct.gather(array, 0))`` will "
+"raise an error."
+msgstr "符号表达式构建功能仅限于基本算术运算。例如， ``ct.static_eval(ct.gather(array, 0))`` 将会引发错误。"
+
+#: cuda.tile._stub.static_eval:27 of
+msgid ""
+"The surrounded expression must not assign to local variables (e.g., via "
+"the walrus operator ``:=``)."
+msgstr "所包裹的表达式不得对局部变量赋值（例如不得使用海象运算符 ``:=`` ）。"
+
+#: cuda.tile._stub.static_eval:30 of
+msgid ""
+"Despite being declared as a function, `static_eval()` is treated like a "
+"keyword: it skips the translation of the surrounded expression according "
+"to the Tile semantics. Moreover, the expression is allowed to use the "
+"full Python syntax, unlike the rest of the Tile code, which is limited to"
+" a stricter subset of the language."
+msgstr ""
+"尽管在形式上声明为函数， ``static_eval()`` 会被当作关键字处理：它会跳过按照 Tile "
+"语义对其所包裹表达式的转换。此外，与其余仅限于更严格语言子集的 Tile 代码不同，其中的表达式允许使用完整的 Python 语法。"
+

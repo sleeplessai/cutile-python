@@ -1,0 +1,148 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/memory_model.rst:8
+msgid "Memory Model"
+msgstr "内存模型"
+
+#: ../../source/memory_model.rst:10
+msgid ""
+"cuTile's memory model permits the compiler and hardware to reorder "
+"operations for performance. Without explicit synchronization, the "
+"ordering of memory accesses across |blocks| is not guaranteed."
+msgstr "cuTile 的内存模型允许编译器和硬件出于性能考虑重排操作。如果没有显式同步，跨 |blocks| 的内存访问顺序无法得到保证。"
+
+#: ../../source/memory_model.rst:14
+msgid ""
+"To coordinate memory accesses between |blocks|, cuTile provides two "
+"attributes for atomic operations:"
+msgstr "为了协调 |blocks| 之间的内存访问，cuTile 为原子操作提供了两个属性："
+
+#: ../../source/memory_model.rst:17
+msgid ""
+"**Memory Order** --- defines the ordering semantics of an atomic "
+"operation."
+msgstr "**内存序（Memory Order）** --- 定义原子操作的排序语义。"
+
+#: ../../source/memory_model.rst:18
+msgid ""
+"**Memory Scope** --- defines the set of |blocks| that participate in "
+"ordering."
+msgstr "**内存作用域（Memory Scope）** --- 定义参与排序的 |blocks| 集合。"
+
+#: ../../source/memory_model.rst:20
+msgid ""
+"Synchronization operates at per-element granularity: each element in the "
+"array participates independently in the memory model."
+msgstr "同步以逐元素粒度生效：数组中的每个元素都独立参与内存模型约束。"
+
+#: ../../source/memory_model.rst:23
+msgid ""
+"For further details, see the Memory Model section of the `Tile IR "
+"documentation <https://docs.nvidia.com/cuda/tile-ir/>`_."
+msgstr ""
+"更多细节请参阅 `Tile IR 文档 <https://docs.nvidia.com/cuda/tile-ir/>`_ 中的 Memory "
+"Model 章节。"
+
+#: ../../source/memory_model.rst:28
+msgid "Memory Order"
+msgstr "内存序"
+
+#: cuda.tile._memory_model.MemoryOrder:1 of
+msgid "Memory ordering semantics of a memory operation."
+msgstr "内存操作的内存排序语义。"
+
+#: ../../../docstring
+#: cuda.tile.MemoryOrder.WEAK:1 of
+msgid "Weak (non-atomic) ordering. The default for load/store operations."
+msgstr "弱序（非原子序）。load/store 操作的默认设置。"
+
+#: ../../../docstring
+#: cuda.tile.MemoryOrder.RELAXED:1 of
+msgid "No ordering guarantees. Cannot be used to synchronize between threads."
+msgstr "不提供排序保证，不能用于线程间同步。"
+
+#: ../../../docstring
+#: cuda.tile.MemoryOrder.ACQUIRE:1 of
+msgid ""
+"Acquire semantics. When this reads a value written by a release, the "
+"releasing thread's prior writes become visible. Subsequent reads/writes "
+"within the same block cannot be reordered before this operation."
+msgstr ""
+"获取语义（Acquire）。当该操作读取到由发布（release）操作写入的值时，发布线程此前的写操作会变为可见。同一 block "
+"内后续的读/写操作不能被重排到此操作之前。"
+
+#: ../../../docstring
+#: cuda.tile.MemoryOrder.RELEASE:1 of
+msgid ""
+"Release semantics. When an acquire reads the value written by this, this "
+"thread's prior writes become visible to the acquiring thread. Prior "
+"reads/writes within the same block cannot be reordered after this "
+"operation."
+msgstr ""
+"发布语义（Release）。当获取（acquire）操作读取到由此操作写入的值时，本线程此前的写操作会对获取线程可见。同一 block "
+"内先前的读/写操作不能被重排到此操作之后。"
+
+#: ../../../docstring
+#: cuda.tile.MemoryOrder.ACQ_REL:1 of
+msgid "Combined acquire and release semantics."
+msgstr "组合的获取与发布（acquire-release）语义。"
+
+#: ../../source/memory_model.rst:38
+msgid "Memory Scope"
+msgstr "内存作用域"
+
+#: cuda.tile._memory_model.MemoryScope:1 of
+msgid "The scope of threads that participate in memory ordering."
+msgstr "参与内存排序的线程作用域范围。"
+
+#: ../../../docstring
+#: cuda.tile.MemoryScope.NONE:1 of
+msgid "No memory scope. Used for load/store operations with WEAK memory ordering."
+msgstr "无内存作用域。用于采用 WEAK 内存序的 load/store 操作。"
+
+#: ../../../docstring
+#: cuda.tile.MemoryScope.BLOCK:1 of
+msgid "Ordering guarantees apply to threads within the same block."
+msgstr "排序保证仅适用于同一 block 内的线程。"
+
+#: ../../../docstring
+#: cuda.tile.MemoryScope.CLUSTER:1 of
+msgid ""
+"Ordering guarantees apply to all threads within the same thread-block "
+"cluster. cuda.lang only."
+msgstr "排序保证适用于同一线程块簇（thread-block cluster）内的所有线程。仅限 cuda.lang。"
+
+#: ../../../docstring
+#: cuda.tile.MemoryScope.DEVICE:1 of
+msgid "Ordering guarantees apply to all threads on the same GPU."
+msgstr "排序保证适用于同一块 GPU 上的所有线程。"
+
+#: ../../../docstring
+#: cuda.tile.MemoryScope.SYS:1 of
+msgid ""
+"Ordering guarantees apply to all threads across the entire system, "
+"including multiple GPUs and the host."
+msgstr "排序保证适用于整个系统中的所有线程，包括多块 GPU 与主机。"
+

@@ -1,0 +1,1040 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/operations.rst:10
+msgid "Operations"
+msgstr "操作列表"
+
+#: ../../source/operations.rst:15
+msgid "Load/Store"
+msgstr "加载与存储"
+
+#: ../../source/operations.rst:30:<autosummary>:1
+msgid ":py:obj:`bid <cuda.tile.bid>`"
+msgstr ""
+
+#: ../../source/operations.rst:30:<autosummary>:1
+msgid "Gets the index of current block."
+msgstr "获取当前 block 的索引。"
+
+#: ../../source/operations.rst:30:<autosummary>:1
+msgid ":py:obj:`num_blocks <cuda.tile.num_blocks>`"
+msgstr ""
+
+#: ../../source/operations.rst:30:<autosummary>:1
+msgid "Gets the number of blocks along the axis."
+msgstr "获取沿指定轴的 block 数量。"
+
+#: ../../source/operations.rst:30:<autosummary>:1
+msgid ":py:obj:`num_tiles <cuda.tile.num_tiles>`"
+msgstr ""
+
+#: ../../source/operations.rst:30:<autosummary>:1
+msgid ""
+"Gets the number of tiles in the |tile space| of the array along the "
+"`axis`."
+msgstr "获取数组 |tile space| 中沿指定轴的 Tile 数量。"
+
+#: ../../source/operations.rst:30:<autosummary>:1
+msgid ":py:obj:`load <cuda.tile.load>`"
+msgstr ""
+
+#: ../../source/operations.rst:30:<autosummary>:1
+msgid "Loads a tile from the `array` which is partitioned into a |tile space|."
+msgstr "从已划分为 |tile space| 的数组中加载一个 Tile。"
+
+#: ../../source/operations.rst:30:<autosummary>:1
+msgid ":py:obj:`store <cuda.tile.store>`"
+msgstr ""
+
+#: ../../source/operations.rst:30:<autosummary>:1
+msgid "Stores a `tile` value into the `array` at the `index` of its |tile space|."
+msgstr "将 ``tile`` 值存储到数组 |tile space| 的指定索引位置。"
+
+#: ../../source/operations.rst:30:<autosummary>:1
+msgid ":py:obj:`load_advanced_indexing <cuda.tile.load_advanced_indexing>`"
+msgstr ""
+
+#: ../../source/operations.rst:30:<autosummary>:1
+msgid "Loads a tile from non-contiguous slices of `array`."
+msgstr "从数组的非连续切片中加载一个 Tile。"
+
+#: ../../source/operations.rst:30:<autosummary>:1
+msgid ":py:obj:`store_advanced_indexing <cuda.tile.store_advanced_indexing>`"
+msgstr ""
+
+#: ../../source/operations.rst:30:<autosummary>:1
+msgid "Stores a `tile` into non-contiguous slices of `array`."
+msgstr "将 ``tile`` 存储到数组的非连续切片中。"
+
+#: ../../source/operations.rst:30:<autosummary>:1
+msgid ":py:obj:`gather <cuda.tile.gather>`"
+msgstr ""
+
+#: ../../source/operations.rst:30:<autosummary>:1
+msgid "Loads a tile from the `array` elements specified by `indices`."
+msgstr "从 ``indices`` 指定的数组元素位置加载一个 Tile。"
+
+#: ../../source/operations.rst:30:<autosummary>:1
+msgid ":py:obj:`scatter <cuda.tile.scatter>`"
+msgstr ""
+
+#: ../../source/operations.rst:30:<autosummary>:1
+msgid "Stores a tile `value` into the `array` elements specified by `indices`."
+msgstr "将 ``value`` Tile 存储到 ``indices`` 指定的数组元素位置。"
+
+#: ../../source/operations.rst:34
+msgid "Factory"
+msgstr "工厂函数"
+
+#: ../../source/operations.rst:45:<autosummary>:1
+msgid ":py:obj:`arange <cuda.tile.arange>`"
+msgstr ""
+
+#: ../../source/operations.rst:45:<autosummary>:1
+msgid ""
+"Creates a 1-D tile of length ``size`` with values ``start, start + step, "
+"..., start + (size - 1) * step``."
+msgstr ""
+"创建长度为 ``size`` 的一维 Tile，其元素值为 ``start, start + step, ..., start + (size -"
+" 1) * step`` 。"
+
+#: ../../source/operations.rst:45:<autosummary>:1
+msgid ":py:obj:`astile <cuda.tile.astile>`"
+msgstr ""
+
+#: ../../source/operations.rst:45:<autosummary>:1
+msgid "Creates a tile from a value."
+msgstr "从给定值创建 Tile。"
+
+#: ../../source/operations.rst:45:<autosummary>:1
+msgid ":py:obj:`full <cuda.tile.full>`"
+msgstr ""
+
+#: ../../source/operations.rst:45:<autosummary>:1
+msgid "Creates a tile filled with given value."
+msgstr "创建使用指定值填充的 Tile。"
+
+#: ../../source/operations.rst:45:<autosummary>:1
+msgid ":py:obj:`ones <cuda.tile.ones>`"
+msgstr ""
+
+#: ../../source/operations.rst:45:<autosummary>:1
+msgid "Creates a tile filled with ones."
+msgstr "创建全 1 填充的 Tile。"
+
+#: ../../source/operations.rst:45:<autosummary>:1
+msgid ":py:obj:`zeros <cuda.tile.zeros>`"
+msgstr ""
+
+#: ../../source/operations.rst:45:<autosummary>:1
+msgid "Creates a tile filled with zeros."
+msgstr "创建全 0 填充的 Tile。"
+
+#: ../../source/operations.rst:49
+msgid "Shape & DType"
+msgstr "形状与数据类型"
+
+#: ../../source/operations.rst:65:<autosummary>:1
+msgid ":py:obj:`cat <cuda.tile.cat>`"
+msgstr ""
+
+#: ../../source/operations.rst:65:<autosummary>:1
+msgid "Concatenates two tiles along the `axis`."
+msgstr "沿指定轴拼接两个 Tile。"
+
+#: ../../source/operations.rst:65:<autosummary>:1
+msgid ":py:obj:`broadcast_to <cuda.tile.broadcast_to>`"
+msgstr ""
+
+#: ../../source/operations.rst:65:<autosummary>:1
+msgid ""
+"Broadcasts a tile to the specified shape following |Numpy broadcasting "
+"rule|."
+msgstr "遵循 |Numpy broadcasting rule| 将 Tile 广播到指定形状。"
+
+#: ../../source/operations.rst:65:<autosummary>:1
+msgid ":py:obj:`expand_dims <cuda.tile.expand_dims>`"
+msgstr ""
+
+#: ../../source/operations.rst:65:<autosummary>:1
+msgid "Reshapes the tile by inserting a new axis of size 1 at given position."
+msgstr "通过在指定位置插入大小为 1 的新轴来改变 Tile 形状。"
+
+#: ../../source/operations.rst:65:<autosummary>:1
+msgid ":py:obj:`reshape <cuda.tile.reshape>`"
+msgstr ""
+
+#: ../../source/operations.rst:65:<autosummary>:1
+msgid "Reshapes a tile to the specified shape."
+msgstr "将 Tile 重塑（reshape）为指定形状。"
+
+#: ../../source/operations.rst:65:<autosummary>:1
+msgid ":py:obj:`permute <cuda.tile.permute>`"
+msgstr ""
+
+#: ../../source/operations.rst:65:<autosummary>:1
+msgid "Permutes the axes of the input tile."
+msgstr "重新排列输入 Tile 的各坐标轴顺序。"
+
+#: ../../source/operations.rst:65:<autosummary>:1
+msgid ":py:obj:`transpose <cuda.tile.transpose>`"
+msgstr ""
+
+#: ../../source/operations.rst:65:<autosummary>:1
+msgid "Transposes two axes of the input tile with at least 2 dimensions."
+msgstr "转置至少包含 2 个维度的输入 Tile 中的两个轴。"
+
+#: ../../source/operations.rst:65:<autosummary>:1
+msgid ":py:obj:`astype <cuda.tile.astype>`"
+msgstr ""
+
+#: ../../source/operations.rst:65:<autosummary>:1
+msgid "Converts a tile to the specified data type."
+msgstr "将 Tile 转换为指定的数据类型。"
+
+#: ../../source/operations.rst:65:<autosummary>:1
+msgid ":py:obj:`bitcast <cuda.tile.bitcast>`"
+msgstr ""
+
+#: ../../source/operations.rst:65:<autosummary>:1
+msgid "Reinterpets tile as being of specified data type."
+msgstr "将 Tile 的底层比特位重新解释为指定的数据类型。"
+
+#: ../../source/operations.rst:65:<autosummary>:1
+msgid ":py:obj:`pack_to_bytes <cuda.tile.pack_to_bytes>`"
+msgstr ""
+
+#: ../../source/operations.rst:65:<autosummary>:1
+msgid "Flattens a tile and reinterprets its raw bytes as uint8 elements."
+msgstr "展平 Tile 并将其原始字节重新解释为 uint8 元素。"
+
+#: ../../source/operations.rst:65:<autosummary>:1
+msgid ":py:obj:`unpack_from_bytes <cuda.tile.unpack_from_bytes>`"
+msgstr ""
+
+#: ../../source/operations.rst:65:<autosummary>:1
+msgid "Reinterprets a 1D uint8 byte tile as a 1D tile of the target data type."
+msgstr "将一维 uint8 字节 Tile 重新解释为目标数据类型的一维 Tile。"
+
+#: ../../source/operations.rst:69
+msgid "Reduction"
+msgstr "归约"
+
+#: ../../source/operations.rst:82:<autosummary>:1
+msgid ":py:obj:`sum <cuda.tile.sum>`"
+msgstr ""
+
+#: ../../source/operations.rst:82:<autosummary>:1
+msgid "Performs sum reduction on tile along the `axis`."
+msgstr "沿指定轴对 Tile 执行求和归约。"
+
+#: ../../source/operations.rst:82:<autosummary>:1
+msgid ":py:obj:`max <cuda.tile.max>`"
+msgstr ""
+
+#: ../../source/operations.rst:82:<autosummary>:1
+msgid "Performs max reduction on tile along the `axis`."
+msgstr "沿指定轴对 Tile 执行最大值归约。"
+
+#: ../../source/operations.rst:82:<autosummary>:1
+msgid ":py:obj:`min <cuda.tile.min>`"
+msgstr ""
+
+#: ../../source/operations.rst:82:<autosummary>:1
+msgid "Performs min reduction on tile along the `axis`."
+msgstr "沿指定轴对 Tile 执行最小值归约。"
+
+#: ../../source/operations.rst:82:<autosummary>:1
+msgid ":py:obj:`prod <cuda.tile.prod>`"
+msgstr ""
+
+#: ../../source/operations.rst:82:<autosummary>:1
+msgid "Performs prod reduction on tile along the `axis`."
+msgstr "沿指定轴对 Tile 执行求积归约。"
+
+#: ../../source/operations.rst:82:<autosummary>:1
+msgid ":py:obj:`argmax <cuda.tile.argmax>`"
+msgstr ""
+
+#: ../../source/operations.rst:82:<autosummary>:1
+msgid "Performs argmax reduction on tile along the `axis`."
+msgstr "沿指定轴对 Tile 执行最大值索引（argmax）归约。"
+
+#: ../../source/operations.rst:82:<autosummary>:1
+msgid ":py:obj:`argmin <cuda.tile.argmin>`"
+msgstr ""
+
+#: ../../source/operations.rst:82:<autosummary>:1
+msgid "Performs argmin reduction on tile along the `axis`."
+msgstr "沿指定轴对 Tile 执行最小值索引（argmin）归约。"
+
+#: ../../source/operations.rst:82:<autosummary>:1
+msgid ":py:obj:`reduce <cuda.tile.reduce>`"
+msgstr ""
+
+#: ../../source/operations.rst:82:<autosummary>:1
+msgid "Apply custom reduction function along axis."
+msgstr "沿指定轴应用自定义归约函数。"
+
+#: ../../source/operations.rst:86
+msgid "Scan"
+msgstr "扫描"
+
+#: ../../source/operations.rst:95:<autosummary>:1
+msgid ":py:obj:`cumsum <cuda.tile.cumsum>`"
+msgstr ""
+
+#: ../../source/operations.rst:95:<autosummary>:1
+msgid "Performs cumsum on tile along the `axis`."
+msgstr "沿指定轴对 Tile 执行累加扫描（cumsum）。"
+
+#: ../../source/operations.rst:95:<autosummary>:1
+msgid ":py:obj:`cumprod <cuda.tile.cumprod>`"
+msgstr ""
+
+#: ../../source/operations.rst:95:<autosummary>:1
+msgid "Performs cumprod on tile along the `axis`."
+msgstr "沿指定轴对 Tile 执行累乘扫描（cumprod）。"
+
+#: ../../source/operations.rst:95:<autosummary>:1
+msgid ":py:obj:`scan <cuda.tile.scan>`"
+msgstr ""
+
+#: ../../source/operations.rst:95:<autosummary>:1
+msgid "Apply custom scan (inclusive prefix) function along axis."
+msgstr "沿指定轴应用自定义扫描（包含当前元素的 prefix）函数。"
+
+#: ../../source/operations.rst:99
+msgid "Matmul"
+msgstr "矩阵乘法"
+
+#: ../../source/operations.rst:107:<autosummary>:1
+msgid ":py:obj:`mma <cuda.tile.mma>`"
+msgstr ""
+
+#: ../../source/operations.rst:107:<autosummary>:1
+msgid "Matrix multiply-accumulate."
+msgstr "矩阵乘加（MMA）。"
+
+#: ../../source/operations.rst:107:<autosummary>:1
+msgid ":py:obj:`mma_scaled <cuda.tile.mma_scaled>`"
+msgstr ""
+
+#: ../../source/operations.rst:107:<autosummary>:1
+msgid "Block-scaled matrix multiply-accumulate."
+msgstr "分块缩放（Block-scaled）矩阵乘加。"
+
+#: ../../source/operations.rst:107:<autosummary>:1
+msgid ":py:obj:`matmul <cuda.tile.matmul>`"
+msgstr ""
+
+#: ../../source/operations.rst:107:<autosummary>:1
+msgid "Performs matrix multiply on the given tiles."
+msgstr "对给定的 Tile 执行矩阵乘法。"
+
+#: ../../source/operations.rst:111
+msgid "Selection"
+msgstr "选择与切片"
+
+#: ../../source/operations.rst:120:<autosummary>:1
+msgid ":py:obj:`where <cuda.tile.where>`"
+msgstr ""
+
+#: ../../source/operations.rst:120:<autosummary>:1
+msgid "Returns elements chosen from x or y depending on condition."
+msgstr "根据条件从 ``x`` 或 ``y`` 中选择元素并返回。"
+
+#: ../../source/operations.rst:120:<autosummary>:1
+msgid ":py:obj:`extract <cuda.tile.extract>`"
+msgstr ""
+
+#: ../../source/operations.rst:120:<autosummary>:1
+msgid "Extracts a smaller tile from input tile."
+msgstr "从输入 Tile 中提取一个较小的子 Tile。"
+
+#: ../../source/operations.rst:120:<autosummary>:1
+msgid ":py:obj:`insert <cuda.tile.insert>`"
+msgstr ""
+
+#: ../../source/operations.rst:120:<autosummary>:1
+msgid "Stores a smaller tile into a bigger tile."
+msgstr "将较小的子 Tile 写入（替换）到较大的 Tile 中。"
+
+#: ../../source/operations.rst:124
+msgid "Math"
+msgstr "数学运算"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`add <cuda.tile.add>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Elementwise add on two tiles."
+msgstr "对两个 Tile 执行逐元素加法。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`sub <cuda.tile.sub>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Elementwise sub on two tiles."
+msgstr "对两个 Tile 执行逐元素减法。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`mul <cuda.tile.mul>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Elementwise mul on two tiles."
+msgstr "对两个 Tile 执行逐元素乘法。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`wrapping_add <cuda.tile.wrapping_add>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Elementwise integer addition that wraps around on overflow."
+msgstr "溢出时回绕的逐元素整数加法。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`wrapping_sub <cuda.tile.wrapping_sub>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Elementwise integer subtraction that wraps around on overflow."
+msgstr "溢出时回绕的逐元素整数减法。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`wrapping_mul <cuda.tile.wrapping_mul>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Elementwise integer multiplication that wraps around on overflow."
+msgstr "溢出时回绕的逐元素整数乘法。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`truediv <cuda.tile.truediv>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Elementwise truediv on two tiles."
+msgstr "对两个 Tile 执行逐元素真除法（truediv）。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`floordiv <cuda.tile.floordiv>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Elementwise floordiv on two tiles."
+msgstr "对两个 Tile 执行逐元素向下取整除法（floordiv）。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`cdiv <cuda.tile.cdiv>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Computes ceil(x / y)."
+msgstr "计算 ceil(x / y)（向上取整除法）。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`pow <cuda.tile.pow>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Elementwise pow on two tiles."
+msgstr "对两个 Tile 执行逐元素幂运算。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`atan2 <cuda.tile.atan2>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Elementwise atan2 of two tiles."
+msgstr "计算两个 Tile 的逐元素反正切 ``atan2`` 。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`mod <cuda.tile.mod>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Elementwise mod on two tiles."
+msgstr "对两个 Tile 执行逐元素取模运算。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`divmod <cuda.tile.divmod>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Elementwise ``divmod()`` on two tiles."
+msgstr "对两个 Tile 执行逐元素 ``divmod()`` 运算。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`minimum <cuda.tile.minimum>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Elementwise minimum on two tiles."
+msgstr "求两个 Tile 的逐元素最小值。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`maximum <cuda.tile.maximum>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Elementwise maximum on two tiles."
+msgstr "求两个 Tile 的逐元素最大值。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`negative <cuda.tile.negative>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Same as `-x`."
+msgstr "等价于 ``-x`` （逐元素取负）。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`abs <cuda.tile.abs>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Perform `abs` on a tile."
+msgstr "对 Tile 执行逐元素绝对值 ``abs`` 。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`isnan <cuda.tile.isnan>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Perform `isnan` on a tile."
+msgstr "对 Tile 执行逐元素 ``isnan`` 检测。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`exp <cuda.tile.exp>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Perform `exp` on a tile."
+msgstr "对 Tile 执行逐元素自然指数 ``exp`` 。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`exp2 <cuda.tile.exp2>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Perform `exp2` on a tile."
+msgstr "对 Tile 执行逐元素以 2 为底的指数 ``exp2`` 。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`log <cuda.tile.log>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Perform `log` on a tile."
+msgstr "对 Tile 执行逐元素自然对数 ``log`` 。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`log2 <cuda.tile.log2>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Perform `log2` on a tile."
+msgstr "对 Tile 执行逐元素以 2 为底的对数 ``log2`` 。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`sqrt <cuda.tile.sqrt>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Perform `sqrt` on a tile."
+msgstr "对 Tile 执行逐元素平方根 ``sqrt`` 。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`rsqrt <cuda.tile.rsqrt>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Perform `rsqrt` on a tile."
+msgstr "对 Tile 执行逐元素平方根倒数 ``rsqrt`` 。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`sin <cuda.tile.sin>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Perform `sin` on a tile."
+msgstr "对 Tile 执行逐元素正弦 ``sin`` 。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`cos <cuda.tile.cos>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Perform `cos` on a tile."
+msgstr "对 Tile 执行逐元素余弦 ``cos`` 。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`tan <cuda.tile.tan>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Perform `tan` on a tile."
+msgstr "对 Tile 执行逐元素正切 ``tan`` 。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`sinh <cuda.tile.sinh>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Perform `sinh` on a tile."
+msgstr "对 Tile 执行逐元素双曲正弦 ``sinh`` 。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`cosh <cuda.tile.cosh>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Perform `cosh` on a tile."
+msgstr "对 Tile 执行逐元素双曲余弦 ``cosh`` 。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`tanh <cuda.tile.tanh>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Perform `tanh` on a tile."
+msgstr "对 Tile 执行逐元素双曲正切 ``tanh`` 。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`floor <cuda.tile.floor>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Perform `floor` on a tile."
+msgstr "对 Tile 执行逐元素向下取整 ``floor`` 。"
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid ":py:obj:`ceil <cuda.tile.ceil>`"
+msgstr ""
+
+#: ../../source/operations.rst:163:<autosummary>:1
+msgid "Perform `ceil` on a tile."
+msgstr "对 Tile 执行逐元素向上取整 ``ceil`` 。"
+
+#: ../../source/operations.rst:167
+msgid "Bitwise"
+msgstr "按位运算"
+
+#: ../../source/operations.rst:179:<autosummary>:1
+msgid ":py:obj:`bitwise_and <cuda.tile.bitwise_and>`"
+msgstr ""
+
+#: ../../source/operations.rst:179:<autosummary>:1
+msgid "Elementwise bitwise_and on two tiles."
+msgstr "对两个 Tile 执行逐元素按位与（bitwise_and）。"
+
+#: ../../source/operations.rst:179:<autosummary>:1
+msgid ":py:obj:`bitwise_or <cuda.tile.bitwise_or>`"
+msgstr ""
+
+#: ../../source/operations.rst:179:<autosummary>:1
+msgid "Elementwise bitwise_or on two tiles."
+msgstr "对两个 Tile 执行逐元素按位或（bitwise_or）。"
+
+#: ../../source/operations.rst:179:<autosummary>:1
+msgid ":py:obj:`bitwise_xor <cuda.tile.bitwise_xor>`"
+msgstr ""
+
+#: ../../source/operations.rst:179:<autosummary>:1
+msgid "Elementwise bitwise_xor on two tiles."
+msgstr "对两个 Tile 执行逐元素按位异或（bitwise_xor）。"
+
+#: ../../source/operations.rst:179:<autosummary>:1
+msgid ":py:obj:`bitwise_lshift <cuda.tile.bitwise_lshift>`"
+msgstr ""
+
+#: ../../source/operations.rst:179:<autosummary>:1
+msgid "Elementwise bitwise_lshift on two tiles."
+msgstr "对两个 Tile 执行逐元素按位左移（bitwise_lshift）。"
+
+#: ../../source/operations.rst:179:<autosummary>:1
+msgid ":py:obj:`bitwise_rshift <cuda.tile.bitwise_rshift>`"
+msgstr ""
+
+#: ../../source/operations.rst:179:<autosummary>:1
+msgid "Elementwise bitwise_rshift on two tiles."
+msgstr "对两个 Tile 执行逐元素按位右移（bitwise_rshift）。"
+
+#: ../../source/operations.rst:179:<autosummary>:1
+msgid ":py:obj:`bitwise_not <cuda.tile.bitwise_not>`"
+msgstr ""
+
+#: ../../source/operations.rst:179:<autosummary>:1
+msgid "Elementwise bitwise not on a tile."
+msgstr "对 Tile 执行逐元素按位取反（bitwise not）。"
+
+#: ../../source/operations.rst:183
+msgid "Comparison"
+msgstr "比较运算"
+
+#: ../../source/operations.rst:194:<autosummary>:1
+msgid ":py:obj:`greater <cuda.tile.greater>`"
+msgstr ""
+
+#: ../../source/operations.rst:194:<autosummary>:1
+msgid "Compare two tiles elementwise with `>`."
+msgstr "使用 ``>`` 对两个 Tile 进行逐元素比较。"
+
+#: ../../source/operations.rst:194:<autosummary>:1
+msgid ":py:obj:`greater_equal <cuda.tile.greater_equal>`"
+msgstr ""
+
+#: ../../source/operations.rst:194:<autosummary>:1
+msgid "Compare two tiles elementwise with `>=`."
+msgstr "使用 ``>=`` 对两个 Tile 进行逐元素比较。"
+
+#: ../../source/operations.rst:194:<autosummary>:1
+msgid ":py:obj:`less <cuda.tile.less>`"
+msgstr ""
+
+#: ../../source/operations.rst:194:<autosummary>:1
+msgid "Compare two tiles elementwise with `<`."
+msgstr "使用 ``<`` 对两个 Tile 进行逐元素比较。"
+
+#: ../../source/operations.rst:194:<autosummary>:1
+msgid ":py:obj:`less_equal <cuda.tile.less_equal>`"
+msgstr ""
+
+#: ../../source/operations.rst:194:<autosummary>:1
+msgid "Compare two tiles elementwise with `<=`."
+msgstr "使用 ``<=`` 对两个 Tile 进行逐元素比较。"
+
+#: ../../source/operations.rst:194:<autosummary>:1
+msgid ":py:obj:`equal <cuda.tile.equal>`"
+msgstr ""
+
+#: ../../source/operations.rst:194:<autosummary>:1
+msgid "Compare two tiles elementwise with `==`."
+msgstr "使用 ``==`` 对两个 Tile 进行逐元素比较。"
+
+#: ../../source/operations.rst:194:<autosummary>:1
+msgid ":py:obj:`not_equal <cuda.tile.not_equal>`"
+msgstr ""
+
+#: ../../source/operations.rst:194:<autosummary>:1
+msgid "Compare two tiles elementwise with `!=`."
+msgstr "使用 ``!=`` 对两个 Tile 进行逐元素比较。"
+
+#: ../../source/operations.rst:198
+msgid "Atomic"
+msgstr "原子操作"
+
+#: ../../source/operations.rst:211:<autosummary>:1
+msgid ":py:obj:`atomic_cas <cuda.tile.atomic_cas>`"
+msgstr ""
+
+#: ../../source/operations.rst:211:<autosummary>:1
+msgid "Bulk atomic compare-and-swap on array elements with given indices."
+msgstr "对指定索引处的数组元素执行批量原子比较并交换（CAS）。"
+
+#: ../../source/operations.rst:211:<autosummary>:1
+msgid ":py:obj:`atomic_xchg <cuda.tile.atomic_xchg>`"
+msgstr ""
+
+#: ../../source/operations.rst:211:<autosummary>:1
+msgid "Bulk atomic exchange of array elements at given indices."
+msgstr "对指定索引处的数组元素执行批量原子交换（exchange）。"
+
+#: ../../source/operations.rst:211:<autosummary>:1
+msgid ":py:obj:`atomic_add <cuda.tile.atomic_add>`"
+msgstr ""
+
+#: ../../source/operations.rst:211:<autosummary>:1
+msgid "Bulk atomic post-increment of array elements at given indices."
+msgstr "对指定索引处的数组元素执行批量原子加法更新。"
+
+#: ../../source/operations.rst:211:<autosummary>:1
+msgid ":py:obj:`atomic_max <cuda.tile.atomic_max>`"
+msgstr ""
+
+#: ../../source/operations.rst:211:<autosummary>:1
+msgid "Bulk atomic maximum value assignment on array elements at given indices."
+msgstr "对指定索引处的数组元素执行批量原子取最大值更新。"
+
+#: ../../source/operations.rst:211:<autosummary>:1
+msgid ":py:obj:`atomic_min <cuda.tile.atomic_min>`"
+msgstr ""
+
+#: ../../source/operations.rst:211:<autosummary>:1
+msgid "Bulk atomic minimum value assignment on array elements at given indices."
+msgstr "对指定索引处的数组元素执行批量原子取最小值更新。"
+
+#: ../../source/operations.rst:211:<autosummary>:1
+msgid ":py:obj:`atomic_and <cuda.tile.atomic_and>`"
+msgstr ""
+
+#: ../../source/operations.rst:211:<autosummary>:1
+msgid "Bulk atomic AND operation on array elements at given indices."
+msgstr "对指定索引处的数组元素执行批量原子按位与操作。"
+
+#: ../../source/operations.rst:211:<autosummary>:1
+msgid ":py:obj:`atomic_or <cuda.tile.atomic_or>`"
+msgstr ""
+
+#: ../../source/operations.rst:211:<autosummary>:1
+msgid "Bulk atomic OR operation on array elements at given indices."
+msgstr "对指定索引处的数组元素执行批量原子按位或操作。"
+
+#: ../../source/operations.rst:211:<autosummary>:1
+msgid ":py:obj:`atomic_xor <cuda.tile.atomic_xor>`"
+msgstr ""
+
+#: ../../source/operations.rst:211:<autosummary>:1
+msgid "Bulk atomic XOR operation on array elements at given indices."
+msgstr "对指定索引处的数组元素执行批量原子按位异或操作。"
+
+#: ../../source/operations.rst:215
+msgid "Utility"
+msgstr "实用工具"
+
+#: ../../source/operations.rst:227:<autosummary>:1
+msgid ":py:obj:`printf <cuda.tile.printf>`"
+msgstr ""
+
+#: ../../source/operations.rst:227:<autosummary>:1
+msgid "Print the values at runtime from the device"
+msgstr "在运行时从设备端打印数值。"
+
+#: ../../source/operations.rst:227:<autosummary>:1
+msgid ":py:obj:`print <cuda.tile.print>`"
+msgstr ""
+
+#: ../../source/operations.rst:227:<autosummary>:1
+msgid "Print values at runtime from the device using Python-style syntax."
+msgstr "在运行时使用 Python 风格语法从设备端打印数值。"
+
+#: ../../source/operations.rst:227:<autosummary>:1
+msgid ":py:obj:`assert_ <cuda.tile.assert_>`"
+msgstr ""
+
+#: ../../source/operations.rst:227:<autosummary>:1
+msgid "Assert that all elements of the given tile are True."
+msgstr "断言给定 Tile 中的所有元素均为 True。"
+
+#: ../../source/operations.rst:227:<autosummary>:1
+msgid ":py:obj:`assume_divisible_by <cuda.tile.assume_divisible_by>`"
+msgstr ""
+
+#: ../../source/operations.rst:227:<autosummary>:1
+msgid "Declares that ``x`` is divisible by ``divisor``."
+msgstr "声明 ``x`` 可被 ``divisor`` 整除。"
+
+#: ../../source/operations.rst:227:<autosummary>:1
+msgid ""
+":py:obj:`grid_dependency_control_launch_dependents "
+"<cuda.tile.grid_dependency_control_launch_dependents>`"
+msgstr ""
+
+#: ../../source/operations.rst:227:<autosummary>:1
+msgid "Allow a programmatically dependent successor kernel to begin scheduling."
+msgstr "允许以编程方式依赖的后继内核开始调度。"
+
+#: ../../source/operations.rst:227:<autosummary>:1
+msgid ""
+":py:obj:`grid_dependency_control_wait "
+"<cuda.tile.grid_dependency_control_wait>`"
+msgstr ""
+
+#: ../../source/operations.rst:227:<autosummary>:1
+msgid ""
+"Wait for the preceding kernel in a programmatic dependent launch to "
+"finish."
+msgstr "在编程式依赖启动中等待前驱内核完成执行。"
+
+#: ../../source/operations.rst:231
+msgid "Metaprogramming Support"
+msgstr "元编程支持"
+
+#: ../../source/operations.rst:241:<autosummary>:1
+msgid ":py:obj:`ensure_constant <cuda.tile.ensure_constant>`"
+msgstr ""
+
+#: ../../source/operations.rst:241:<autosummary>:1
+msgid "Asserts that the argument is a compile-time constant and returns it."
+msgstr "断言参数为编译期常量并将其返回。"
+
+#: ../../source/operations.rst:241:<autosummary>:1
+msgid ":py:obj:`static_assert <cuda.tile.static_assert>`"
+msgstr ""
+
+#: ../../source/operations.rst:241:<autosummary>:1
+msgid "Asserts that a condition is true at compile time."
+msgstr "在编译期断言给定条件为真。"
+
+#: ../../source/operations.rst:241:<autosummary>:1
+msgid ":py:obj:`static_eval <cuda.tile.static_eval>`"
+msgstr ""
+
+#: ../../source/operations.rst:241:<autosummary>:1
+msgid "Evaluates the given Python expression at compile time."
+msgstr "在编译期求值给定的 Python 表达式。"
+
+#: ../../source/operations.rst:241:<autosummary>:1
+msgid ":py:obj:`static_exception <cuda.tile.static_exception>`"
+msgstr ""
+
+#: ../../source/operations.rst:241:<autosummary>:1
+msgid "Marks an exception as compile-time."
+msgstr "将异常标记为编译期异常。"
+
+#: ../../source/operations.rst:241:<autosummary>:1
+msgid ":py:obj:`static_iter <cuda.tile.static_iter>`"
+msgstr ""
+
+#: ../../source/operations.rst:241:<autosummary>:1
+msgid "Expand an iterable during compilation."
+msgstr "在编译期间展开可迭代对象。"
+
+#: ../../source/operations.rst:245
+msgid "Classes"
+msgstr "核心类"
+
+#: ../../source/operations.rst:252:<autosummary>:1
+msgid ":py:obj:`Array <cuda.tile.Array>`"
+msgstr ""
+
+#: ../../source/operations.rst:252:<autosummary>:1
+msgid "Class for |global array| objects."
+msgstr "表示 |global array| 对象的类。"
+
+#: ../../source/operations.rst:252:<autosummary>:1
+msgid ":py:obj:`TiledView <cuda.tile.TiledView>`"
+msgstr ""
+
+#: ../../source/operations.rst:252:<autosummary>:1
+msgid "Class for |tiled view| objects."
+msgstr "表示 |tiled view| 对象的类。"
+
+#: ../../source/operations.rst:252:<autosummary>:1
+msgid ":py:obj:`Slice <cuda.tile.Slice>`"
+msgstr ""
+
+#: ../../source/operations.rst:252:<autosummary>:1
+msgid "A start + length index for array dimensions."
+msgstr "用于数组维度的起始位置 + 长度索引。"
+
+#: ../../source/operations.rst:264
+msgid "Enums"
+msgstr "枚举"
+
+#: ../../source/operations.rst:271:<autosummary>:1
+msgid ":py:obj:`RoundingMode <cuda.tile.RoundingMode>`"
+msgstr ""
+
+#: ../../source/operations.rst:271:<autosummary>:1
+msgid "Rounding mode for floating-point operations."
+msgstr "浮点运算的舍入模式。"
+
+#: ../../source/operations.rst:271:<autosummary>:1
+msgid ":py:obj:`PaddingMode <cuda.tile.PaddingMode>`"
+msgstr ""
+
+#: ../../source/operations.rst:271:<autosummary>:1
+msgid "Padding mode for load operation."
+msgstr "加载操作的填充模式。"
+
+#: ../../source/operations.rst:275
+msgid "Autotuning"
+msgstr "自动调优"
+
+#: ../../source/operations.rst:280:<autosummary>:1
+msgid ":py:obj:`tune.exhaustive_search <cuda.tile.tune.exhaustive_search>`"
+msgstr ""
+
+#: ../../source/operations.rst:280:<autosummary>:1
+msgid "Searches the entire search space and return the best configuration."
+msgstr "遍历整个搜索空间并返回最佳配置。"
+
+#: ../../source/operations.rst:288:<autosummary>:1
+msgid ":py:obj:`tune.TuningResult <cuda.tile.tune.TuningResult>`"
+msgstr ""
+
+#: ../../source/operations.rst:288:<autosummary>:1
+msgid "Holds the measurement result for each config."
+msgstr "保存每组配置的测量结果。"
+
+#: ../../source/operations.rst:288:<autosummary>:1
+msgid ":py:obj:`tune.Measurement <cuda.tile.tune.Measurement>`"
+msgstr ""
+
+#: ../../source/operations.rst:288:<autosummary>:1
+msgid "Holds a configuration and its timing result."
+msgstr "保存一组配置及其计时结果。"
+
+#: ../../source/operations.rst:295:<autosummary>:1
+msgid ":py:obj:`kernel.replace_hints <cuda.tile.kernel.replace_hints>`"
+msgstr ""
+
+#: ../../source/operations.rst:295:<autosummary>:1
+msgid "Return a new kernel with updated compiler hints."
+msgstr "返回一个带有更新后编译器提示的新内核。"
+
+#: ../../source/operations.rst:295:<autosummary>:1
+msgid ":py:obj:`compiler_timeout <cuda.tile.compiler_timeout>`"
+msgstr ""
+
+#: ../../source/operations.rst:295:<autosummary>:1
+msgid "Context manager that temporarily sets the compiler timeout."
+msgstr "临时设置编译器超时时间的上下文管理器。"
+
+#: ../../source/operations.rst:299
+msgid "JAX FFI"
+msgstr "JAX FFI"
+
+#: ../../source/operations.rst:305:<autosummary>:1
+msgid ":py:obj:`jax.cutile_call <cuda.tile.jax.cutile_call>`"
+msgstr ""
+
+#: ../../source/operations.rst:305:<autosummary>:1
+msgid "Launch a cuTile kernel from a JAX-traced graph."
+msgstr "从 JAX 追踪计算图中启动 cuTile 内核。"
+
+#: ../../source/operations.rst:312:<autosummary>:1
+msgid ":py:obj:`jax.OutputPlaceholder <cuda.tile.jax.OutputPlaceholder>`"
+msgstr ""
+
+#: ../../source/operations.rst:312:<autosummary>:1
+msgid "Represents an output buffer passed to cutile_call."
+msgstr "表示传递给 ``cutile_call`` 的输出缓冲区。"
+
+#: ../../source/operations.rst:312:<autosummary>:1
+msgid ":py:obj:`jax.InputOutput <cuda.tile.jax.InputOutput>`"
+msgstr ""
+
+#: ../../source/operations.rst:312:<autosummary>:1
+msgid ""
+"Wraps an input buffer to alias an output buffer to be returned by "
+"cutile_call."
+msgstr "包装一个输入缓冲区，使其与 ``cutile_call`` 返回的输出缓冲区共享同一块存储（alias）。"
+

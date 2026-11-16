@@ -1,0 +1,125 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.load_advanced_indexing.rst:2
+msgid "cuda.tile.load\\_advanced\\_indexing"
+msgstr "cuda.tile.load\\_advanced\\_indexing"
+
+#: cuda.tile._stub.load_advanced_indexing:1 of
+msgid "Loads a tile from non-contiguous slices of `array`."
+msgstr "从数组的非连续切片中加载一个 Tile。"
+
+#: cuda.tile._stub.load_advanced_indexing:3 of
+msgid ""
+"``indices`` is a tuple of length ``array.ndim``.  Exactly one entry must "
+"be a 1-D integer :class:`Tile` (the *sparse dim*); every other entry must"
+" be a :class:`Slice` ``(start, length)`` where ``start`` is a runtime "
+"element-space offset and ``length`` is a compile-time power-of-two tile "
+"size."
+msgstr ""
+"``indices`` 是长度为 ``array.ndim`` 的元组。其中必须有且仅有一项为一维整数 :class:`Tile` （即 "
+"*稀疏维度* ）；其余每一项都必须是 :class:`Slice` ``(start, length)`` ，其中 ``start`` "
+"为运行时元素空间偏移量， ``length`` 为编译期确定且为 2 的幂的 Tile 大小。"
+
+#: cuda.tile._stub.load_advanced_indexing:9 of
+#, python-brace-format
+msgid ""
+"The sparse-dim tile contains element-space indices — each value selects "
+"one slice of the array along that dimension.  Each dense-dim "
+":class:`Slice` describes a contiguous range ``[start, start + length)``. "
+"The resulting tile has shape ``(len_0, ..., len_{n-1})`` where ``len_i`` "
+"is the index-tile length for the sparse dim or ``Slice.length`` for dense"
+" dims."
+msgstr ""
+"稀疏维度 Tile 包含元素空间索引——每个值沿该维度选择数组中的一个切片。每个稠密维度 :class:`Slice` 描述一段连续范围 "
+"``[start, start + length)`` 。所得 Tile 的形状为 ``(len_0, ..., len_{n-1})`` ，其中"
+" ``len_i`` 对稀疏维度而言为索引 Tile 的长度，对稠密维度而言为 ``Slice.length`` 。"
+
+#: cuda.tile._stub.load_advanced_indexing:16 of
+msgid ""
+"If the tile lies entirely outside the tiled view, the behavior is "
+"undefined."
+msgstr "若 Tile 完全位于分块视图之外，则行为未定义。"
+
+#: ../../source/generated/cuda.tile.load_advanced_indexing.rst
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile._stub.load_advanced_indexing:18 of
+msgid "Array to load from."
+msgstr "要从中加载数据的数组。"
+
+#: cuda.tile._stub.load_advanced_indexing:20 of
+msgid ""
+"Length must equal ``array.ndim``.  Exactly one entry is a 1-D integer "
+":class:`Tile` (sparse dim); the rest are :class:`Slice` objects (dense "
+"dims)."
+msgstr ""
+"长度必须等于 ``array.ndim`` 。其中必须有且仅有一项为一维整数 :class:`Tile` （稀疏维度）；其余各项均为 "
+":class:`Slice` 对象（稠密维度）。"
+
+#: cuda.tile._stub.load_advanced_indexing:24 of
+msgid ""
+"Fill value for OOB elements on both sparse and dense dims. Defaults to "
+"``UNDETERMINED``."
+msgstr "稀疏维度和稠密维度上越界（OOB）元素的填充值。默认为 ``UNDETERMINED`` 。"
+
+#: cuda.tile._stub.load_advanced_indexing:27 of
+msgid "DRAM traffic hint (1 = low, 10 = high)."
+msgstr "DRAM 访存负载强度提示（1 = 低，10 = 高）。"
+
+#: cuda.tile._stub.load_advanced_indexing:29 of
+msgid "If ``False``, TMA will not be used."
+msgstr "若为 ``False`` ，则不会使用 TMA。"
+
+#: ../../source/generated/cuda.tile.load_advanced_indexing.rst
+msgid "Returns"
+msgstr "返回值"
+
+#: cuda.tile._stub.load_advanced_indexing:32 of
+#, python-brace-format
+msgid ""
+"Shape ``(len_0, ..., len_{n-1})`` — sparse dim length equals the index-"
+"tile length; dense dim lengths equal the corresponding ``Slice.length`` "
+"values."
+msgstr ""
+"形状为 ``(len_0, ..., len_{n-1})`` ——其中稀疏维度长度等于索引 Tile 的长度，稠密维度长度等于对应 "
+"``Slice.length`` 的值。"
+
+#: ../../source/generated/cuda.tile.load_advanced_indexing.rst
+msgid "Return type"
+msgstr "返回类型"
+
+#: cuda.tile._stub.load_advanced_indexing:38 of
+msgid "Examples"
+msgstr "示例"
+
+#: cuda.tile._stub.load_advanced_indexing:57 of
+msgid "Output"
+msgstr "输出"
+
+#: cuda.tile._stub.load_advanced_indexing:59 of
+msgid ":func:`store_advanced_indexing`"
+msgstr ":func:`store_advanced_indexing`"
+

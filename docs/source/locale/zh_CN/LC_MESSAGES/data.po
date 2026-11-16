@@ -1,0 +1,973 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/data.rst:10
+msgid "Data Model"
+msgstr "数据模型"
+
+#: ../../source/data.rst:12
+msgid ""
+"cuTile is an array-based programming model. The fundamental data "
+"structure is the multidimensional array whose elements share a single "
+"homogeneous type. cuTile Python exposes only arrays, not pointers."
+msgstr ""
+"cuTile 是一种基于数组的编程模型。其最基本的数据结构是元素具有单一齐次类型的多维数组。cuTile Python "
+"仅暴露数组抽象，而不直接暴露指针。"
+
+#: ../../source/data.rst:16
+msgid "An array-based model was chosen because:"
+msgstr "选择基于数组的编程模型基于以下考量："
+
+#: ../../source/data.rst:18
+msgid ""
+"Arrays know their bounds, so accesses can be checked for safety and "
+"correctness."
+msgstr "数组自身携带边界信息，因此可以对访问进行安全性和正确性检查。"
+
+#: ../../source/data.rst:19
+msgid ""
+"Array-based load/store operations can be efficiently lowered to speed-of-"
+"light hardware mechanisms."
+msgstr "基于数组的 load/store 操作可以高效地降级（lower）为接近硬件极限速度的底层硬件机制。"
+
+#: ../../source/data.rst:20
+msgid ""
+"Python programmers are already familiar with array-based frameworks such "
+"as NumPy."
+msgstr "Python 开发者早已熟悉诸如 NumPy 等基于数组的编程框架。"
+
+#: ../../source/data.rst:21
+msgid "Pointers are not a natural fit for Python."
+msgstr "指针概念并不符合 Python 的语言习惯。"
+
+#: ../../source/data.rst:23
+msgid ""
+"Within |tile code|, only the types described in this section are "
+"supported."
+msgstr "在 |tile code| 中，仅支持本节所描述的数据类型。"
+
+#: ../../source/data.rst:29
+msgid "Global Arrays"
+msgstr "全局数组"
+
+#: ../../source/data.rst:31
+msgid ""
+"A *global array* (or *array*) is a container of elements of a specific "
+"|dtype| arranged in a logical multidimensional space."
+msgstr "*全局数组* （或简称为 *数组*）是按逻辑多维空间组织、且具有特定 |dtype| 的元素容器。"
+
+#: ../../source/data.rst:34
+msgid ""
+"An array's *shape* is a tuple of integers, each denoting the length of "
+"the corresponding dimension. The length of the shape tuple equals the "
+"array's number of dimensions, and the product of its values equals the "
+"total number of logical elements in the array."
+msgstr "数组的 *形状（shape）* 是一个整数元组，每个整数表示对应维度的长度。形状元组的长度等于数组的维度数，各元素之积等于数组中逻辑元素的总数量。"
+
+#: ../../source/data.rst:39
+msgid ""
+"Arrays are stored in global memory using a *strided memory layout*: in "
+"addition to a shape, each array has an equally sized tuple of *strides* "
+"that maps logical indices to physical memory locations. For example, for "
+"a 3-dimensional `float32` array with strides `(s1, s2, s3)`, the memory "
+"address of the element at index `(i1, i2, i3)` is:"
+msgstr ""
+"数组在全局内存中采用 *跨步内存布局（strided memory layout）* 存储：除形状外，每个数组还带有一个同等长度的 "
+"*步长（strides）* 元组，用于将逻辑索引映射到物理内存位置。例如，对于步长为 ``(s1, s2, s3)`` 的三维 "
+"``float32`` 数组，索引 ``(i1, i2, i3)`` 处元素的内存地址为："
+
+#: ../../source/data.rst:48
+msgid ""
+"where ``base_addr`` is the base address of the array and ``4`` is the "
+"byte size of a ``float32`` element."
+msgstr "其中 ``base_addr`` 为数组的基地址， ``4`` 为每个 ``float32`` 元素的字节大小。"
+
+#: ../../source/data.rst:51
+msgid ""
+"New arrays can only be allocated by the host and passed to the tile "
+"kernel as arguments. |Tile code| can only create new views of existing "
+"arrays, for example via :meth:`Array.slice`. As in Python, assigning an "
+"array to another variable does not copy the underlying data but creates "
+"another reference to the same array."
+msgstr ""
+"新数组只能由主机端分配并作为参数传递给 Tile 内核。|Tile code| 只能基于已有数组创建新视图（例如通过 "
+":meth:`Array.slice` ）。与常规 Python 一样，将数组赋值给另一个变量不会复制底层数据，而是创建指向同一数组的另一个引用。"
+
+#: ../../source/data.rst:56
+msgid ""
+"Any object that implements the |DLPack| interface or the |CUDA Array "
+"Interface| can be passed as a kernel argument --- for example, |CuPy| "
+"arrays and |PyTorch| tensors."
+msgstr ""
+"任何实现了 |DLPack| 接口或 |CUDA Array Interface| 的对象都可以作为内核参数传入——例如 |CuPy| 数组和 "
+"|PyTorch| 张量。"
+
+#: ../../source/data.rst:59
+msgid ""
+"When launching from Python with :py:func:`cuda.tile.launch`, distinct "
+"array arguments must not overlap in memory, including arrays passed "
+"inside tuples. Otherwise, the behavior is undefined. For ahead-of-time "
+"compilation, the permitted aliasing is specified by "
+":py:class:`cuda.tile.compilation.ArrayConstraint`."
+msgstr ""
+"从 Python 使用 :py:func:`cuda.tile.launch` "
+"启动内核时，不同的数组参数（包括作为元组元素传入的数组）在内存中不得重叠，否则行为未定义。对于预先（AOT）编译，允许的别名关系通过 "
+":py:class:`cuda.tile.compilation.ArrayConstraint` 指定。"
+
+#: ../../source/data.rst:64
+msgid ""
+"An array's shape and strides can be queried with :py:attr:`Array.shape` "
+"and :py:attr:`Array.strides`. Their scalar values use ``int32`` by "
+"default. For arrays whose shape or stride values exceed the range of "
+"``int32``, use :py:data:`cuda.tile.IndexedWithInt64` or set "
+"``index_dtype=ct.int64`` in an :py:class:`cuda.tile.ArrayAnnotation`."
+msgstr ""
+"可通过 :py:attr:`Array.shape` 和 :py:attr:`Array.strides` "
+"查询数组的形状与步长。它们的标量值默认采用 ``int32`` 类型。如果数组的形状或步长值超出 ``int32`` 的表示范围，请使用 "
+":py:data:`cuda.tile.IndexedWithInt64` ，或在 "
+":py:class:`cuda.tile.ArrayAnnotation` 中设置 ``index_dtype=ct.int64`` 。"
+
+#: ../../source/data.rst:70
+msgid ""
+"Shape and stride values can be runtime values or compile-time constants. "
+"Use ``static_shape_dims`` and ``static_stride_dims`` in "
+":py:class:`cuda.tile.ArrayAnnotation` to specialize selected dimensions "
+"to their launch-time values. The dispatcher can also infer constant "
+"dimensions, such as shape or stride values equal to one."
+msgstr ""
+"形状和步长值既可以是运行时值，也可以是编译期常量。可在 :py:class:`cuda.tile.ArrayAnnotation` 中使用 "
+"``static_shape_dims`` 和 ``static_stride_dims`` "
+"，将指定维度特化为其启动时取值。分发器也能自动推断常量维度（例如等于 1 的形状或步长值）。"
+
+#: ../../source/data.rst:78
+msgid ":ref:`cuda.tile.Array class documentation <data-array-cuda-tile-array>`"
+msgstr ":ref:`cuda.tile.Array 类文档 <data-array-cuda-tile-array>`"
+
+#: ../../source/data.rst:90
+msgid "Tiles and Scalars"
+msgstr "Tile 与标量"
+
+#: ../../source/data.rst:91
+msgid ""
+"A *tile* is an immutable multidimensional collection of elements of a "
+"specific |dtype|."
+msgstr "*Tile* 是具有特定 |dtype| 的不可变多维元素集合。"
+
+#: ../../source/data.rst:93
+msgid ""
+"A tile's *shape* is a tuple of integers, each denoting the length of the "
+"corresponding dimension. The length of the shape tuple equals the tile's "
+"number of dimensions, and the product of its values equals the total "
+"number of elements in the tile."
+msgstr ""
+"Tile 的 *形状（shape）* 是一个整数元组，每个整数表示对应维度的长度。形状元组的长度等于 Tile 的维度数，各元素之积等于 Tile"
+" 中元素的总数。"
+
+#: ../../source/data.rst:97
+msgid ""
+"The shape of a tile must be known at compile time. Each dimension of a "
+"tile must be a power of 2."
+msgstr "Tile 的形状必须在编译期确定，且每个维度的长度都必须是 2 的幂。"
+
+#: ../../source/data.rst:99
+msgid ""
+"A tile's dtype and shape can be queried with the ``dtype`` and ``shape`` "
+"attributes, respectively. For example, if ``x`` is a `float32` tile, "
+"``x.dtype`` returns a compile-time constant equal to "
+":py:data:`cuda.tile.float32`."
+msgstr ""
+"可分别通过 ``dtype`` 和 ``shape`` 属性查询 Tile 的数据类型和形状。例如，若 ``x`` 是一个 ``float32``"
+" Tile， ``x.dtype`` 会返回一个等于 :py:data:`cuda.tile.float32` 的编译期常量。"
+
+#: ../../source/data.rst:103
+msgid ""
+"A zero-dimensional tile is called a *scalar*. A scalar has exactly one "
+"element and its shape is the empty tuple `()`. Numeric literals like `7` "
+"or `3.14` are treated as constant scalars, i.e. zero-dimensional tiles."
+msgstr ""
+"零维 Tile 称为 *标量（scalar）* 。标量仅包含一个元素，其形状为空元组 ``()`` 。诸如 ``7`` 或 ``3.14`` "
+"之类的数字字面量会被视作常量标量，即零维 Tile。"
+
+#: ../../source/data.rst:107
+msgid ""
+"Because scalars are tiles, they differ slightly from Python's "
+"``int``/``float`` objects. For example, they have ``dtype`` and ``shape``"
+" attributes:"
+msgstr ""
+"由于标量本质上也是 Tile，它们与 Python 原生的 ``int`` / ``float`` 对象略有不同。例如，标量同样具有 "
+"``dtype`` 和 ``shape`` 属性："
+
+#: ../../source/data.rst:117
+msgid ""
+"Tiles can only be used in |tile code|, not in host code. A tile's "
+"contents do not necessarily have a physical representation in memory. "
+"Tiles are created by loading from |global arrays| using functions such as"
+" :py:func:`cuda.tile.load` and :py:func:`cuda.tile.gather`, or with "
+"|factory| functions such as :py:func:`cuda.tile.zeros`."
+msgstr ""
+"Tile 只能在 |tile code| 中使用，而不能在主机代码中使用。Tile 的内容在内存中不一定具有对应的物理存储表示。Tile "
+"可通过使用 :py:func:`cuda.tile.load` 、 :py:func:`cuda.tile.gather` 等函数从 "
+"|global arrays| 加载创建，或通过 :py:func:`cuda.tile.zeros` 等 |factory| 函数创建。"
+
+#: ../../source/data.rst:123
+msgid ""
+"Tiles can be stored back into global arrays using functions such as "
+":py:func:`cuda.tile.store` and :py:func:`cuda.tile.scatter`."
+msgstr ""
+"可以使用 :py:func:`cuda.tile.store` 和 :py:func:`cuda.tile.scatter` 等函数将 Tile "
+"存回全局数组。"
+
+#: ../../source/data.rst:126
+msgid ""
+"Scalar constants are |loosely typed| by default, for example, a literal "
+"``2`` or a constant attribute like ``Tile.ndim``, ``Tile.shape``, or "
+"``Array.ndim``."
+msgstr ""
+"标量常量默认为 |loosely typed| ，例如字面量 ``2`` 或 ``Tile.ndim`` 、 ``Tile.shape`` 、 "
+"``Array.ndim`` 等常量属性。"
+
+#: ../../source/data.rst:130
+msgid ":ref:`cuda.tile.Tile class documentation <data-tile-cuda-tile-tile>`"
+msgstr ":ref:`cuda.tile.Tile 类文档 <data-tile-cuda-tile-tile>`"
+
+#: ../../source/data.rst:142
+msgid "Element & Tile Space"
+msgstr "元素空间与 Tile 空间"
+
+#: ../../source/data.rst:156
+msgid ""
+"The *element space* of an array is the multidimensional space of its "
+"elements, stored in memory according to a given layout (row-major, "
+"column-major, etc.)."
+msgstr "数组的 *元素空间（element space）* 是由其元素构成的多维空间，元素按照给定的内存布局（行优先、列优先等）存储在内存中。"
+
+#: ../../source/data.rst:159
+msgid ""
+"The *tile space* of an array is the multidimensional space of tiles of a "
+"given tile shape within that array. A tile index ``(i, j, ...)`` with "
+"shape ``S`` refers to the elements belonging to the ``(i+1)``-th, "
+"``(j+1)``-th, ... tile."
+msgstr ""
+"数组的 *Tile 空间（tile space）* 是指该数组中按给定 Tile 形状划分出的 Tile 多维空间。形状为 ``S`` 的 "
+"Tile 索引 ``(i, j, ...)`` 指向第 ``(i+1)`` 、 ``(j+1)`` 、…… 个 Tile 中的元素。"
+
+#: ../../source/data.rst:163
+msgid ""
+"When accessing array elements via tile indices, the array's "
+"multidimensional memory layout is used. To access the tile space with a "
+"different layout, use the `order` parameter of load/store operations."
+msgstr ""
+"通过 Tile 索引访问数组元素时，默认沿用数组自身的多维内存维度顺序。如需按不同维度映射顺序访问 Tile 空间，可使用 load/store "
+"操作的 ``order`` 参数。"
+
+#: ../../source/data.rst:169
+msgid "Tiled Views"
+msgstr "分块视图"
+
+#: ../../source/data.rst:171
+msgid "A *tiled view* represents the |tile space| of a |global array|."
+msgstr "*分块视图（tiled view）* 表示一个 |global array| 的 |tile space| 。"
+
+#: ../../source/data.rst:173
+msgid ""
+"A tiled view's *num_tiles* is a tuple of integers, each denoting the "
+"number of tiles along the corresponding dimension. The length of the "
+"*num_tiles* tuple equals the tile space's number of dimensions, and the "
+"product of its values equals the total number of tiles in the tile space."
+msgstr ""
+"分块视图的 *num_tiles* 是一个整数元组，每个整数表示沿对应维度的 Tile 数量。*num_tiles* 元组的长度等于 Tile "
+"空间的维度数，各元素之积等于 Tile 空间中的 Tile 总数。"
+
+#: ../../source/data.rst:177
+msgid "A tile in the tiled view can be loaded or stored by its tile index."
+msgstr "分块视图中的每个 Tile 都可通过其 Tile 索引进行加载或存储。"
+
+#: ../../source/data.rst:179
+msgid ""
+"By default, consecutive tiles along each axis are adjacent with no "
+"overlap or gaps: the origin of each successive tile advances by "
+"``tile_shape[i]`` elements along axis *i*. Specifying ``traversal_steps``"
+" to :meth:`Array.tiled_view` changes the advance per step to "
+"``traversal_steps[i]``, producing overlapping tiles when "
+"``traversal_steps[i] < tile_shape[i]`` or gapped tiles when "
+"``traversal_steps[i] > tile_shape[i]``."
+msgstr ""
+"默认情况下，沿每个轴相邻的 Tile 紧邻排列且无重叠或间隔：每步原点沿轴 *i* 前进 ``tile_shape[i]`` 个元素。在 "
+":meth:`Array.tiled_view` 中指定 ``traversal_steps`` 可将每步前进量修改为 "
+"``traversal_steps[i]`` ：当 ``traversal_steps[i] < tile_shape[i]`` 时产生重叠 "
+"Tile，当 ``traversal_steps[i] > tile_shape[i]`` 时产生带间隔的 Tile。"
+
+#: ../../source/data.rst:186
+msgid ""
+":ref:`cuda.tile.TiledView class documentation <data-tiled-view-cuda-tile-"
+"tiled-view>`"
+msgstr ":ref:`cuda.tile.TiledView 类文档 <data-tiled-view-cuda-tile-tiled-view>`"
+
+#: ../../source/data.rst:188
+msgid ":meth:`Array.tiled_view`"
+msgstr ":meth:`Array.tiled_view`"
+
+#: ../../source/data.rst:198
+msgid "Shape Broadcasting"
+msgstr "形状广播"
+
+#: ../../source/data.rst:200
+msgid ""
+"*Shape broadcasting* allows |tiles| with different shapes to be combined "
+"in arithmetic operations. When an operation involves |tiles| of different"
+" shapes, the smaller |tile| is automatically extended to match the larger"
+" one, following these rules:"
+msgstr ""
+"*形状广播（Shape broadcasting）* 允许不同形状的 |tiles| 参与同一算术运算。当运算涉及形状不同的 |tiles| "
+"时，较小的 |tile| 会按以下规则自动扩展以匹配较大 Tile 的形状："
+
+#: ../../source/data.rst:204
+msgid "|Tiles| are aligned by their trailing dimensions."
+msgstr "将两个 |Tiles| 按末尾维度（右对齐）对齐。"
+
+#: ../../source/data.rst:205
+msgid ""
+"If the corresponding dimensions have the same size or one of them is 1, "
+"they are compatible."
+msgstr "若对应维度长度相等，或其中之一为 1，则认为该维度兼容。"
+
+#: ../../source/data.rst:206
+msgid ""
+"If one |tile| has fewer dimensions, its shape is padded with 1s on the "
+"left."
+msgstr "若其中一个 |tile| 维度数较少，则在其形状左侧补 1。"
+
+#: ../../source/data.rst:208
+msgid ""
+"Broadcasting follows the same semantics as |NumPy|, keeping code concise "
+"and readable while maintaining computational efficiency."
+msgstr "广播遵循与 |NumPy| 相同的语义，在保持计算高效性的同时使代码简洁可读。"
+
+#: ../../source/data.rst:214
+msgid "Data Types"
+msgstr "数据类型"
+
+#: cuda.tile.DType:1 of
+msgid ""
+"A *data type* (or *dtype*) describes the type of the objects of an "
+"|array|, |tile|, or operation."
+msgstr "*数据类型* （或 *dtype*）描述 |array| 、 |tile| 或操作中元素对象的类型。"
+
+#: cuda.tile.DType:3 of
+msgid ""
+"|Dtypes| determine how values are stored in memory and how operations on "
+"those values areperformed."
+msgstr "|Dtypes| 决定了数值在内存中的存储方式以及对这些数值执行运算的方式。"
+
+#: ../../../docstring
+#: cuda.tile.DType.bitwidth:1 of
+msgid "The number of bits in an element of the |data type|"
+msgstr "该 |data type| 单个元素所占的比特位数。"
+
+#: ../../../docstring
+#: cuda.tile.DType.name:1 of
+msgid "The name of the |data type|"
+msgstr "该 |data type| 的名称。"
+
+#: ../../source/generated/includes/numeric_dtypes.rst:4
+msgid "An 8-bit boolean |arithmetic dtype|."
+msgstr "8 位布尔型 |arithmetic dtype| 。"
+
+#: ../../source/generated/includes/numeric_dtypes.rst:9
+msgid "8-bit unsigned |arithmetic dtype| with values on the interval [0, +255]"
+msgstr "8 位无符号 |arithmetic dtype| ，取值范围为 [0, +255]。"
+
+#: ../../source/generated/includes/numeric_dtypes.rst:14
+msgid "16-bit unsigned |arithmetic dtype| with values on the interval [0, +65535]"
+msgstr "16 位无符号 |arithmetic dtype| ，取值范围为 [0, +65535]。"
+
+#: ../../source/generated/includes/numeric_dtypes.rst:19
+msgid ""
+"32-bit unsigned |arithmetic dtype| with values on the interval [0, "
+"+4294967295]"
+msgstr "32 位无符号 |arithmetic dtype| ，取值范围为 [0, +4294967295]。"
+
+#: ../../source/generated/includes/numeric_dtypes.rst:24
+msgid ""
+"64-bit unsigned |arithmetic dtype| with values on the interval [0, "
+"+18446744073709551615]"
+msgstr "64 位无符号 |arithmetic dtype| ，取值范围为 [0, +18446744073709551615]。"
+
+#: ../../source/generated/includes/numeric_dtypes.rst:29
+msgid "8-bit signed |arithmetic dtype| with values on the interval [-128, +127]"
+msgstr "8 位有符号 |arithmetic dtype| ，取值范围为 [-128, +127]。"
+
+#: ../../source/generated/includes/numeric_dtypes.rst:34
+msgid ""
+"16-bit signed |arithmetic dtype| with values on the interval [-32768, "
+"+32767]"
+msgstr "16 位有符号 |arithmetic dtype| ，取值范围为 [-32768, +32767]。"
+
+#: ../../source/generated/includes/numeric_dtypes.rst:39
+msgid ""
+"32-bit signed |arithmetic dtype| with values on the interval "
+"[-2147483648, +2147483647]"
+msgstr "32 位有符号 |arithmetic dtype| ，取值范围为 [-2147483648, +2147483647]。"
+
+#: ../../source/generated/includes/numeric_dtypes.rst:44
+msgid ""
+"64-bit signed |arithmetic dtype| with values on the interval "
+"[-9223372036854775808, +9223372036854775807]"
+msgstr ""
+"64 位有符号 |arithmetic dtype| ，取值范围为 [-9223372036854775808, "
+"+9223372036854775807]。"
+
+#: ../../source/generated/includes/numeric_dtypes.rst:49
+msgid ""
+"A IEEE 754 half-precision (16-bit) binary floating-point |arithmetic "
+"dtype| (see |IEEE 754-2019|)."
+msgstr "IEEE 754 半精度（16 位）二进制浮点 |arithmetic dtype| （参见 |IEEE 754-2019| ）。"
+
+#: ../../source/generated/includes/numeric_dtypes.rst:54
+msgid ""
+"A IEEE 754 single-precision (32-bit) binary floating-point |arithmetic "
+"dtype| (see |IEEE 754-2019|)."
+msgstr "IEEE 754 单精度（32 位）二进制浮点 |arithmetic dtype| （参见 |IEEE 754-2019| ）。"
+
+#: ../../source/generated/includes/numeric_dtypes.rst:59
+msgid ""
+"A IEEE 754 double-precision (64-bit) binary floating-point |arithmetic "
+"dtype| (see |IEEE 754-2019|)."
+msgstr "IEEE 754 双精度（64 位）二进制浮点 |arithmetic dtype| （参见 |IEEE 754-2019| ）。"
+
+#: ../../source/generated/includes/numeric_dtypes.rst:64
+msgid ""
+"A 16-bit floating-point |arithmetic dtype| with 1 sign bit, 8 exponent "
+"bits, and 7 mantissa bits."
+msgstr "16 位浮点 |arithmetic dtype| ，包含 1 个符号位、8 个指数位和 7 个尾数位。"
+
+#: ../../source/generated/includes/numeric_dtypes.rst:69
+msgid ""
+"A 32-bit tensor floating-point |numeric dtype| with 1 sign bit, 8 "
+"exponent bits, and 10 mantissa bits (19-bit representation stored in "
+"32-bit container)."
+msgstr "32 位张量浮点 |numeric dtype| ，包含 1 个符号位、8 个指数位和 10 个尾数位（19 位表示存储在 32 位容器中）。"
+
+#: ../../source/generated/includes/numeric_dtypes.rst:74
+msgid ""
+"An 8-bit floating-point |numeric dtype| with 1 sign bit, 4 exponent bits,"
+" and 3 mantissa bits."
+msgstr "8 位浮点 |numeric dtype| ，包含 1 个符号位、4 个指数位和 3 个尾数位。"
+
+#: ../../source/generated/includes/numeric_dtypes.rst:79
+msgid ""
+"An 8-bit floating-point |numeric dtype| with 1 sign bit, 5 exponent bits,"
+" and 2 mantissa bits."
+msgstr "8 位浮点 |numeric dtype| ，包含 1 个符号位、5 个指数位和 2 个尾数位。"
+
+#: ../../source/generated/includes/numeric_dtypes.rst:84
+msgid ""
+"An 8-bit floating-point |numeric dtype| with no sign bit, 8 exponent "
+"bits, and 0 mantissa bits."
+msgstr "8 位浮点 |numeric dtype| ，无符号位，包含 8 个指数位和 0 个尾数位。"
+
+#: ../../source/generated/includes/numeric_dtypes.rst:89
+msgid ""
+"A 4-bit floating-point |numeric dtype| with 1 sign bit, 2 exponent bits, "
+"and 1 mantissa bit."
+msgstr "4 位浮点 |numeric dtype| ，包含 1 个符号位、2 个指数位和 1 个尾数位。"
+
+#: ../../source/generated/includes/numeric_dtypes.rst:94
+msgid ""
+"An 8-bit floating-point |numeric dtype| with no sign bit, 5 exponent "
+"bits, and 3 mantissa bits."
+msgstr "8 位浮点 |numeric dtype| ，无符号位，包含 5 个指数位和 3 个尾数位。"
+
+#: ../../source/data.rst:224
+msgid "Numeric & Arithmetic Data Types"
+msgstr "数值与算术数据类型"
+
+#: ../../source/data.rst:225
+msgid ""
+"A *numeric* data type represents numbers. An *arithmetic* data type is a "
+"numeric data type that supports general arithmetic operations such as "
+"addition, subtraction, multiplication, and division."
+msgstr "*数值（numeric）* 数据类型用于表示数字；*算术（arithmetic）* 数据类型则是支持加、减、乘、除等通用算术运算的数值数据类型。"
+
+#: ../../source/data.rst:233
+msgid "Arithmetic Promotion"
+msgstr "算术类型提升"
+
+#: ../../source/data.rst:235
+msgid ""
+"Binary operations can be performed on two |tile| or |scalar| operands of "
+"different |numeric dtypes|."
+msgstr "可以对不同 |numeric dtypes| 的两个 |tile| 或 |scalar| 操作数执行二元运算。"
+
+#: ../../source/data.rst:237
+msgid ""
+"When both operands are |loosely typed numeric constants|, the result is "
+"also a loosely typed constant: ``5 + 7`` is a loosely typed integral "
+"constant 12, and ``5 + 3.0`` is a loosely typed floating-point constant "
+"8.0."
+msgstr ""
+"当两个操作数均为 |loosely typed numeric constants| 时，结果同样是松散类型化常量：``5 + 7`` "
+"为松散类型整数常量 12， ``5 + 3.0`` 为松散类型浮点常量 8.0。"
+
+#: ../../source/data.rst:241
+msgid ""
+"If any of the operands is not a |loosely typed numeric constant|, both "
+"are *promoted* to a common dtype as follows:"
+msgstr ""
+"只要任意操作数不是 |loosely typed numeric constant| ，二者就会按以下规则 *提升（promoted）* "
+"到一个公共 dtype："
+
+#: ../../source/data.rst:244
+msgid ""
+"Each operand is classified into one of the three categories: *boolean*, "
+"*integral*, or *floating-point*. The categories are ordered as follows: "
+"*boolean* < *integral* < *floating-point*."
+msgstr ""
+"每个操作数归为以下三个类别之一： *布尔（boolean）* 、 *整数（integral）* 或 *浮点（floating-point）* "
+"。类别的优先级顺序为： *布尔* < *整数* < *浮点* 。"
+
+#: ../../source/data.rst:247
+msgid ""
+"If either operand is a |loosely typed numeric constant|, a concrete dtype"
+" is picked for it: integral constants are treated as `int32`, `int64`, or"
+" `uint64`, depending on the value; floating-point constants are treated "
+"as `float32`."
+msgstr ""
+"若某个操作数是 |loosely typed numeric constant| ，系统会根据其取值选取具体 dtype：整数常量依其大小视为 "
+"``int32`` 、 ``int64`` 或 ``uint64`` ；浮点常量视为 ``float32`` 。"
+
+#: ../../source/data.rst:250
+msgid ""
+"If one of the two operands has a higher category than the other, then its"
+" concrete dtype is chosen as the common dtype."
+msgstr "若其中一个操作数所属类别高于另一个，则选择该较高类别操作数的具体 dtype 作为公共 dtype。"
+
+#: ../../source/data.rst:252
+msgid ""
+"If both operands are of the same category, but one of them is a |loosely "
+"typed numeric constant|, then the other operand's dtype is picked as the "
+"common dtype."
+msgstr ""
+"若两个操作数属于同一类别，但其中一个为 |loosely typed numeric constant| ，则选取另一个操作数的 dtype "
+"作为公共 dtype。"
+
+#: ../../source/data.rst:254
+msgid "Otherwise, the common dtype is computed according to the table below."
+msgstr "否则，根据下表计算二者的公共 dtype。"
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:2
+#: ../../source/generated/includes/dtype_promotion_table.rst:4
+msgid "b1"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:2
+#: ../../source/generated/includes/dtype_promotion_table.rst:4
+#: ../../source/generated/includes/dtype_promotion_table.rst:6
+msgid "u8"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:2
+#: ../../source/generated/includes/dtype_promotion_table.rst:4
+#: ../../source/generated/includes/dtype_promotion_table.rst:6
+#: ../../source/generated/includes/dtype_promotion_table.rst:8
+msgid "u16"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:2
+#: ../../source/generated/includes/dtype_promotion_table.rst:4
+#: ../../source/generated/includes/dtype_promotion_table.rst:6
+#: ../../source/generated/includes/dtype_promotion_table.rst:8
+#: ../../source/generated/includes/dtype_promotion_table.rst:10
+msgid "u32"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:2
+#: ../../source/generated/includes/dtype_promotion_table.rst:4
+#: ../../source/generated/includes/dtype_promotion_table.rst:6
+#: ../../source/generated/includes/dtype_promotion_table.rst:8
+#: ../../source/generated/includes/dtype_promotion_table.rst:10
+#: ../../source/generated/includes/dtype_promotion_table.rst:12
+msgid "u64"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:2
+#: ../../source/generated/includes/dtype_promotion_table.rst:4
+#: ../../source/generated/includes/dtype_promotion_table.rst:14
+msgid "i8"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:2
+#: ../../source/generated/includes/dtype_promotion_table.rst:4
+#: ../../source/generated/includes/dtype_promotion_table.rst:14
+#: ../../source/generated/includes/dtype_promotion_table.rst:16
+msgid "i16"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:2
+#: ../../source/generated/includes/dtype_promotion_table.rst:4
+#: ../../source/generated/includes/dtype_promotion_table.rst:14
+#: ../../source/generated/includes/dtype_promotion_table.rst:16
+#: ../../source/generated/includes/dtype_promotion_table.rst:18
+msgid "i32"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:2
+#: ../../source/generated/includes/dtype_promotion_table.rst:4
+#: ../../source/generated/includes/dtype_promotion_table.rst:14
+#: ../../source/generated/includes/dtype_promotion_table.rst:16
+#: ../../source/generated/includes/dtype_promotion_table.rst:18
+#: ../../source/generated/includes/dtype_promotion_table.rst:20
+msgid "i64"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:2
+#: ../../source/generated/includes/dtype_promotion_table.rst:4
+#: ../../source/generated/includes/dtype_promotion_table.rst:6
+#: ../../source/generated/includes/dtype_promotion_table.rst:8
+#: ../../source/generated/includes/dtype_promotion_table.rst:10
+#: ../../source/generated/includes/dtype_promotion_table.rst:12
+#: ../../source/generated/includes/dtype_promotion_table.rst:14
+#: ../../source/generated/includes/dtype_promotion_table.rst:16
+#: ../../source/generated/includes/dtype_promotion_table.rst:18
+#: ../../source/generated/includes/dtype_promotion_table.rst:20
+#: ../../source/generated/includes/dtype_promotion_table.rst:22
+msgid "f16"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:2
+#: ../../source/generated/includes/dtype_promotion_table.rst:4
+#: ../../source/generated/includes/dtype_promotion_table.rst:6
+#: ../../source/generated/includes/dtype_promotion_table.rst:8
+#: ../../source/generated/includes/dtype_promotion_table.rst:10
+#: ../../source/generated/includes/dtype_promotion_table.rst:12
+#: ../../source/generated/includes/dtype_promotion_table.rst:14
+#: ../../source/generated/includes/dtype_promotion_table.rst:16
+#: ../../source/generated/includes/dtype_promotion_table.rst:18
+#: ../../source/generated/includes/dtype_promotion_table.rst:20
+#: ../../source/generated/includes/dtype_promotion_table.rst:22
+#: ../../source/generated/includes/dtype_promotion_table.rst:24
+#: ../../source/generated/includes/dtype_promotion_table.rst:28
+msgid "f32"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:2
+#: ../../source/generated/includes/dtype_promotion_table.rst:4
+#: ../../source/generated/includes/dtype_promotion_table.rst:6
+#: ../../source/generated/includes/dtype_promotion_table.rst:8
+#: ../../source/generated/includes/dtype_promotion_table.rst:10
+#: ../../source/generated/includes/dtype_promotion_table.rst:12
+#: ../../source/generated/includes/dtype_promotion_table.rst:14
+#: ../../source/generated/includes/dtype_promotion_table.rst:16
+#: ../../source/generated/includes/dtype_promotion_table.rst:18
+#: ../../source/generated/includes/dtype_promotion_table.rst:20
+#: ../../source/generated/includes/dtype_promotion_table.rst:22
+#: ../../source/generated/includes/dtype_promotion_table.rst:24
+#: ../../source/generated/includes/dtype_promotion_table.rst:26
+#: ../../source/generated/includes/dtype_promotion_table.rst:28
+msgid "f64"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:2
+#: ../../source/generated/includes/dtype_promotion_table.rst:4
+#: ../../source/generated/includes/dtype_promotion_table.rst:6
+#: ../../source/generated/includes/dtype_promotion_table.rst:8
+#: ../../source/generated/includes/dtype_promotion_table.rst:10
+#: ../../source/generated/includes/dtype_promotion_table.rst:12
+#: ../../source/generated/includes/dtype_promotion_table.rst:14
+#: ../../source/generated/includes/dtype_promotion_table.rst:16
+#: ../../source/generated/includes/dtype_promotion_table.rst:18
+#: ../../source/generated/includes/dtype_promotion_table.rst:20
+#: ../../source/generated/includes/dtype_promotion_table.rst:28
+msgid "bf"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:2
+#: ../../source/generated/includes/dtype_promotion_table.rst:30
+msgid "tf32"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:2
+#: ../../source/generated/includes/dtype_promotion_table.rst:32
+msgid "f8e4m3fn"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:2
+#: ../../source/generated/includes/dtype_promotion_table.rst:34
+msgid "f8e5m2"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:2
+#: ../../source/generated/includes/dtype_promotion_table.rst:36
+msgid "f8e8m0fnu"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:2
+#: ../../source/generated/includes/dtype_promotion_table.rst:38
+msgid "f4e2m1fn"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:4
+#: ../../source/generated/includes/dtype_promotion_table.rst:6
+#: ../../source/generated/includes/dtype_promotion_table.rst:8
+#: ../../source/generated/includes/dtype_promotion_table.rst:10
+#: ../../source/generated/includes/dtype_promotion_table.rst:12
+#: ../../source/generated/includes/dtype_promotion_table.rst:14
+#: ../../source/generated/includes/dtype_promotion_table.rst:16
+#: ../../source/generated/includes/dtype_promotion_table.rst:18
+#: ../../source/generated/includes/dtype_promotion_table.rst:20
+#: ../../source/generated/includes/dtype_promotion_table.rst:22
+#: ../../source/generated/includes/dtype_promotion_table.rst:24
+#: ../../source/generated/includes/dtype_promotion_table.rst:26
+#: ../../source/generated/includes/dtype_promotion_table.rst:28
+#: ../../source/generated/includes/dtype_promotion_table.rst:30
+#: ../../source/generated/includes/dtype_promotion_table.rst:32
+#: ../../source/generated/includes/dtype_promotion_table.rst:34
+#: ../../source/generated/includes/dtype_promotion_table.rst:36
+#: ../../source/generated/includes/dtype_promotion_table.rst:38
+msgid "ERR"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:41
+msgid "Legend:"
+msgstr "图例："
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:43
+msgid "b1: ``bool_``"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:44
+msgid "u8: ``uint8``"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:45
+msgid "u16: ``uint16``"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:46
+msgid "u32: ``uint32``"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:47
+msgid "u64: ``uint64``"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:48
+msgid "i8: ``int8``"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:49
+msgid "i16: ``int16``"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:50
+msgid "i32: ``int32``"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:51
+msgid "i64: ``int64``"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:52
+msgid "f16: ``float16``"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:53
+msgid "f32: ``float32``"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:54
+msgid "f64: ``float64``"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:55
+msgid "bf: ``bfloat16``"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:56
+msgid "tf32: ``tfloat32``"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:57
+msgid "f8e4m3fn: ``float8_e4m3fn``"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:58
+msgid "f8e5m2: ``float8_e5m2``"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:59
+msgid "f8e8m0fnu: ``float8_e8m0fnu``"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:60
+msgid "f4e2m1fn: ``float4_e2m1fn``"
+msgstr ""
+
+#: ../../source/generated/includes/dtype_promotion_table.rst:61
+msgid "ERR: Implicit promotion between these types is not supported"
+msgstr "ERR：不支持这两种类型之间的隐式类型提升"
+
+#: ../../source/data.rst:261
+msgid "Tuples"
+msgstr "元组"
+
+#: ../../source/data.rst:263
+msgid ""
+"Tuples can be constructed and used in |tile code| and passed as |kernel| "
+"arguments. Tuple arguments may be nested and contain supported argument "
+"types, such as scalars and arrays. Their structure is known at compile "
+"time; their elements need not be constants. Tuple indexing requires a "
+"compile-time constant index."
+msgstr ""
+"可在 |tile code| 中构造和使用元组，也可将其作为 |kernel| "
+"参数传递。元组参数可以嵌套并包含受支持的参数类型（如标量和数组）。元组的结构在编译期已知，但其元素不必全是常量。对元组进行索引需要编译期常量索引。"
+
+#: ../../source/data.rst:269
+msgid ""
+"Parameter annotations can describe individual elements, for example "
+"``tuple[ct.Array, ct.Constant[int]]``. A parameter annotated with "
+"``ct.Constant[tuple]`` makes the whole tuple constant, so every element "
+"must be representable as a compile-time constant."
+msgstr ""
+"参数注解可描述元组中的各个元素，例如 ``tuple[ct.Array, ct.Constant[int]]`` 。标注为 "
+"``ct.Constant[tuple]`` 的参数会使整个元组变为常量，因此其所有元素都必须能表示为编译期常量。"
+
+#: ../../source/data.rst:274
+msgid ""
+"For ahead-of-time export, tuple parameters use "
+":py:class:`cuda.tile.compilation.TupleConstraint` and require the "
+"``cutile_python_v2`` calling convention. See :ref:`compilation-callconv`."
+msgstr ""
+"对于预先导出（AOT），元组参数使用 :py:class:`cuda.tile.compilation.TupleConstraint` 且需要 "
+"``cutile_python_v2`` 调用约定。参见 :ref:`compilation-callconv` 。"
+
+#: ../../source/data.rst:279
+msgid "Lists of Arrays"
+msgstr "数组列表"
+
+#: ../../source/data.rst:281
+msgid ""
+"A non-empty Python list of arrays can be passed as a kernel argument. All"
+" elements must have the same rank and dtype. In |tile code|, this becomes"
+" a list view supporting ``len`` and integer indexing, including runtime "
+"indices. The list structure cannot be modified, but its arrays can be "
+"loaded and stored. Creating or mutating ordinary Python lists in |tile "
+"code| is unsupported."
+msgstr ""
+"可以将非空的 Python 数组列表作为内核参数传递。所有元素必须具有相同的秩（维度数）和 dtype。在 |tile code| "
+"中，该列表会成为支持 ``len`` 与整数索引（包括运行时索引）的列表视图。列表结构不可更改，但可以对其中的数组执行 load 和 store "
+"操作。在 |tile code| 中不支持创建或修改普通 Python 列表。"
+
+#: ../../source/data.rst:287
+msgid ""
+"Use :py:class:`cuda.tile.ListAnnotation` to configure the element arrays'"
+" indexing types and static dimensions."
+msgstr "请使用 :py:class:`cuda.tile.ListAnnotation` 配置元素数组的索引类型及静态维度。"
+
+#: ../../source/data.rst:293
+msgid "Rounding Modes"
+msgstr "舍入模式"
+
+#: cuda.tile._numeric_semantics.RoundingMode:1 of
+msgid "Rounding mode for floating-point operations."
+msgstr "浮点运算的舍入模式。"
+
+#: ../../../docstring
+#: cuda.tile.RoundingMode.RN:1 of
+msgid "Round to nearest (ties to even)."
+msgstr "向最接近的数舍入（半数向偶数舍入，ties to even）。"
+
+#: ../../../docstring
+#: cuda.tile.RoundingMode.RZ:1 of
+msgid "Round towards zero (truncate)."
+msgstr "向零舍入（截断）。"
+
+#: ../../../docstring
+#: cuda.tile.RoundingMode.RM:1 of
+msgid "Round towards negative infinity."
+msgstr "向负无穷大方向舍入。"
+
+#: ../../../docstring
+#: cuda.tile.RoundingMode.RP:1 of
+msgid "Round towards positive infinity."
+msgstr "向正无穷大方向舍入。"
+
+#: ../../../docstring
+#: cuda.tile.RoundingMode.RA:1 of
+msgid "Round to nearest (ties away from zero)."
+msgstr "向最接近的数舍入（半数远离零舍入，ties away from zero）。"
+
+#: ../../../docstring
+#: cuda.tile.RoundingMode.FULL:1 of
+msgid "Full precision rounding mode."
+msgstr "全精度舍入模式。"
+
+#: ../../../docstring
+#: cuda.tile.RoundingMode.APPROX:1 of
+msgid "Approximate rounding mode."
+msgstr "近似舍入模式。"
+
+#: ../../../docstring
+#: cuda.tile.RoundingMode.RZI:1 of
+msgid "Round towards zero to the nearest integer."
+msgstr "向零舍入到最接近的整数。"
+
+#: ../../source/data.rst:303
+msgid "Padding Modes"
+msgstr "填充模式"
+
+#: cuda.tile._numeric_semantics.PaddingMode:1 of
+msgid "Padding mode for load operation."
+msgstr "加载操作的填充模式。"
+
+#: ../../../docstring
+#: cuda.tile.PaddingMode.UNDETERMINED:1 of
+msgid "The padding value is not determined."
+msgstr "填充值未确定（undetermined）。"
+
+#: ../../../docstring
+#: cuda.tile.PaddingMode.ZERO:1 of
+msgid "The padding value is zero."
+msgstr "填充值为正零（0）。"
+
+#: ../../../docstring
+#: cuda.tile.PaddingMode.NEG_ZERO:1 of
+msgid "The padding value is negative zero."
+msgstr "填充值为负零（-0）。"
+
+#: ../../../docstring
+#: cuda.tile.PaddingMode.NAN:1 of
+msgid "The padding value is NaN."
+msgstr "填充值为 NaN。"
+
+#: ../../../docstring
+#: cuda.tile.PaddingMode.POS_INF:1 of
+msgid "The padding value is positive infinity."
+msgstr "填充值为正无穷大（+inf）。"
+
+#: ../../../docstring
+#: cuda.tile.PaddingMode.NEG_INF:1 of
+msgid "The padding value is negative infinity."
+msgstr "填充值为负无穷大（-inf）。"
+

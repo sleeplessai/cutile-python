@@ -19,6 +19,8 @@ build/
 **/docs/venv
 **/docs/build
 **/docs/source/**/generated
+!**/docs/source/locale/**/generated
+**/docs/source/locale/**/*.mo
 **/docs/source/stubs
 *.benchmarks
 .vscode/

@@ -1,0 +1,80 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.cumsum.rst:2
+msgid "cuda.tile.cumsum"
+msgstr "cuda.tile.cumsum"
+
+#: cuda.tile._stub.cumsum:1 of
+msgid "Performs cumsum on tile along the `axis`."
+msgstr "沿指定轴对 Tile 执行累加扫描（cumsum）。"
+
+#: ../../source/generated/cuda.tile.cumsum.rst
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile._stub.cumsum:3 of
+msgid "input tile"
+msgstr "输入 Tile"
+
+#: cuda.tile._stub.cumsum:5 of
+msgid "the axis for scan, default 0."
+msgstr "要执行扫描的轴，默认为 0。"
+
+#: cuda.tile._stub.cumsum:7 of
+msgid "if True, the scan is performed in the reverse direction."
+msgstr "若为 True，则沿反方向执行扫描。"
+
+#: cuda.tile._stub.cumsum:9 of
+msgid ""
+"The rounding mode for the operation, only supported for float types, "
+"default is RoundingMode.RN when applicable."
+msgstr "该操作的舍入模式，仅支持浮点类型；适用时默认为 RoundingMode.RN。"
+
+#: cuda.tile._stub.cumsum:11 of
+msgid ""
+"If True, flushes subnormal inputs and results to sign-preserving zero, "
+"default is False."
+msgstr "若为 True，则将次正规（subnormal）输入和结果刷零（保留符号），默认为 False。"
+
+#: ../../source/generated/cuda.tile.cumsum.rst
+msgid "Return type"
+msgstr "返回类型"
+
+#: cuda.tile._stub.cumsum:17 of
+msgid "Examples"
+msgstr "示例"
+
+#: cuda.tile._stub.cumsum:18 of
+msgid "Scan along axis 1."
+msgstr "沿轴 1 执行扫描。"
+
+#: cuda.tile._stub.cumsum:31 cuda.tile._stub.cumsum:44 of
+msgid "Output"
+msgstr "输出"
+
+#: cuda.tile._stub.cumsum:32 of
+msgid "Reverse scan."
+msgstr "反向扫描。"
+

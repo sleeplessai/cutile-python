@@ -1,0 +1,100 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/index.rst:6
+msgid "cuTile Python"
+msgstr "cuTile Python"
+
+#: ../../source/index.rst:8
+msgid ""
+"cuTile is a parallel programming model for NVIDIA GPUs and a Python-based"
+" :abbr:`DSL (Domain-Specific Language)`. It automatically leverages "
+"advanced hardware capabilities, such as tensor cores and tensor memory "
+"accelerators, while providing portability across different NVIDIA GPU "
+"architectures. cuTile enables the latest hardware features without "
+"requiring code changes."
+msgstr ""
+"cuTile 是面向 NVIDIA GPU 的并行编程模型，也是一种基于 Python 的 :abbr:`DSL (Domain-Specific"
+" Language，领域特定语言)`。它能够自动利用张量核心（Tensor Cores）和张量内存加速器（Tensor Memory "
+"Accelerator）等先进硬件能力，同时在不同 NVIDIA GPU 架构之间提供良好的可移植性。使用 "
+"cuTile，无需修改代码即可启用最新硬件特性。"
+
+#: ../../source/index.rst:13
+msgid ""
+"cuTile |kernels| are GPU programs that are executed in parallel on a "
+"logical |grid| of |blocks|. The :py:class:`@ct.kernel <cuda.tile.kernel>`"
+" decorator marks a Python function as a kernel's entry point. Kernels "
+"cannot be called directly from the host code; the host must queue kernels"
+" for execution on GPU using the :py:func:`ct.launch() <cuda.tile.launch>`"
+" function:"
+msgstr ""
+"cuTile |kernels| 是在由 |blocks| 组成的逻辑 |grid| 上并行执行的 GPU 程序。 "
+":py:class:`@ct.kernel <cuda.tile.kernel>` 装饰器将 Python "
+"函数标记为内核的入口点。内核不能直接从主机代码中调用；主机必须使用 :py:func:`ct.launch() "
+"<cuda.tile.launch>` 函数将内核加入队列以在 GPU 上执行："
+
+#: ../../source/index.rst:58
+msgid ""
+"|Kernels| move data between |arrays| and |tiles| using functions like "
+":py:func:`ct.load() <cuda.tile.load>` and :py:func:`ct.store() "
+"<cuda.tile.store>`. Both arrays and tiles are tensor-like data "
+"structures: each has a specific shape (i.e., the number of elements along"
+" each axis) and a |dtype| (i.e., the data type of elements). However, "
+"there are important differences:"
+msgstr ""
+"|Kernels| 使用 :py:func:`ct.load() <cuda.tile.load>` 和 :py:func:`ct.store()"
+" <cuda.tile.store>` 等函数在 |arrays| 与 |tiles| 之间搬运数据。数组和 Tile "
+"都是类似张量的数据结构：各自都有特定的形状（即沿每个轴的元素数量）和 |dtype| （即元素的数据类型）。不过，二者之间存在重要区别："
+
+#: ../../source/index.rst:64
+msgid ""
+"|Arrays| are stored in the global memory. They are mutable and have "
+"physical, strided memory layouts. Within the kernel code, they support "
+"only a limited set of operations, mostly related to |loading and storing|"
+" data to/from tiles. Various Python objects, including PyTorch tensors "
+"and CuPy arrays, can be passed as arrays from the host code to the kernel"
+" via kernel arguments."
+msgstr ""
+"|Arrays| "
+"存储在全局内存中。它们是可变的，并具有物理跨步（strided）内存布局。在内核代码中，数组仅支持有限的一组操作，主要涉及将数据与 Tile "
+"之间进行 |loading and storing| 。多种 Python 对象（包括 PyTorch 张量和 CuPy "
+"数组）都可以作为内核参数从主机代码以数组形式传递给内核。"
+
+#: ../../source/index.rst:70
+msgid ""
+"|Tiles| are immutable values without defined storage that only exist in "
+"the kernel code. Tile dimensions must be compile-time constants that are "
+"powers of two. Tiles support a multitude of |operations|, including "
+"elementwise arithmetic, matrix multiplication, reduction, shape "
+"manipulation, etc."
+msgstr ""
+"|Tiles| 是仅存在于内核代码中的不可变值，没有固定的存储位置。Tile 的各维度尺寸必须是 2 的幂且为编译期常量。Tile 支持丰富的 "
+"|operations| ，包括逐元素算术、矩阵乘法、归约、形状变换等。"
+
+#: ../../source/index.rst:75
+msgid ""
+"Proceed to the :ref:`quickstart` page for installation instructions and a"
+" complete working example."
+msgstr "请前往 :ref:`quickstart` 页面查看安装说明和完整的可运行示例。"
+

@@ -1,0 +1,71 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.reshape.rst:2
+msgid "cuda.tile.reshape"
+msgstr "cuda.tile.reshape"
+
+#: cuda.tile._stub.reshape:1 of
+msgid "Reshapes a tile to the specified shape."
+msgstr "将 Tile 重塑（reshape）为指定形状。"
+
+#: cuda.tile._stub.reshape:3 of
+msgid ""
+"One of the shape elements may be specified as -1 to indicate that the "
+"corresponding dimension is to be inferred automatically."
+msgstr "可将形状中的一个元素指定为 -1，表示自动推断该维度的大小。"
+
+#: cuda.tile._stub.reshape:6 of
+msgid ""
+"For example, reshaping a ``(16, 2)`` tile to ``(8, -1)`` will produce a "
+"tile of shape ``(8, 4)``: as there are 32 elements in total, the second "
+"dimension will be computed as 32 divided by 8."
+msgstr ""
+"例如，将形状为 ``(16, 2)`` 的 Tile 重塑为 ``(8, -1)`` 将得到形状为 ``(8, 4)`` 的 Tile：由于总共有"
+" 32 个元素，第二维将通过 32 除以 8 自动计算得出。"
+
+#: ../../source/generated/cuda.tile.reshape.rst
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile._stub.reshape:10 of
+msgid "input tile."
+msgstr "输入 Tile。"
+
+#: cuda.tile._stub.reshape:12 of
+msgid "target shape."
+msgstr "目标形状。"
+
+#: ../../source/generated/cuda.tile.reshape.rst
+msgid "Return type"
+msgstr "返回类型"
+
+#: cuda.tile._stub.reshape:18 of
+msgid "Examples"
+msgstr "示例"
+
+#: cuda.tile._stub.reshape:28 of
+msgid "Output"
+msgstr "输出"
+

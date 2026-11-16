@@ -1,0 +1,146 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.mma.rst:2
+msgid "cuda.tile.mma"
+msgstr "cuda.tile.mma"
+
+#: cuda.tile._stub.mma:1 of
+msgid "Matrix multiply-accumulate."
+msgstr "矩阵乘加（MMA）。"
+
+#: cuda.tile._stub.mma:3 of
+msgid ""
+"Computes ``(x @ y) + acc`` as a single operation (where ``@`` denotes "
+"matrix multiplication). Preserves the dtype of `acc`."
+msgstr "作为单个操作计算 ``(x @ y) + acc`` （其中 ``@`` 表示矩阵乘法）。保留 ``acc`` 的数据类型。"
+
+#: ../../source/generated/cuda.tile.mma.rst
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile._stub.mma:7 of
+msgid "LHS of the mma, 2D or 3D."
+msgstr "MMA 的左操作数（LHS），支持二维或三维。"
+
+#: cuda.tile._stub.mma:9 of
+msgid "RHS of the mma, 2D or 3D."
+msgstr "MMA 的右操作数（RHS），支持二维或三维。"
+
+#: cuda.tile._stub.mma:11 of
+msgid "Accumulator of mma."
+msgstr "MMA 的累加器。"
+
+#: cuda.tile._stub.mma:13 of
+msgid ""
+"Enable fast accumulation mode, which trades accumulator precision for "
+"throughput. Requires fp8 input dtypes (``float8_e4m3fn`` or "
+"``float8_e5m2``). Currently only has an effect on Hopper GPUs; silently "
+"ignored on other architectures. Default: ``False`` (since CTK 13.3)."
+msgstr ""
+"启用快速累加模式，以牺牲一定累加器精度来换取更高的吞吐量。需要 FP8 输入数据类型（ ``float8_e4m3fn`` 或 "
+"``float8_e5m2`` ）。目前仅在 Hopper GPU 上生效；在其他架构上将被静默忽略。默认值： ``False`` （自 CTK "
+"13.3 起）。"
+
+#: cuda.tile._stub.mma:20 of
+msgid "Supported datatypes:"
+msgstr "支持的数据类型："
+
+#: cuda.tile._stub.mma:23 of
+msgid "Input"
+msgstr "输入"
+
+#: cuda.tile._stub.mma:23 of
+msgid "Acc/Output"
+msgstr "累加器/输出"
+
+#: cuda.tile._stub.mma:25 of
+msgid "f16"
+msgstr "f16"
+
+#: cuda.tile._stub.mma:25 cuda.tile._stub.mma:35 cuda.tile._stub.mma:37 of
+msgid "f16 or f32"
+msgstr "f16 或 f32"
+
+#: cuda.tile._stub.mma:27 of
+msgid "bf16"
+msgstr "bf16"
+
+#: cuda.tile._stub.mma:27 cuda.tile._stub.mma:29 cuda.tile._stub.mma:33 of
+msgid "f32"
+msgstr "f32"
+
+#: cuda.tile._stub.mma:31 of
+msgid "f64"
+msgstr "f64"
+
+#: cuda.tile._stub.mma:33 of
+msgid "tf32"
+msgstr "tf32"
+
+#: cuda.tile._stub.mma:35 of
+msgid "f8e4m3fn"
+msgstr "f8e4m3fn"
+
+#: cuda.tile._stub.mma:37 of
+msgid "f8e5m2"
+msgstr "f8e5m2"
+
+#: cuda.tile._stub.mma:39 of
+msgid "[u|i]8"
+msgstr "[u|i]8"
+
+#: cuda.tile._stub.mma:39 of
+msgid "i32"
+msgstr "i32"
+
+#: cuda.tile._stub.mma:42 of
+msgid ""
+"If `x` and `y` have different dtype, they will NOT be promoted to common "
+"dtype. Shape of `x` and `y` will be broadcasted to up until the last two "
+"axes."
+msgstr ""
+"如果 ``x`` 和 ``y`` 具有不同的数据类型，它们 **不会** 被提升到公共数据类型。 ``x`` 和 ``y`` "
+"除最后两个轴之外的前导维度将进行广播。"
+
+#: ../../source/generated/cuda.tile.mma.rst
+msgid "Return type"
+msgstr "返回类型"
+
+#: cuda.tile._stub.mma:48 of
+msgid "Examples"
+msgstr "示例"
+
+#: cuda.tile._stub.mma:49 of
+msgid "2D x 2D with accumulation."
+msgstr "二维 x 二维（带累加）。"
+
+#: cuda.tile._stub.mma:63 cuda.tile._stub.mma:76 of
+msgid "Output"
+msgstr "输出"
+
+#: cuda.tile._stub.mma:64 of
+msgid "Batched: 3D x 2D with broadcast."
+msgstr "批处理：三维 x 二维（带广播）。"
+

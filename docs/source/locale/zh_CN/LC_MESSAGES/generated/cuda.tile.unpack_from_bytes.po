@@ -1,0 +1,73 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.unpack_from_bytes.rst:2
+msgid "cuda.tile.unpack\\_from\\_bytes"
+msgstr "cuda.tile.unpack\\_from\\_bytes"
+
+#: cuda.tile._stub.unpack_from_bytes:1 of
+msgid "Reinterprets a 1D uint8 byte tile as a 1D tile of the target data type."
+msgstr "将一维 uint8 字节 Tile 重新解释为目标数据类型的一维 Tile。"
+
+#: cuda.tile._stub.unpack_from_bytes:3 of
+msgid ""
+"The inverse of :py:func:`pack_to_bytes`. The input must be a 1D tile of "
+"dtype uint8, and the total number of bits must be divisible by the target"
+" data type bit width."
+msgstr ""
+":py:func:`pack_to_bytes` 的逆操作。输入必须是数据类型为 uint8 的一维 "
+"Tile，且总比特位数必须能被目标数据类型的位宽整除。"
+
+#: ../../source/generated/cuda.tile.unpack_from_bytes.rst
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile._stub.unpack_from_bytes:7 of
+msgid "a 1D tile of dtype uint8."
+msgstr "数据类型为 uint8 的一维 Tile。"
+
+#: cuda.tile._stub.unpack_from_bytes:9 of
+msgid "target data type."
+msgstr "目标数据类型。"
+
+#: ../../source/generated/cuda.tile.unpack_from_bytes.rst
+msgid "Returns"
+msgstr "返回值"
+
+#: cuda.tile._stub.unpack_from_bytes:12 of
+msgid "a 1D tile of ``dtype`` with ``num_bytes * 8 // bit width`` elements."
+msgstr "数据类型为 ``dtype`` 、包含 ``num_bytes * 8 // bit_width`` 个元素（即总比特数除以位宽）的一维 Tile。"
+
+#: ../../source/generated/cuda.tile.unpack_from_bytes.rst
+msgid "Return type"
+msgstr "返回类型"
+
+#: cuda.tile._stub.unpack_from_bytes:16 of
+msgid "Examples"
+msgstr "示例"
+
+#: cuda.tile._stub.unpack_from_bytes:26 of
+msgid "Output"
+msgstr "输出"
+

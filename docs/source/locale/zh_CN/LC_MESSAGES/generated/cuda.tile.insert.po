@@ -1,0 +1,93 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.insert.rst:2
+msgid "cuda.tile.insert"
+msgstr "cuda.tile.insert"
+
+#: cuda.tile._stub.insert:1 of
+msgid "Stores a smaller tile into a bigger tile."
+msgstr "将较小的子 Tile 写入（替换）到较大的 Tile 中。"
+
+#: cuda.tile._stub.insert:3 of
+msgid ""
+"Returns a new tile whose elements match ``x``, except in the subtile at "
+"the given grid ``index``, whose elements match ``value``. This is the "
+"inverse of :py:func:`extract`: the shape of the inserted subtile is taken"
+" from ``value``, and ``extract(insert(x, index, value), index, "
+"value.shape)`` reproduces ``value``."
+msgstr ""
+"返回一个新 Tile：除给定网格 ``index`` 处的子 Tile 元素替换为 ``value`` 外，其余元素均与 ``x`` 一致。这是 "
+":py:func:`extract` 的逆操作：插入子 Tile 的形状由 ``value`` 决定，且 ``extract(insert(x, "
+"index, value), index, value.shape)`` 将还原出 ``value`` 。"
+
+#: cuda.tile._stub.insert:9 of
+msgid ""
+"Like all tile operations, this does not mutate ``x`` in place; it returns"
+" a new tile."
+msgstr "与所有 Tile 操作一样，该操作不会原地修改 ``x`` ，而是返回一个新的 Tile。"
+
+#: ../../source/generated/cuda.tile.insert.rst
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile._stub.insert:12 of
+msgid "destination tile."
+msgstr "目标 Tile。"
+
+#: cuda.tile._stub.insert:14 of
+msgid ""
+"Index into the grid of subtiles, not element index. Each dimension ``i`` "
+"has ``x.shape[i] // value.shape[i]`` subtiles; valid values are ``[0, "
+"x.shape[i] // value.shape[i])``."
+msgstr ""
+"子 Tile 网格中的索引（而非元素级索引）。每个维度 ``i`` 包含 ``x.shape[i] // value.shape[i]`` 个子 "
+"Tile；有效值为 ``[0, x.shape[i] // value.shape[i])`` 。"
+
+#: cuda.tile._stub.insert:18 of
+msgid ""
+"subtile to store. Its shape must evenly divide ``x.shape`` in every "
+"dimension. A 0-d ``value`` is treated as a unit subtile."
+msgstr "要存入的子 Tile。其形状必须在每个维度上都能整除 ``x.shape`` 。零维（0-d） ``value`` 会被视为单位大小的子 Tile。"
+
+#: ../../source/generated/cuda.tile.insert.rst
+msgid "Return type"
+msgstr "返回类型"
+
+#: cuda.tile._stub.insert:26 of
+msgid "Examples"
+msgstr "示例"
+
+#: cuda.tile._stub.insert:27 of
+msgid "1D tile."
+msgstr "一维 Tile。"
+
+#: cuda.tile._stub.insert:41 cuda.tile._stub.insert:55 of
+msgid "Output"
+msgstr "输出"
+
+#: cuda.tile._stub.insert:42 of
+msgid "2D tile."
+msgstr "二维 Tile。"
+

@@ -1,0 +1,191 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.load.rst:2
+msgid "cuda.tile.load"
+msgstr "cuda.tile.load"
+
+#: cuda.tile._stub.load:1 of
+msgid "Loads a tile from the `array` which is partitioned into a |tile space|."
+msgstr "从已划分为 |tile space| 的数组中加载一个 Tile。"
+
+#: cuda.tile._stub.load:3 of
+msgid ""
+"The |tile space| is the result of partitioning the `array` into a grid of"
+" equally sized tiles specified by `shape`."
+msgstr "|tile space| 是将 ``array`` 按 ``shape`` 指定大小划分为等大 Tile 网格后得到的结果。"
+
+#: cuda.tile._stub.load:6 of
+msgid ""
+"For example, partitoning a 2D `array` of shape ``(M, N)`` using tile "
+"shape ``(tm, tn)`` results in a 2D tile space of size ``(cdiv(M, tm), "
+"cdiv(N, tn))``. An index into this tile space using index ``(i, j)`` "
+"produces a tile of size ``(tm, tn)``::"
+msgstr ""
+"例如，使用 ``(tm, tn)`` 的 Tile 形状对形状为 ``(M, N)`` 的二维 ``array`` 进行分块，会得到大小为 "
+"``(cdiv(M, tm), cdiv(N, tn))`` 的二维 Tile 空间。使用索引 ``(i, j)`` 访问该 Tile "
+"空间将得到大小为 ``(tm, tn)`` 的 Tile： ::"
+
+#: cuda.tile._stub.load:12 cuda.tile._stub.load:25 of
+msgid "The result tile `t` will be computed according to ::"
+msgstr "结果 Tile ``t`` 将按如下方式计算： ::"
+
+#: cuda.tile._stub.load:16 of
+msgid ""
+"For a tile that partially extends beyond the array boundaries, out-of-"
+"bound elements are filled according to `padding_mode`. If the tile lies "
+"entirely outside the array, the behavior is undefined."
+msgstr "对于部分超出数组边界的 Tile，越界元素将根据 ``padding_mode`` 进行填充。若 Tile 完全位于数组边界之外，则行为未定义。"
+
+#: cuda.tile._stub.load:20 of
+msgid ""
+"`order` is used to map the tile axis to the array axis. The transposed "
+"example of the above call to `load` would be::"
+msgstr "``order`` 用于将 Tile 的轴映射到数组的轴。上述 ``load`` 调用的转置示例如下： ::"
+
+#: ../../source/generated/cuda.tile.load.rst
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile._stub.load:31 of
+msgid "The |array| to load from."
+msgstr "要加载数据的 |array| 。"
+
+#: cuda.tile._stub.load:33 of
+msgid "An index in the |tile space| of ``shape`` from ``array``."
+msgstr "按 ``shape`` 划分 ``array`` 所得到的 |tile space| 中的索引。"
+
+#: cuda.tile._stub.load:35 of
+msgid "A tuple of const integers definining the shape of the tile."
+msgstr "定义 Tile 形状的常量整数元组。"
+
+#: cuda.tile._stub.load:37 of
+msgid ""
+"Permutation applied to array axes before the logical |tile space| is "
+"constructed. Can be specified either as a tuple of constants, or as one "
+"of the two special string literal values:  * \"C\" is an alias for ``(0, "
+"1, 2, ...)``, i.e. no permutation applied; * \"F\" is an alias for "
+"``(..., 2, 1, 0)``, i.e. axis order is reversed."
+msgstr ""
+
+#: cuda.tile._stub.load:37 of
+msgid ""
+"Permutation applied to array axes before the logical |tile space| is "
+"constructed. Can be specified either as a tuple of constants, or as one "
+"of the two special string literal values:"
+msgstr "在构建逻辑 |tile space| 之前应用于数组各轴的排列顺序。既可以指定为常量元组，也可以指定为以下两个特殊字符串字面量之一："
+
+#: cuda.tile._stub.load:41 of
+msgid "\"C\" is an alias for ``(0, 1, 2, ...)``, i.e. no permutation applied;"
+msgstr "``\"C\"`` 是 ``(0, 1, 2, ...)`` 的别名，即不应用轴重排；"
+
+#: cuda.tile._stub.load:42 of
+msgid "\"F\" is an alias for ``(..., 2, 1, 0)``, i.e. axis order is reversed."
+msgstr "``\"F\"`` 是 ``(..., 2, 1, 0)`` 的别名，即反转轴顺序。"
+
+#: cuda.tile._stub.load:44 of
+msgid ""
+"The value used to pad the tile when it extends beyond the array "
+"boundaries. By default, the padding value is undetermined."
+msgstr "当 Tile 超出数组边界时用于填充越界位置的值。默认情况下，填充值为未确定值（undetermined）。"
+
+#: cuda.tile._stub.load:47 of
+msgid ""
+"Whether to bounds-check the tile against the array boundaries. When "
+"``False``, the tile is assumed to stay fully within bounds and the out-"
+"of-bounds check is skipped, producing a faster load; violating this "
+"assumption is undefined behavior. Since no out-of-bound elements can "
+"occur in this case, ``padding_mode`` is ignored. Defaults to ``True``. "
+"Setting it to ``False`` requires tileiras 13.4+."
+msgstr ""
+"是否针对数组边界对 Tile 执行边界检查。设为 ``False`` 时，将假定 Tile "
+"完全位于边界之内并跳过越界检查，从而提升加载性能；违反该假设将导致未定义行为。由于此时不会出现越界元素， ``padding_mode`` "
+"将被忽略。默认为 ``True`` 。将其设为 ``False`` 需要 tileiras 13.4+。"
+
+#: cuda.tile._stub.load:53 of
+msgid ""
+"A hint indicating how heavy DRAM traffic will be. It shall be an integer "
+"between 1 (low) and 10 (high). By default, the compiler will infer the "
+"latency."
+msgstr "指示 DRAM 访存负载强度的提示值，应为 1（低）到 10（高）之间的整数。默认由编译器自动推断。"
+
+#: cuda.tile._stub.load:56 of
+msgid "If False, the load will not use TMA. By default, TMA is allowed."
+msgstr "若为 False，该加载操作不会使用 TMA。默认允许使用 TMA。"
+
+#: cuda.tile._stub.load:58 of
+msgid ""
+"Memory ordering semantics for the load. Defaults to ``MemoryOrder.WEAK``."
+" Valid values: ``WEAK``, ``RELAXED``, ``ACQUIRE``."
+msgstr ""
+"加载操作的内存序语义。默认为 ``MemoryOrder.WEAK`` 。有效值： ``WEAK`` 、 ``RELAXED`` 、 "
+"``ACQUIRE`` 。"
+
+#: cuda.tile._stub.load:61 of
+msgid ""
+"The scope of threads that participate in memory ordering. Only meaningful"
+" when ``memory_order`` is not ``WEAK``."
+msgstr "参与内存排序的线程作用域。仅当 ``memory_order`` 不为 ``WEAK`` 时生效。"
+
+#: ../../source/generated/cuda.tile.load.rst
+msgid "Return type"
+msgstr "返回类型"
+
+#: cuda.tile._stub.load:68 of
+msgid "Examples"
+msgstr "示例"
+
+#: cuda.tile._stub.load:69 of
+msgid "Load from an 1D array."
+msgstr "从一维数组加载。"
+
+#: cuda.tile._stub.load:-1 cuda.tile._stub.load:89 cuda.tile._stub.load:111
+#: cuda.tile._stub.load:129 of
+msgid "Output"
+msgstr "输出"
+
+#: cuda.tile._stub.load:90 of
+msgid "Load from a 2D array in transposed order."
+msgstr "按转置顺序从二维数组加载。"
+
+#: cuda.tile._stub.load:112 of
+msgid "Load from a 3D array with last 2 axes transposed."
+msgstr "从三维数组加载，并转置最后两个轴。"
+
+#: cuda.tile._stub.load:130 of
+msgid "Load a single scalar."
+msgstr "加载单个标量。"
+
+#: cuda.tile._stub.load:151 of
+msgid ":py:func:`store`"
+msgstr ":py:func:`store`"
+
+#: cuda.tile._stub.load:152 of
+msgid ":py:func:`gather`"
+msgstr ":py:func:`gather`"
+
+#: cuda.tile._stub.load:153 of
+msgid "|Tile space|"
+msgstr "|Tile space|"
+

@@ -1,0 +1,74 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.num_tiles.rst:2
+msgid "cuda.tile.num\\_tiles"
+msgstr "cuda.tile.num\\_tiles"
+
+#: cuda.tile._stub.num_tiles:1 of
+msgid ""
+"Gets the number of tiles in the |tile space| of the array along the "
+"`axis`."
+msgstr "获取数组 |tile space| 中沿指定轴的 Tile 数量。"
+
+#: ../../source/generated/cuda.tile.num_tiles.rst
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile._stub.num_tiles:3 of
+msgid "An array object on a cuda device."
+msgstr "位于 CUDA 设备上的数组对象。"
+
+#: cuda.tile._stub.num_tiles:5 of
+msgid "The axis of the tile partition space to get the dim size."
+msgstr "要获取维度大小的 Tile 划分空间轴。"
+
+#: cuda.tile._stub.num_tiles:7 of
+msgid "A sequence of const integers definining the shape of the tile."
+msgstr "定义 Tile 形状的常量整数序列。"
+
+#: cuda.tile._stub.num_tiles:9 of
+msgid "Order of axis mapping. See :py:func:`load`."
+msgstr "轴映射顺序。参见 :py:func:`load` 。"
+
+#: ../../source/generated/cuda.tile.num_tiles.rst
+msgid "Returns"
+msgstr "返回值"
+
+#: cuda.tile._stub.num_tiles:12 of
+msgid "int32"
+msgstr "int32"
+
+#: ../../source/generated/cuda.tile.num_tiles.rst
+msgid "Return type"
+msgstr "返回类型"
+
+#: cuda.tile._stub.num_tiles:15 of
+msgid "Examples"
+msgstr "示例"
+
+#: cuda.tile._stub.num_tiles:31 of
+msgid "Output"
+msgstr "输出"
+

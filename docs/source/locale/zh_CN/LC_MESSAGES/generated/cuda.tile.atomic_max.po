@@ -1,0 +1,91 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.atomic_max.rst:2
+msgid "cuda.tile.atomic\\_max"
+msgstr "cuda.tile.atomic\\_max"
+
+#: cuda.tile._stub.atomic_max:1 of
+msgid "Bulk atomic maximum value assignment on array elements at given indices."
+msgstr "对指定索引处的数组元素执行批量原子取最大值更新。"
+
+#: cuda.tile._stub.atomic_max:3 of
+msgid ""
+"For each specified index, `atomic_max()` reads the corresponding array "
+"element, computes the maximum between its value and the corresponding "
+"value of `update`, and writes the modified value back to the same "
+"location. The original value of the element before the update is "
+"returned."
+msgstr ""
+"对于每个指定索引， ``atomic_max()`` 会读取对应的数组元素，计算其值与 ``update`` "
+"对应值之间的最大值，并将修改后的值写回原位置。函数返回更新前该元素的原始值。"
+
+#: cuda.tile._stub.atomic_max:8 of
+msgid ""
+"For each individual element, the operation is performed atomically, but "
+"the operation as a whole is not atomic, and the order of individual "
+"writes is unspecified."
+msgstr "对于单个元素而言该操作是原子的，但整体操作并不具备跨元素原子性，且各个元素的写入顺序未指定。"
+
+#: cuda.tile._stub.atomic_max:11 of
+msgid ""
+"`atomic_max()` follows the same convention as :py:func:`gather()` and "
+":py:func:`scatter()`: `indices` must be a tuple whose length equals the "
+"`array` rank. All elements of this tuple must be integer tiles or scalars"
+" of the same shape, or different shapes that are broadcastable to a "
+"common shape. If the array is 1-dimensional, `indices` can be passed as a"
+" single tile rather than a tuple of length 1."
+msgstr ""
+"``atomic_max()`` 遵循与 :py:func:`gather()` 和 :py:func:`scatter()` 相同的约定： "
+"``indices`` 必须为长度等于 ``array`` "
+"秩（rank）的元组。该元组的所有元素都必须是具有相同形状（或可广播到同一公共形状的）整数 Tile 或标量。若数组为一维， "
+"``indices`` 可直接作为单个 Tile 传入，而无需包装为长度为 1 的元组。"
+
+#: cuda.tile._stub.atomic_max:18 of
+msgid ""
+"`update` must be a scalar or a tile whose shape is broadcastable to the "
+"common shape of `indices`."
+msgstr "``update`` 必须为标量或 Tile，其形状需可广播到 ``indices`` 的公共形状。"
+
+#: cuda.tile._stub.atomic_max:21 of
+msgid ""
+"By default, `atomic_max()` checks that indices are within the bounds of "
+"the array. For indices that are out of bounds, no operation is performed,"
+" and an implementation-defined value is returned. To disable bounds "
+"checking, set `check_bounds` to ``False``. In this mode, the caller is "
+"responsible for ensuring that all indices are within the bounds of the "
+"array, and any out-of-bounds access will result in undefined behavior."
+msgstr ""
+"默认情况下， ``atomic_max()`` "
+"会检查索引是否在数组边界内。对于越界索引，不会执行任何操作，并返回由实现定义的值。若要禁用边界检查，请将 ``check_bounds`` 设为 "
+"``False`` 。在此模式下，调用方须负责确保所有索引均在数组边界内，任何越界访问都将导致未定义行为。"
+
+#: cuda.tile._stub.atomic_max:27 of
+msgid "Examples:"
+msgstr "示例："
+
+#: cuda.tile._stub.atomic_max:44 of
+msgid "Output"
+msgstr "输出"
+

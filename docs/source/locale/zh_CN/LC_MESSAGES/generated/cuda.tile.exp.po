@@ -1,0 +1,70 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.exp.rst:2
+msgid "cuda.tile.exp"
+msgstr "cuda.tile.exp"
+
+#: cuda.tile._stub.exp:1 of
+msgid "Perform `exp` on a tile."
+msgstr "对 Tile 执行逐元素自然指数 ``exp`` 。"
+
+#: ../../source/generated/cuda.tile.exp.rst
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile._stub.exp:5 of
+msgid ""
+"Supported values:  - ``RoundingMode.FULL`` (f32 only) - "
+"``RoundingMode.APPROX`` (f32 only)  (since CTK 13.3)"
+msgstr ""
+
+#: cuda.tile._stub.exp:5 of
+msgid "Supported values:"
+msgstr "支持的值："
+
+#: cuda.tile._stub.exp:7 of
+msgid "``RoundingMode.FULL`` (f32 only)"
+msgstr "``RoundingMode.FULL`` （仅限 f32）"
+
+#: cuda.tile._stub.exp:8 of
+msgid "``RoundingMode.APPROX`` (f32 only)"
+msgstr "``RoundingMode.APPROX`` （仅限 f32）"
+
+#: cuda.tile._stub.exp:10 of
+msgid "(since CTK 13.3)"
+msgstr "（自 CTK 13.3 起）"
+
+#: ../../source/generated/cuda.tile.exp.rst
+msgid "Return type"
+msgstr "返回类型"
+
+#: cuda.tile._stub.exp:16 of
+msgid "Examples"
+msgstr "示例"
+
+#: cuda.tile._stub.exp:25 of
+msgid "Output"
+msgstr "输出"
+

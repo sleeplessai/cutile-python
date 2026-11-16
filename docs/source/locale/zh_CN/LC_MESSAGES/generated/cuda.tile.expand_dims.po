@@ -1,0 +1,62 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.expand_dims.rst:2
+msgid "cuda.tile.expand\\_dims"
+msgstr "cuda.tile.expand\\_dims"
+
+#: cuda.tile._stub.expand_dims:1 of
+msgid "Reshapes the tile by inserting a new axis of size 1 at given position."
+msgstr "通过在指定位置插入大小为 1 的新轴来改变 Tile 形状。"
+
+#: cuda.tile._stub.expand_dims:3 of
+msgid ""
+"This can also be done via the NumPy-style syntax: `x[:, None]` or "
+"`x[np.newaxis, :]`"
+msgstr "也可以通过 NumPy 风格语法实现： ``x[:, None]`` 或 ``x[np.newaxis, :]`` 。"
+
+#: ../../source/generated/cuda.tile.expand_dims.rst
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile._stub.expand_dims:5 of
+msgid "input tile."
+msgstr "输入 Tile。"
+
+#: cuda.tile._stub.expand_dims:7 of
+msgid "axis to expand the tile dimension."
+msgstr "要扩展插入新维度的轴。"
+
+#: ../../source/generated/cuda.tile.expand_dims.rst
+msgid "Return type"
+msgstr "返回类型"
+
+#: cuda.tile._stub.expand_dims:13 of
+msgid "Examples"
+msgstr "示例"
+
+#: cuda.tile._stub.expand_dims:24 of
+msgid "Output"
+msgstr "输出"
+

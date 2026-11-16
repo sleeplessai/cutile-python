@@ -1,0 +1,158 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.mma_scaled.rst:2
+msgid "cuda.tile.mma\\_scaled"
+msgstr "cuda.tile.mma\\_scaled"
+
+#: cuda.tile._stub.mma_scaled:1 of
+msgid "Block-scaled matrix multiply-accumulate."
+msgstr "分块缩放（Block-scaled）矩阵乘加。"
+
+#: cuda.tile._stub.mma_scaled:3 of
+msgid ""
+"Computes a matrix multiply-accumulate where inputs are scaled by block "
+"scales along the K dimension before the mma::"
+msgstr "计算矩阵乘加：在进行 MMA 之前，先沿 K 维度按分块缩放因子（block scales）对输入进行缩放： ::"
+
+#: cuda.tile._stub.mma_scaled:9 of
+msgid ""
+"The scaling block size is ``B = K // K_s``, where ``K_s`` is the K "
+"dimension of the scale tile. ``K`` must be divisible by ``K_s``, and "
+"``B`` must be one of the allowed values listed in the table below."
+msgstr ""
+"缩放分块大小为 ``B = K // K_s`` ，其中 ``K_s`` 是缩放因子 Tile 的 K 维度大小。 ``K`` 必须能被 "
+"``K_s`` 整除，且 ``B`` 必须为下表列出的允许值之一。"
+
+#: ../../source/generated/cuda.tile.mma_scaled.rst
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile._stub.mma_scaled:13 of
+msgid "LHS input, 2D or 3D ``[..., M, K]``."
+msgstr "左操作数（LHS）输入，二维或三维，形状为 ``[..., M, K]`` 。"
+
+#: cuda.tile._stub.mma_scaled:15 of
+msgid ""
+"Scale factors for x, shape ``[..., M, K_s]``. All dimensions except K_s "
+"must match x exactly."
+msgstr "``x`` 的缩放因子，形状为 ``[..., M, K_s]`` 。除 ``K_s`` 之外的所有维度都必须与 ``x`` 完全匹配。"
+
+#: cuda.tile._stub.mma_scaled:18 of
+msgid "RHS input, 2D or 3D ``[..., K, N]``."
+msgstr "右操作数（RHS）输入，二维或三维，形状为 ``[..., K, N]`` 。"
+
+#: cuda.tile._stub.mma_scaled:20 of
+msgid ""
+"Scale factors for y, shape ``[..., K_s, N]``. All dimensions except K_s "
+"must match y exactly."
+msgstr "``y`` 的缩放因子，形状为 ``[..., K_s, N]`` 。除 ``K_s`` 之外的所有维度都必须与 ``y`` 完全匹配。"
+
+#: cuda.tile._stub.mma_scaled:23 of
+msgid "Accumulator ``[..., M, N]``."
+msgstr "累加器，形状为 ``[..., M, N]`` 。"
+
+#: cuda.tile._stub.mma_scaled:26 of
+msgid "Supported datatypes and scaling block sizes:"
+msgstr "支持的数据类型与缩放分块大小："
+
+#: cuda.tile._stub.mma_scaled:29 of
+msgid "Input (x/y)"
+msgstr "输入 (x/y)"
+
+#: cuda.tile._stub.mma_scaled:29 of
+msgid "Scale"
+msgstr "缩放因子"
+
+#: cuda.tile._stub.mma_scaled:29 of
+msgid "Acc/Out"
+msgstr "累加器/输出"
+
+#: cuda.tile._stub.mma_scaled:29 of
+msgid "B"
+msgstr "B"
+
+#: cuda.tile._stub.mma_scaled:31 of
+msgid "f8e4m3fn, f8e5m2"
+msgstr "f8e4m3fn, f8e5m2"
+
+#: cuda.tile._stub.mma_scaled:31 cuda.tile._stub.mma_scaled:33 of
+msgid "f8e8m0fnu"
+msgstr "f8e8m0fnu"
+
+#: cuda.tile._stub.mma_scaled:31 cuda.tile._stub.mma_scaled:33
+#: cuda.tile._stub.mma_scaled:35 of
+msgid "f32"
+msgstr "f32"
+
+#: cuda.tile._stub.mma_scaled:31 of
+msgid "32"
+msgstr "32"
+
+#: cuda.tile._stub.mma_scaled:33 cuda.tile._stub.mma_scaled:35 of
+msgid "f4e2m1fn"
+msgstr "f4e2m1fn"
+
+#: cuda.tile._stub.mma_scaled:33 of
+msgid "16, 32"
+msgstr "16, 32"
+
+#: cuda.tile._stub.mma_scaled:35 of
+msgid "f8e4m3fn"
+msgstr "f8e4m3fn"
+
+#: cuda.tile._stub.mma_scaled:35 of
+msgid "16"
+msgstr "16"
+
+#: cuda.tile._stub.mma_scaled:38 of
+msgid ""
+"Batch dimensions of x and y are broadcast against each other (same as "
+":func:`mma`). x_scale's batch dimension must match x's batch exactly, and"
+" y_scale's batch dimension must match y's batch exactly; both are then "
+"broadcast to the output batch shape."
+msgstr ""
+"``x`` 和 ``y`` 的批处理维度会相互广播（与 :func:`mma` 相同）。 ``x_scale`` 的批处理维度必须与 ``x`` "
+"完全匹配， ``y_scale`` 的批处理维度必须与 ``y`` 完全匹配；随后两者均会广播至输出批处理形状。"
+
+#: ../../source/generated/cuda.tile.mma_scaled.rst
+msgid "Return type"
+msgstr "返回类型"
+
+#: cuda.tile._stub.mma_scaled:46 of
+msgid "Examples"
+msgstr "示例"
+
+#: cuda.tile._stub.mma_scaled:47 of
+msgid "Basic usage."
+msgstr "基本用法。"
+
+#: cuda.tile._stub.mma_scaled:-1 of
+msgid "Output"
+msgstr "输出"
+
+#: cuda.tile._stub.mma_scaled:66 of
+msgid "For best performance on sm_100."
+msgstr "用于在 sm_100 上获得最佳性能。"
+

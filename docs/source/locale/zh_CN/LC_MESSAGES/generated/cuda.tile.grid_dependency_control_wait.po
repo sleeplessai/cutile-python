@@ -1,0 +1,40 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.grid_dependency_control_wait.rst:2
+msgid "cuda.tile.grid\\_dependency\\_control\\_wait"
+msgstr "cuda.tile.grid\\_dependency\\_control\\_wait"
+
+#: cuda.tile._stub.grid_dependency_control_wait:1 of
+msgid ""
+"Wait for the preceding kernel in a programmatic dependent launch to "
+"finish."
+msgstr "在编程式依赖启动中等待前驱内核完成执行。"
+
+#: cuda.tile._stub.grid_dependency_control_wait:3 of
+msgid ""
+"After the wait completes, predecessor-produced memory is visible to "
+"subsequent operations in the dependent kernel."
+msgstr "等待完成后，前驱内核写入的内存对依赖内核中的后续操作可见。"
+

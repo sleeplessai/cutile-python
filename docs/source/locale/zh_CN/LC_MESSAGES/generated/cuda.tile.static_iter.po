@@ -1,0 +1,75 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.static_iter.rst:2
+msgid "cuda.tile.static\\_iter"
+msgstr "cuda.tile.static\\_iter"
+
+#: cuda.tile._stub.static_iter:1 of
+msgid "Expand an iterable during compilation."
+msgstr "在编译期间展开可迭代对象。"
+
+#: cuda.tile._stub.static_iter:3 of
+msgid "Can only be used as the iterable of a `for` loop::"
+msgstr "仅可用作 ``for`` 循环中的可迭代对象： ::"
+
+#: cuda.tile._stub.static_iter:8 of
+msgid ""
+"The surrounded expression is evaluated using the same rules as "
+":py:func:`static_eval`: it can reference global and local variables, and "
+"use the full Python syntax, but must not perform any run-time operations."
+msgstr ""
+"所包裹的表达式会按照与 :py:func:`static_eval` 相同的规则进行求值：它可以引用全局变量和局部变量，并可使用完整的 "
+"Python 语法，但不得执行任何运行时操作。"
+
+#: cuda.tile._stub.static_iter:12 of
+msgid ""
+"The expression must return a Python iterable, whose length must not "
+"exceed some pre-defined number of iterations (currently, 1000). Before "
+"any further processing is done, the contents of the iterable are saved to"
+" a temporary list, and each item is checked to be valid, as if it were a "
+"result of a :py:func:`static_eval` expression (i.e., it must be a "
+"supported compile-time constant value or a proxy object for a dynamic "
+"value such as a tile)."
+msgstr ""
+"该表达式必须返回一个 Python 可迭代对象，且其长度不得超过预设的最大迭代次数（当前为 "
+"1000）。在进行进一步处理之前，可迭代对象的内容会先保存到临时列表中，并逐项检查其有效性，就像检查 :py:func:`static_eval`"
+" 表达式的结果一样（即每一项都必须是受支持的编译期常量值，或是诸如 Tile 等动态值的代理对象）。"
+
+#: cuda.tile._stub.static_iter:19 of
+msgid ""
+"Finally, for each item of the iterable, the loop body is inlined, with "
+"the induction variable(s) bound to the item. Loads, stores, and "
+"arithmetic in the body retain their runtime semantics, subject to "
+"compiler optimization. The `break`, `continue`, and `return` statements "
+"are not allowed inside a `static_iter` loop."
+msgstr ""
+"最后，对于可迭代对象中的每一项，循环体都会被内联展开，且归纳变量（induction "
+"variable）会绑定至当前项。循环体内的加载、存储和算术运算保留其运行时语义，并由编译器进行优化。 ``static_iter`` "
+"循环内部不允许使用 ``break`` 、 ``continue`` 和 ``return`` 语句。"
+
+#: cuda.tile._stub.static_iter:43 of
+msgid "Output"
+msgstr "输出"
+

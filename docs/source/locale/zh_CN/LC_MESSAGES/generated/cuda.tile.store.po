@@ -1,0 +1,146 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.store.rst:2
+msgid "cuda.tile.store"
+msgstr "cuda.tile.store"
+
+#: cuda.tile._stub.store:1 of
+msgid "Stores a `tile` value into the `array` at the `index` of its |tile space|."
+msgstr "将 ``tile`` 值存储到数组 |tile space| 的指定索引位置。"
+
+#: cuda.tile._stub.store:3 of
+msgid ""
+"The |tile space| is the result of partitioning the `array` into a grid of"
+" tiles with equal size defined by the shape of the `tile`."
+msgstr "|tile space| 是将 ``array`` 按 ``tile`` 的形状划分为等大 Tile 网格后得到的结果。"
+
+#: cuda.tile._stub.store:6 of
+msgid ""
+"For example, given a tile `t` of shape ``(tm, tn)`` and array of shape "
+"``(M, N)``::"
+msgstr "例如，给定形状为 ``(tm, tn)`` 的 Tile ``t`` 以及形状为 ``(M, N)`` 的数组： ::"
+
+#: cuda.tile._stub.store:11 of
+msgid "The above call to `store` will store elements according to::"
+msgstr "上述 ``store`` 调用将按如下方式存储元素： ::"
+
+#: cuda.tile._stub.store:15 of
+msgid ""
+"For a tile that partially extends beyond the array boundaries, out-of-"
+"bound elements are ignored. If the tile lies entirely outside the array, "
+"the behavior is undefined."
+msgstr "对于部分超出数组边界的 Tile，越界元素将被忽略。若 Tile 完全位于数组边界之外，则行为未定义。"
+
+#: ../../source/generated/cuda.tile.store.rst
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile._stub.store:19 of
+msgid "The |array| to store to."
+msgstr "要写入数据的 |array| 。"
+
+#: cuda.tile._stub.store:21 of
+msgid ""
+"An index in the |tile space| of ``array``. ``shape`` is inferred from the"
+" ``tile`` argument."
+msgstr "``array`` 的 |tile space| 中的索引。 ``shape`` 根据 ``tile`` 参数自动推断。"
+
+#: cuda.tile._stub.store:24 of
+msgid ""
+"The |tile| to store. The rank of the tile must match rank of the array, "
+"unless it is a scalar or 0d tile."
+msgstr "要存储的 |tile| 。Tile 的秩（rank）必须与数组的秩匹配，除非它是标量或零维（0-d）Tile。"
+
+#: cuda.tile._stub.store:27 of
+msgid "Order of axis mapping. See :py:func:`load`."
+msgstr "轴映射顺序。参见 :py:func:`load` 。"
+
+#: cuda.tile._stub.store:29 of
+msgid ""
+"Whether to bounds-check the tile against the array boundaries. When "
+"``False``, the tile is assumed to stay fully within bounds and the out-"
+"of-bounds check is skipped, producing a faster store; violating this "
+"assumption is undefined behavior. Defaults to ``True``. Setting it to "
+"``False`` requires tileiras 13.4+."
+msgstr ""
+"是否针对数组边界对 Tile 执行边界检查。设为 ``False`` 时，将假定 Tile "
+"完全位于边界之内并跳过越界检查，从而提升存储性能；违反该假设将导致未定义行为。默认为 ``True`` 。将其设为 ``False`` 需要 "
+"tileiras 13.4+。"
+
+#: cuda.tile._stub.store:34 of
+msgid ""
+"A hint indicating how heavy DRAM traffic will be. It shall be an integer "
+"between 1 (low) and 10 (high). By default, the compiler will infer the "
+"latency."
+msgstr "指示 DRAM 访存负载强度的提示值，应为 1（低）到 10（高）之间的整数。默认由编译器自动推断。"
+
+#: cuda.tile._stub.store:37 of
+msgid "If False, the store will not use TMA. By default, TMA is allowed."
+msgstr "若为 False，该存储操作不会使用 TMA。默认允许使用 TMA。"
+
+#: cuda.tile._stub.store:40 of
+msgid ""
+"Memory ordering semantics for the store. Defaults to "
+"``MemoryOrder.WEAK``. Valid values: ``WEAK``, ``RELAXED``, ``RELEASE``."
+msgstr ""
+"存储操作的内存序语义。默认为 ``MemoryOrder.WEAK`` 。有效值： ``WEAK`` 、 ``RELAXED`` 、 "
+"``RELEASE`` 。"
+
+#: cuda.tile._stub.store:43 of
+msgid ""
+"The scope of threads that participate in memory ordering. Only meaningful"
+" when ``memory_order`` is not ``WEAK``."
+msgstr "参与内存排序的线程作用域。仅当 ``memory_order`` 不为 ``WEAK`` 时生效。"
+
+#: cuda.tile._stub.store:48 of
+msgid "Examples"
+msgstr "示例"
+
+#: cuda.tile._stub.store:49 of
+msgid "Store into 1D array, partial out of bound store is ignored."
+msgstr "存储到一维数组，部分越界的写入将被忽略。"
+
+#: cuda.tile._stub.store:67 cuda.tile._stub.store:87 of
+msgid "Output"
+msgstr "输出"
+
+#: cuda.tile._stub.store:68 of
+msgid ""
+"When storing with a scalar (0d tile), it is broadcasted to the rank of "
+"the array."
+msgstr "使用标量（零维 Tile）进行存储时，会将其广播至与数组相同的秩。"
+
+#: cuda.tile._stub.store:89 of
+msgid ":py:func:`load`"
+msgstr ":py:func:`load`"
+
+#: cuda.tile._stub.store:90 of
+msgid ":py:func:`scatter`"
+msgstr ":py:func:`scatter`"
+
+#: cuda.tile._stub.store:91 of
+msgid "|Tile space|"
+msgstr "|Tile space|"
+

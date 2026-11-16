@@ -44,8 +44,12 @@ from sphinx.ext.doctest import (
     setup as doctest_setup,
 )
 
+from sphinx.locale import get_translation, init as locale_init
 from sphinx.util import logging as sphinx_logging
 logger = sphinx_logging.getLogger(__name__)
+
+MESSAGE_CATALOG_NAME = "doctest_ext"
+_ = get_translation(MESSAGE_CATALOG_NAME)
 
 _libc = ctypes.CDLL('ucrtbase' if sys.platform == 'win32' else None)
 
@@ -247,6 +251,16 @@ def _make_code_block(code, groups=None, source_info=None, node_type=None, option
     return node
 
 
+def _ui_labels():
+    return {
+        "snippet": _("Snippet"),
+        "complete": _("Complete Example"),
+        "copy": _("Copy"),
+        "copied": _("Copied!"),
+        "output": _("Output"),
+    }
+
+
 def _make_tabs(env, snippet_block, full_block):
     """Build a CSS-only tabbed container with Snippet and Complete blocks.
 
@@ -259,6 +273,7 @@ def _make_tabs(env, snippet_block, full_block):
     tabs_id = env.temp_data["next_tabs_id"]
     env.temp_data["next_tabs_id"] += 1
 
+    labels = _ui_labels()
     name = f"snippet-tab-{tabs_id}"
     id_snippet = f"snippet-tab-{tabs_id}-snippet"
     id_full = f"snippet-tab-{tabs_id}-full"
@@ -268,9 +283,9 @@ def _make_tabs(env, snippet_block, full_block):
 
     header_html = (
         f'<input type="radio" name="{name}" id="{id_snippet}" checked>'
-        f'<label for="{id_snippet}">Snippet</label>'
+        f'<label for="{id_snippet}">{labels["snippet"]}</label>'
         f'<input type="radio" name="{name}" id="{id_full}">'
-        f'<label for="{id_full}">Complete Example</label>'
+        f'<label for="{id_full}">{labels["complete"]}</label>'
     )
     container += nodes.raw('', header_html, format='html')
 
@@ -282,13 +297,28 @@ def _make_tabs(env, snippet_block, full_block):
     panel2 = nodes.container()
     panel2["classes"].append("snippet-tab-panel")
     panel2["classes"].append("snippet-tab-copyable")
+    copy_label = labels["copy"]
+    copied_label = labels["copied"]
+    copy_attr = (
+        copy_label.replace("&", "&amp;")
+        .replace('"', "&quot;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+    )
+    copied_attr = (
+        copied_label.replace("&", "&amp;")
+        .replace('"', "&quot;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+    )
     copy_btn = (
-        '<button class="snippet-copy-btn" title="Copy" '
+        f'<button class="snippet-copy-btn" title="{copy_attr}" '
+        f'data-copy="{copy_attr}" data-copied="{copied_attr}" '
         'onclick="let c=this.parentNode.querySelector(\'pre\').textContent;'
         'navigator.clipboard.writeText(c);'
-        'this.textContent=\'Copied!\';'
-        'setTimeout(()=>this.textContent=\'Copy\',1500)">'
-        'Copy</button>'
+        'this.textContent=this.dataset.copied;'
+        'setTimeout(()=>this.textContent=this.dataset.copy,1500)">'
+        f'{copy_attr}</button>'
     )
     panel2 += nodes.raw('', copy_btn, format='html')
     panel2 += full_block
@@ -352,7 +382,8 @@ class LabeledTestoutputDirective(TestoutputDirective):
 
     def run(self):
         result = super().run()
-        label = nodes.paragraph('', 'Output')
+        labels = _ui_labels()
+        label = nodes.paragraph('', labels["output"])
         label['classes'].append('testoutput-label')
         return [label] + result
 
@@ -397,7 +428,16 @@ def _lint_docstring(app, what, name, obj, options, lines):
     _lint_lines(lines, location=name)
 
 
+def _reload_catalog(app, env, docnames):
+    """Reload doctest_ext catalog after Sphinx compiles .po -> .mo files."""
+    locale_dir = os.path.join(app.srcdir, "locale")
+    locale_init([locale_dir], app.config.language, catalog=MESSAGE_CATALOG_NAME)
+
+
 def setup(app):
+    locale_dir = os.path.join(app.srcdir, "locale")
+    app.add_message_catalog(MESSAGE_CATALOG_NAME, locale_dir)
+    app.connect("env-before-read-docs", _reload_catalog)
     doctest_setup(app)
     app.connect('source-read', _lint_source_read)
     app.connect('autodoc-process-docstring', _lint_docstring)

@@ -1,0 +1,83 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.print.rst:2
+msgid "cuda.tile.print"
+msgstr "cuda.tile.print"
+
+#: cuda.tile._stub.print:1 of
+msgid "Print values at runtime from the device using Python-style syntax."
+msgstr "在运行时使用 Python 风格语法从设备端打印数值。"
+
+#: cuda.tile._stub.print:3 of
+msgid ""
+"Supports Python f-strings and positional arguments similar to Python's "
+"built-in ``print()`` function."
+msgstr "支持类似于 Python 内置 ``print()`` 函数的 f-string 与位置参数。"
+
+#: cuda.tile._stub.print of
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile._stub.print:6 of
+#, python-format
+msgid ""
+"Values to print. Each argument can be: - A string literal or f-string - A"
+" tile value (format inferred from dtype: int→``%d``, float→``%f``)"
+msgstr ""
+"要打印的值。每个参数可以是：- 字符串字面量或 f-string - Tile 值（格式根据数据类型自动推断：整型→ ``%d`` ，浮点型→ "
+"``%f`` ）"
+
+#: cuda.tile._stub.print:9 of
+msgid "Separator inserted between arguments (default: ``' '``)"
+msgstr "参数之间插入的分隔符（默认为 ``' '`` ）。"
+
+#: cuda.tile._stub.print:11 of
+msgid "String appended after the last argument (default: ``'\\n'``)"
+msgstr "最后一个参数之后追加的字符串（默认为 ``'\\n'`` ）。"
+
+#: cuda.tile._stub.print:15 of
+msgid "Examples"
+msgstr "示例"
+
+#: cuda.tile._stub.print:27 of
+msgid "Output"
+msgstr "输出"
+
+#: cuda.tile._stub.print:29 of
+msgid "Notes"
+msgstr "备注"
+
+#: cuda.tile._stub.print:30 of
+msgid ""
+"This operation has significant overhead, and should only be used for "
+"debugging purposes."
+msgstr "该操作开销较大，仅应用于调试目的。"
+
+#: cuda.tile._stub.print:33 of
+msgid ""
+"F-string expressions must evaluate to tile values. Constant compile-time "
+"values are supported as string-formatted segments."
+msgstr "f-string 表达式必须求值为 Tile 值。常量编译期值可作为字符串格式化片段使用。"
+

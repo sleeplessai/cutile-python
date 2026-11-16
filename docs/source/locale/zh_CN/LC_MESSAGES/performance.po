@@ -1,0 +1,271 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/performance.rst:8
+msgid "Performance Tuning"
+msgstr "性能调优"
+
+#: ../../source/performance.rst:10
+msgid "Several performance tuning techniques are available in cuTile:"
+msgstr "cuTile 提供了多种性能调优手段："
+
+#: ../../source/performance.rst:12
+msgid "architecture-specific configuration values, using :class:`ByTarget`;"
+msgstr "使用 :class:`ByTarget` 设置针对特定架构的配置值；"
+
+#: ../../source/performance.rst:13
+msgid "load/store hints such as ``latency`` and ``allow_tma``;"
+msgstr "``latency`` 和 ``allow_tma`` 等 load/store 提示参数；"
+
+#: ../../source/performance.rst:14
+msgid "divisibility hints via :func:`assume_divisible_by`."
+msgstr "通过 :func:`assume_divisible_by` 提供的整除性提示。"
+
+#: ../../source/performance.rst:18
+msgid "Architecture-specific configuration"
+msgstr "针对特定架构的配置"
+
+#: cuda.tile._by_target.ByTarget:1 of
+msgid "Type used to specify a value that depends on the target GPU architecture."
+msgstr "用于指定依赖于目标 GPU 架构的配置值的类型。"
+
+#: ../../source/performance.rst
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile._by_target.ByTarget:3 of
+msgid ""
+"The fallback value to use when the target GPU architecture is not "
+"explicitly listed in ``value_by_target``."
+msgstr "当目标 GPU 架构未在 ``value_by_target`` 中显式列出时所使用的默认回退值。"
+
+#: cuda.tile._by_target.ByTarget:5 of
+msgid ""
+"Mapping from GPU architecture name to value. Keys must be strings of the "
+"form ``\"sm_<major><minor>\"``, such as ``\"sm_100\"`` or ``\"sm_120\"``."
+msgstr ""
+"从 GPU 架构名称到配置值的映射。键名必须是形如 ``\"sm_<major><minor>\"`` 的字符串，例如 "
+"``\"sm_100\"`` 或 ``\"sm_120\"`` 。"
+
+#: cuda.tile._by_target.ByTarget:9 of
+msgid "Examples"
+msgstr "示例"
+
+#: cuda.tile._by_target.ByTarget:10 of
+msgid "Use one ``num_ctas`` value for all architectures:"
+msgstr "为所有架构使用相同的 ``num_ctas`` 值："
+
+#: cuda.tile._by_target.ByTarget:21 of
+msgid ""
+"Use different ``num_ctas`` values for specific architectures, and a "
+"fallback value for all others:"
+msgstr "为特定架构使用不同的 ``num_ctas`` 值，并为其他所有架构指定回退默认值："
+
+#: ../../source/performance.rst:24
+msgid ""
+"See :ref:`tile-kernels` for the full description of kernel configuration "
+"parameters such as ``num_ctas``, ``occupancy`` and ``opt_level``. Any of "
+"these options may be given as a :class:`ByTarget` value to specialize "
+"them for different GPU architectures."
+msgstr ""
+"关于 ``num_ctas`` 、 ``occupancy`` 和 ``opt_level`` 等内核配置参数的完整说明，请参见 :ref"
+":`tile-kernels` 。这些选项均可传入 :class:`ByTarget` 对象，以针对不同 GPU 架构进行特化配置。"
+
+#: ../../source/performance.rst:30
+msgid "Load/store performance hints"
+msgstr "Load/Store 性能提示"
+
+#: ../../source/performance.rst:32
+msgid ""
+"The :func:`load` and :func:`store` operations accept optional keyword "
+"arguments that can influence how memory traffic is scheduled and lowered:"
+msgstr ":func:`load` 和 :func:`store` 操作接受以下可选关键字参数，用于影响内存访存的调度与降级（lowering）方式："
+
+#: ../../source/performance.rst:35
+msgid ""
+"``latency`` (``int`` or ``None``) – A hint indicating how heavy the DRAM "
+"traffic will be for this operation. It shall be an integer between 1 "
+"(low) and 10 (high). A large value typically fits the cases when DRAM "
+"traffic is high, and will likely result in a larger prefetch depth of the"
+" memory operation."
+msgstr ""
+"``latency`` （ ``int`` 或 ``None`` ）– 用于提示该操作的 DRAM 访存负载强度。取值应为 1（低）到 "
+"10（高）之间的整数。较大的值通常适用于 DRAM 访存压力较大的场景，并且往往会为该内存操作带来更大的预取深度（prefetch depth）。"
+
+#: ../../source/performance.rst:40
+msgid ""
+"``allow_tma`` (``bool`` or ``None``) – If ``True``, the load or store may"
+" be lowered to use TMA (Tensor Memory Accelerator) when the target "
+"architecture supports it. If ``False``, TMA will not be used for this "
+"operation. By default, TMA is allowed."
+msgstr ""
+"``allow_tma`` （ ``bool`` 或 ``None`` ）– 若为 ``True`` ，当目标架构支持时，该 load 或 "
+"store 操作可被降级为使用 TMA（Tensor Memory Accelerator，张量内存加速器）。若为 ``False`` "
+"，则该操作不会使用 TMA。默认允许使用 TMA。"
+
+#: ../../source/performance.rst:45
+msgid ""
+"These hints are optional: kernels will compile and run without specifying"
+" them, but providing them can help the compiler make better code-"
+"generation decisions for a particular memory-access pattern."
+msgstr "这些提示参数均为可选项：即使不指定，内核依然可以正常编译和运行；但针对特定的内存访问模式提供这些提示，有助于编译器做出更优的代码生成决策。"
+
+#: ../../source/performance.rst:51
+msgid "Example"
+msgstr "示例"
+
+#: ../../source/performance.rst:60
+msgid "Divisibility hints"
+msgstr "整除性提示"
+
+#: ../../source/performance.rst:62
+msgid ""
+":func:`assume_divisible_by` is a compiler hint that declares an integer "
+"scalar to be divisible by a compile-time constant. No check is performed "
+"at runtime:"
+msgstr ":func:`assume_divisible_by` 是一种编译器提示，用于声明某个整数标量可被一个编译期常量整除。运行时不会执行任何检查："
+
+#: ../../source/performance.rst:70
+msgid ""
+"The compiler propagates the divisibility metadata through arithmetic "
+"operations — so that derived indices and pointer offsets inherit the same"
+" fact. This matters most when a runtime scalar is used to compute a "
+"dynamic array slice:"
+msgstr "编译器会通过算术运算传播这种整除性元数据——从而使派生出的索引和指针偏移量继承同一性质。当使用运行时标量来计算动态数组切片时，这一机制尤为关键："
+
+#: ../../source/performance.rst:85
+msgid ""
+"Without the hints, the compiler treats ``dim_offset`` and ``dim_size`` as"
+" fully unknown and cannot prove alignment for the derived view. With the "
+"hints, it can infer alignment all the way into the view's base address "
+"and shape, enabling wider memory operations."
+msgstr ""
+"没有这些提示时，编译器会将 ``dim_offset`` 和 ``dim_size`` "
+"视为完全未知的值，无法证明派生视图的对齐性。提供提示后，编译器能够一路将对齐信息推导至视图的基地址和形状，从而启用更宽的内存访问指令。"
+
+#: ../../source/performance.rst:90
+msgid ""
+"The hint is a programmer declaration, not an enforcement. Behavior is "
+"undefined if ``x`` is not actually divisible by ``divisor`` at runtime."
+msgstr "该提示仅是程序员向编译器做出的声明，而非运行时强制检查。如果运行时 ``x`` 实际上不能被 ``divisor`` 整除，则行为未定义。"
+
+#: ../../source/performance.rst:97
+msgid "Autotuning"
+msgstr "自动调优"
+
+#: ../../source/performance.rst:99
+msgid ""
+":func:`tune.exhaustive_search` provides a convenient way to measure "
+"kernel performance on a finite space of configurations and return the "
+"best configuration."
+msgstr ":func:`tune.exhaustive_search` 提供了一种便捷的方式，用于在有限的配置空间中测量内核性能并返回最佳配置。"
+
+#: cuda.tile.tune._tune.exhaustive_search:1 of
+msgid "Searches the entire search space and return the best configuration."
+msgstr "遍历整个搜索空间并返回最佳配置。"
+
+#: cuda.tile.tune._tune.exhaustive_search:3 of
+msgid "Sequence of configs to evaluate."
+msgstr "待评估的配置序列。"
+
+#: cuda.tile.tune._tune.exhaustive_search:4 of
+msgid "The CUDA stream to execute kernel on."
+msgstr "用于执行内核的 CUDA 流（stream）。"
+
+#: cuda.tile.tune._tune.exhaustive_search:5 of
+msgid "Maps a config to grid dimensions."
+msgstr "将单个配置映射为网格（grid）维度的函数。"
+
+#: cuda.tile.tune._tune.exhaustive_search:6 of
+msgid ""
+"The kernel to tune, or a function mapping a config to the kernel to tune."
+" For best performance when using a function, return the same kernel "
+"object for configs that map to the same kernel."
+msgstr "待调优的内核，或将配置映射为待调优内核的函数。使用函数时，为获得最佳性能，对于映射到同一内核的不同配置，请返回相同的内核对象。"
+
+#: cuda.tile.tune._tune.exhaustive_search:9 of
+msgid "Maps a config to kernel arguments for timing."
+msgstr "将配置映射为用于计时测试的内核参数的函数。"
+
+#: cuda.tile.tune._tune.exhaustive_search:10 of
+msgid "Maps a config to compiler hints. Default: no hints."
+msgstr "将配置映射为编译器提示的函数。默认：无提示。"
+
+#: cuda.tile.tune._tune.exhaustive_search:11 of
+msgid "If true, avoid printing any progress or result."
+msgstr "若为 True，则不打印任何进度或结果。"
+
+#: cuda.tile.tune._tune.exhaustive_search:12 of
+msgid ""
+"Wall-time timeout (in seconds) per kernel launch, enforced by running "
+"benchmarks in a subprocess. When None (the default), timeouts are "
+"disabled and kernels run directly without a subprocess."
+msgstr ""
+"每次内核启动的挂钟超时时间（单位：秒），通过在子进程中运行基准测试来强制生效。若为 "
+"None（默认），则禁用超时限制，内核直接在当前进程中运行而无需启动子进程。"
+
+#: cuda.tile.tune._tune.exhaustive_search:16 of
+msgid ""
+"Flush L2 before each kernel run. Defaults to True. Set to False to "
+"measure without deliberately evicting cached data."
+msgstr "每次运行内核前刷新（清空）L2 缓存。默认为 True。设为 False 则在测量前不刻意驱逐已缓存的数据。"
+
+#: ../../source/performance.rst
+msgid "Returns"
+msgstr "返回值"
+
+#: cuda.tile.tune._tune.exhaustive_search:19 of
+msgid "TuningResult with the best config and its time in microseconds."
+msgstr "包含最佳配置及其耗时（单位：微秒）的 TuningResult 对象。"
+
+#: ../../source/performance.rst
+msgid "Return type"
+msgstr "返回类型"
+
+#: cuda.tile.tune._tune.exhaustive_search:21 of
+msgid "Examples:"
+msgstr "示例："
+
+#: cuda.tile.tune._tune.exhaustive_search:93 of
+msgid "Output"
+msgstr "输出"
+
+#: ../../source/performance.rst:105
+msgid ""
+"To achieve consistent result with tuning, it is best to fix GPU clock and"
+" memory clock."
+msgstr "为了在调优过程中获得稳定一致的测量结果，建议锁定 GPU 核心频率和显存频率。"
+
+#: ../../source/performance.rst:107
+msgid "Enable persistent mode::"
+msgstr "启用持久模式（Persistent Mode）::"
+
+#: ../../source/performance.rst:111
+msgid "Query supported clocks::"
+msgstr "查询支持的频率::"
+
+#: ../../source/performance.rst:115
+msgid "Fix graphics and memory clocks::"
+msgstr "锁定图形时钟和显存时钟::"
+

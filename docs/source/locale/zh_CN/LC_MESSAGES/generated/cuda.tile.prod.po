@@ -1,0 +1,92 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.prod.rst:2
+msgid "cuda.tile.prod"
+msgstr "cuda.tile.prod"
+
+#: cuda.tile._stub.prod:1 of
+msgid "Performs prod reduction on tile along the `axis`."
+msgstr "沿指定轴对 Tile 执行求积归约。"
+
+#: ../../source/generated/cuda.tile.prod.rst
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile._stub.prod:3 of
+msgid "input tile."
+msgstr "输入 Tile。"
+
+#: cuda.tile._stub.prod:5 of
+msgid ""
+"the axis for reduction. The default, `axis=None`, will reduce all of the "
+"elements. For `argmin` and `argmax`, tuple of axis is not supported."
+msgstr "要执行归约的轴。默认值 ``axis=None`` 表示归约所有元素。对于 ``argmin`` 和 ``argmax`` ，不支持传入轴元组。"
+
+#: cuda.tile._stub.prod:9 of
+msgid ""
+"If true, preserves the number of dimension from the input tile. "
+"rounding_mode (RoundingMode): The rounding mode for the operation, only "
+"supported for float types, default is RoundingMode.RN when applicable. "
+"flush_to_zero (const bool): If True, flushes subnormal inputs and results"
+" to sign-preserving zero, default is False."
+msgstr ""
+"若为 True，则在输出中保留与输入 Tile 相同的维度数。 ``rounding_mode`` "
+"(RoundingMode)：该操作的舍入模式，仅支持浮点类型；适用时默认为 ``RoundingMode.RN`` 。 "
+"``flush_to_zero`` (const bool)：若为 True，则将次正规（subnormal）输入和结果刷零（保留符号），默认为 "
+"False。"
+
+#: ../../source/generated/cuda.tile.prod.rst
+msgid "Returns"
+msgstr "返回值"
+
+#: cuda.tile._stub.prod:15 of
+msgid ""
+".. rubric:: Examples  Reduce all axes.  .. testcode::     :template: "
+"kernel_wrapper.py      tx = ct.arange(8, dtype=ct.int32).reshape((2, 4))"
+"     print(\"input:\", tx)     print(\"reduced:\", ct.prod(tx, None))  .."
+" testoutput::      input: [[0, 1, 2, 3], [4, 5, 6, 7]]     reduced: 0  "
+"Reduce axis 1 and keepdims.  .. testcode::     :template: "
+"kernel_wrapper.py      tx = ct.arange(8, dtype=ct.int32).reshape((2, 4))"
+"     print(\"input:\", tx)     print(\"reduced:\", ct.prod(tx, 1, "
+"keepdims=True))  .. testoutput::      input: [[0, 1, 2, 3], [4, 5, 6, 7]]"
+"     reduced: [[0], [840]]"
+msgstr ""
+
+#: cuda.tile._stub.prod of
+msgid "Examples"
+msgstr "示例"
+
+#: cuda.tile._stub.prod:17 of
+msgid "Reduce all axes."
+msgstr "沿所有轴进行归约。"
+
+#: cuda.tile._stub.prod:31 of
+msgid "Reduce axis 1 and keepdims."
+msgstr "沿轴 1 进行归约并保留维度（keepdims）。"
+
+#: ../../source/generated/cuda.tile.prod.rst
+msgid "Return type"
+msgstr "返回类型"
+

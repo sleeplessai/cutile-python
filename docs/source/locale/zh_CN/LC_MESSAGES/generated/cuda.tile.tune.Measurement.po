@@ -1,0 +1,53 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.tune.Measurement.rst:2
+msgid "cuda.tile.tune.Measurement"
+msgstr "cuda.tile.tune.Measurement"
+
+#: cuda.tile.tune._tune.Measurement:1 of
+msgid "Holds a configuration and its timing result."
+msgstr "保存一组配置及其计时结果。"
+
+#: ../../../docstring
+#: cuda.tile.tune.Measurement.config:1 of
+msgid "The configuration"
+msgstr "当前配置"
+
+#: ../../../docstring
+#: cuda.tile.tune.Measurement.mean_us:1 of
+msgid "Mean time in microseconds"
+msgstr "平均耗时（微秒）"
+
+#: ../../../docstring
+#: cuda.tile.tune.Measurement.num_samples:1 of
+msgid "Number of samples taken for the measurement"
+msgstr "本次测量采集的样本数量"
+
+#: ../../../docstring
+#: cuda.tile.tune.Measurement.error_margin_us:1 of
+#, python-format
+msgid "Half of the 95% confidence interval of the measurement"
+msgstr "测量结果 95% 置信区间的一半"
+

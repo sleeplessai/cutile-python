@@ -1,0 +1,683 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/compilation.rst:8
+msgid "Compilation and Export"
+msgstr "编译与导出"
+
+#: ../../source/compilation.rst:10
+msgid ""
+"When a kernel function marked with :py:class:`@ct.kernel "
+"<cuda.tile.kernel>` is launched using :py:func:`ct.launch() "
+"<cuda.tile.launch>`, it is specialized and compiled just in time (JIT) "
+"for the concrete launch arguments. It is also possible to compile a "
+"kernel ahead of time (AOT) and export it as a CUDA binary (cubin) file, "
+"or as a TileIR bytecode file."
+msgstr ""
+"当使用 :py:func:`ct.launch() <cuda.tile.launch>` 启动带有 :py:class:`@ct.kernel "
+"<cuda.tile.kernel>` "
+"装饰器的内核函数时，内核会针对具体的启动参数进行即时（JIT）特化与编译。此外，还可以对内核进行预先（AOT）编译，并将其导出为 CUDA "
+"二进制（cubin）文件或 TileIR 字节码文件。"
+
+#: ../../source/compilation.rst:15
+msgid ""
+"While just-in-time compilation provides the convenience of automatic "
+"kernel specialization, ahead-of-time compilation requires the user to "
+"precisely describe the arguments for which the kernel is being compiled, "
+"including their types and additional constraints (assumptions) imposed on"
+" their values."
+msgstr "即时编译提供了自动内核特化的便利，而预先编译则要求用户精确描述内核所针对编译的参数，包括参数类型以及施加在参数值上的额外约束（假设）。"
+
+#: ../../source/compilation.rst:20
+msgid ""
+"The main API entry point for ahead-of-time compilation is "
+":py:func:`cuda.tile.compilation.export_kernel`:"
+msgstr "预先编译的主要 API 入口点是 :py:func:`cuda.tile.compilation.export_kernel` ："
+
+#: cuda.tile.compilation._export.export_kernel:1 of
+msgid "Compile and export a kernel."
+msgstr "编译并导出内核。"
+
+#: ../../source/compilation.rst
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile.compilation._export.export_kernel:3 of
+msgid "A kernel function to export."
+msgstr "要导出的内核函数。"
+
+#: cuda.tile.compilation._export.export_kernel:5 of
+msgid "A non-empty list of signatures for which to compile the kernel."
+msgstr "用于编译内核的非空签名列表。"
+
+#: cuda.tile.compilation._export.export_kernel:7 of
+msgid ""
+"Either a filename or a binary file-like object to write the output to. To"
+" save the result in memory, you can pass an instance of the `io.BytesIO` "
+"standard library class."
+msgstr "用于写入输出结果的文件路径或二进制类文件对象。如需将结果保存在内存中，可传入标准库类 ``io.BytesIO`` 的实例。"
+
+#: cuda.tile.compilation._export.export_kernel:11 of
+msgid ""
+"Name of the target GPU for which to compile the kernel (e.g., "
+"`\"sm_100\"`). Required when `output_format` is `\"cubin\"`. It can be "
+"set to `None` when `output_format` is `\"tileir_bytecode\"` to export "
+"architecture-independent bytecode (requires a bytecode version of "
+"\"13.3\" or later)."
+msgstr ""
+"要编译内核的目标 GPU 架构名称（例如 ``\"sm_100\"`` ）。当 ``output_format`` 为 ``\"cubin\"``"
+" 时为必填项；当 ``output_format`` 为 ``\"tileir_bytecode\"`` 时可设为 ``None`` "
+"以导出与架构无关的字节码（要求字节码版本为 \"13.3\" 或更高）。"
+
+#: cuda.tile.compilation._export.export_kernel:16 of
+msgid ""
+"Set to \"cubin\" to export a CUDA binary file, or \"tileir_bytecode\" to "
+"export a TileIR bytecode file."
+msgstr ""
+"设为 ``\"cubin\"`` 以导出 CUDA 二进制文件，或设为 ``\"tileir_bytecode\"`` 以导出 TileIR "
+"字节码文件。"
+
+#: cuda.tile.compilation._export.export_kernel:19 of
+msgid ""
+"Set to `None` to automatically detect the latest TileIR bytecode version "
+"supported by the compiler (default). Otherwise, it must be a string of "
+"the form \"major.minor\" that specifies the version of the TileIR "
+"bytecode to use (e.g., \"13.1\")."
+msgstr ""
+"设为 ``None`` 时自动检测编译器支持的最新 TileIR 字节码版本（默认）。否则必须传入形如 ``\"major.minor\"`` "
+"的字符串来指定要使用的 TileIR 字节码版本（例如 ``\"13.1\"`` ）。"
+
+#: ../../source/compilation.rst:27
+msgid "Kernel Signatures"
+msgstr "内核签名"
+
+#: ../../source/compilation.rst:28
+msgid ""
+"There are two ways to construct a :py:class:`KernelSignature` object for "
+"use with :py:func:`export_kernel`. The recommended way is to do it "
+"explicitly, by instantiating a :py:class:`KernelSignature` object and "
+"providing a list of manually constructed :py:class:`ParameterConstraint` "
+"objects."
+msgstr ""
+"有两种方式可以构造供 :py:func:`export_kernel` 使用的 :py:class:`KernelSignature` "
+"对象。推荐的做法是显式构造：实例化一个 :py:class:`KernelSignature` 对象，并传入手动构造的 "
+":py:class:`ParameterConstraint` 对象列表。"
+
+#: ../../source/compilation.rst:33
+msgid ""
+"Alternatively, one may use :py:meth:`KernelSignature.from_kernel_args` to"
+" obtain a signature that would be used if the kernel was compiled just-"
+"in-time for the given example arguments. While convenient, this approach "
+"may create undesired assumptions on kernel parameters. For example, if "
+"the base address of an example array argument happens to be divisible by "
+"16, an assumption may be made that it will always be so. Launching the "
+"exported kernel with an array that doesn't satisfy this assumption would "
+"then result in undefined behavior. It is therefore recommended to limit "
+"the use of this approach to testing or prototyping."
+msgstr ""
+"另一种方式是使用 :py:meth:`KernelSignature.from_kernel_args` "
+"，直接根据给定的示例参数获取内核即时编译时会生成的签名。这种方法虽然便捷，但可能会对内核参数引入非预期的隐式假设。例如，若示例数组参数的基地址恰好能被"
+" 16 "
+"整除，编译器可能会假定该地址在所有调用中始终如此对齐；随后若使用不满足该假设的数组启动导出的内核，就会导致未定义行为。因此建议仅在测试或原型验证阶段使用该方法。"
+
+#: cuda.tile.compilation._signature.KernelSignature:1 of
+msgid "Signature of a compiled kernel."
+msgstr "已编译内核的签名。"
+
+#: cuda.tile.compilation._signature.KernelSignature:3 of
+msgid ""
+"For each parameter of the kernel's Python function, a corresponding "
+":py:class:`ParameterConstraint` instance.  Possible constraint classes "
+"are: :py:class:`ScalarConstraint`, :py:class:`PointerConstraint`, "
+":py:class:`ArrayConstraint`, :py:class:`ListConstraint`, "
+":py:class:`TupleConstraint`, :py:class:`ConstantConstraint`, "
+":py:class:`DataclassConstraint`.  A plain :py:class:`ConstantValue` (for "
+"example, a literal ``10``), can be used as shorthand for "
+":py:class:`ConstantConstraint` wrapping the given value. Similarly, a "
+"plain ``tuple`` is shorthand for a :py:class:`TupleConstraint` .  Each "
+"constraint must be compatible with annotations on the corresponding "
+"kernel parameter. For example, if a parameter is marked with "
+":py:class:`ct.Constant <cuda.tile.Constant>`, then the corresponding "
+"constraint must be a :py:class:`ConstantConstraint`, or a nested "
+":py:class:`TupleConstraint` thereof (or a plain value according to the "
+"shorthand notation described above)."
+msgstr ""
+
+#: cuda.tile.compilation._signature.KernelSignature:3 of
+msgid ""
+"For each parameter of the kernel's Python function, a corresponding "
+":py:class:`ParameterConstraint` instance."
+msgstr "对应于内核 Python 函数中每个参数的 :py:class:`ParameterConstraint` 实例。"
+
+#: cuda.tile.compilation._signature.KernelSignature:6 of
+msgid ""
+"Possible constraint classes are: :py:class:`ScalarConstraint`, "
+":py:class:`PointerConstraint`, :py:class:`ArrayConstraint`, "
+":py:class:`ListConstraint`, :py:class:`TupleConstraint`, "
+":py:class:`ConstantConstraint`, :py:class:`DataclassConstraint`."
+msgstr ""
+"可用的约束类包括： :py:class:`ScalarConstraint` 、 :py:class:`PointerConstraint` 、 "
+":py:class:`ArrayConstraint` 、 :py:class:`ListConstraint` 、 "
+":py:class:`TupleConstraint` 、 :py:class:`ConstantConstraint` 、 "
+":py:class:`DataclassConstraint` 。"
+
+#: cuda.tile.compilation._signature.KernelSignature:11 of
+msgid ""
+"A plain :py:class:`ConstantValue` (for example, a literal ``10``), can be"
+" used as shorthand for :py:class:`ConstantConstraint` wrapping the given "
+"value. Similarly, a plain ``tuple`` is shorthand for a "
+":py:class:`TupleConstraint` ."
+msgstr ""
+"普通 :py:class:`ConstantValue` （例如字面量 ``10`` ）可用作包裹该值的 "
+":py:class:`ConstantConstraint` 简写。同理，普通 ``tuple`` 可用作 "
+":py:class:`TupleConstraint` 的简写。"
+
+#: cuda.tile.compilation._signature.KernelSignature:15 of
+msgid ""
+"Each constraint must be compatible with annotations on the corresponding "
+"kernel parameter. For example, if a parameter is marked with "
+":py:class:`ct.Constant <cuda.tile.Constant>`, then the corresponding "
+"constraint must be a :py:class:`ConstantConstraint`, or a nested "
+":py:class:`TupleConstraint` thereof (or a plain value according to the "
+"shorthand notation described above)."
+msgstr ""
+"每个约束都必须与对应内核参数上的注解兼容。例如，若参数标记有 :py:class:`ct.Constant "
+"<cuda.tile.Constant>` ，则对应的约束必须是 :py:class:`ConstantConstraint` ，或由其组成的嵌套"
+" :py:class:`TupleConstraint` （或按上述简写规则表示的普通值）。"
+
+#: cuda.tile.compilation._signature.KernelSignature:21
+#: cuda.tile.compilation._signature.KernelSignature.from_kernel_args:20 of
+msgid "|Calling convention| to use."
+msgstr "要使用的 |Calling convention| 。"
+
+#: cuda.tile.compilation._signature.KernelSignature:23 of
+msgid ""
+"Symbol name to use for the exported kernel. Set to `None` to "
+"automatically generate it from the Python function name and this "
+"signature, using a name mangling algorithm defined by the selected "
+"calling convention."
+msgstr ""
+"用于导出内核的符号名称。设为 ``None`` 时，将根据所选调用约定的名称修饰（name mangling）算法，由 Python "
+"函数名和此签名自动生成。"
+
+#: cuda.tile.compilation._signature.KernelSignature.with_mangled_symbol:1 of
+msgid ""
+"Returns a copy of `self` with the `symbol` attribute replaced with a "
+"mangled name."
+msgstr "返回 ``self`` 的副本，其中 ``symbol`` 属性被替换为经名称修饰（mangled）后的符号名。"
+
+#: cuda.tile.compilation._signature.KernelSignature.with_mangled_symbol:3 of
+msgid "Function name to use as the base of the mangled symbol."
+msgstr "用作修饰后符号名称基础的函数名。"
+
+#: ../../source/compilation.rst
+msgid "Returns"
+msgstr "返回值"
+
+#: cuda.tile.compilation._signature.KernelSignature.from_kernel_args:27
+#: cuda.tile.compilation._signature.KernelSignature.with_mangled_symbol:6
+#: cuda.tile.compilation._signature.KernelSignature.with_symbol:6 of
+msgid "KernelSignature"
+msgstr ""
+
+#: ../../source/compilation.rst
+msgid "Return type"
+msgstr "返回类型"
+
+#: cuda.tile.compilation._signature.KernelSignature.with_symbol:1 of
+msgid ""
+"Returns a copy of `self` with the `symbol` attribute replaced with the "
+"given value."
+msgstr "返回 ``self`` 的副本，其中 ``symbol`` 属性被替换为给定值。"
+
+#: cuda.tile.compilation._signature.KernelSignature.with_symbol:3 of
+msgid "The new symbol name."
+msgstr "新的符号名称。"
+
+#: cuda.tile.compilation._signature.KernelSignature.from_kernel_args:1 of
+msgid ""
+"Returns the signature that would be used if the kernel was compiled just-"
+"in-time for the given arguments.o"
+msgstr "返回针对给定参数即时编译内核时将使用的签名。"
+
+#: cuda.tile.compilation._signature.KernelSignature.from_kernel_args:6 of
+msgid ""
+"It is recommended to limit the use of this function to testing or "
+"prototyping. Deriving a kernel signature from example arguments may "
+"create unexpected assumptions on kernel parameters."
+msgstr "建议仅在测试或原型开发中使用此函数。基于示例参数推导内核签名可能会引入意料之外的参数假设。"
+
+#: cuda.tile.compilation._signature.KernelSignature.from_kernel_args:10 of
+msgid ""
+"For example, if the base address of an example array argument happens to "
+"be divisible by 16, an assumption may be made that it will always be so. "
+"Launching the exported kernel with an array that doesn't satisfy this "
+"assumption would result in undefined behavior."
+msgstr "例如，若示例数组参数的基地址恰好可被 16 整除，编译器可能会假定该地址始终如此对齐。若用不满足此假设的数组启动导出的内核，将导致未定义行为。"
+
+#: cuda.tile.compilation._signature.KernelSignature.from_kernel_args:15 of
+msgid ""
+"A kernel function decorated with :py:class:`@ct.kernel "
+"<cuda.tile.kernel>`."
+msgstr "带有 :py:class:`@ct.kernel <cuda.tile.kernel>` 装饰器的内核函数。"
+
+#: cuda.tile.compilation._signature.KernelSignature.from_kernel_args:17 of
+msgid ""
+"Tuple of kernel arguments, as if it were be passed to "
+":py:func:`ct.launch() <cuda.tile.launch>`."
+msgstr "内核参数元组，格式与传递给 :py:func:`ct.launch() <cuda.tile.launch>` 的参数一致。"
+
+#: cuda.tile.compilation._signature.KernelSignature.from_kernel_args:22 of
+msgid ""
+"Specifies the `symbol` attribute of the returned signature. If set to "
+"`None`, the returned symbol will be automatically filled using a name "
+"mangling algorithm defined by the selected |calling convention|."
+msgstr ""
+"指定返回签名的 ``symbol`` 属性。若设为 ``None`` ，将使用所选 |calling convention| "
+"定义的名称修饰算法自动生成符号名。"
+
+#: ../../source/compilation.rst:45
+msgid ""
+"The :py:class:`ParameterConstraint` type alias is used as a type hint for"
+" a kernel parameter constraint:"
+msgstr "类型别名 :py:class:`ParameterConstraint` 用作内核参数约束的类型提示："
+
+#: cuda.tile.compilation._signature.ScalarConstraint:1 of
+msgid ""
+"Describes a scalar kernel parameter and associated compile-time "
+"assumptions."
+msgstr "描述标量内核参数及其关联的编译期假设。"
+
+#: cuda.tile.compilation._signature.ScalarConstraint:3 of
+msgid "Data type of the scalar."
+msgstr "标量的数据类型。"
+
+#: cuda.tile.compilation._signature.ArrayConstraint:1 of
+msgid ""
+"Describes an array kernel parameter and associated compile-time "
+"assumptions."
+msgstr "描述数组内核参数及其关联的编译期假设。"
+
+#: cuda.tile.compilation._signature.ArrayConstraint:3 of
+msgid "Data type of the array."
+msgstr "数组的数据类型。"
+
+#: cuda.tile.compilation._signature.ArrayConstraint:5 of
+msgid "Number of dimensions of the array, also known as rank."
+msgstr "数组的维度数量，也称为秩（rank）。"
+
+#: cuda.tile.compilation._signature.ArrayConstraint:7 of
+msgid ""
+"Data type used to represent array's shape, strides and indices. Supported"
+" values are :py:data:`ct.int32 <cuda.tile.int32>` and :py:data:`ct.int64 "
+"<cuda.tile.int64>`. Using ``int64`` enables support for arrays whose "
+"shape or stride values exceed the range of a 32-bit integer."
+msgstr ""
+"用于表示数组形状、步长和索引的数据类型。支持的值为 :py:data:`ct.int32 <cuda.tile.int32>` 和 "
+":py:data:`ct.int64 <cuda.tile.int64>` 。使用 ``int64`` 可支持形状或步长超出 32 "
+"位整数范围的数组。"
+
+#: cuda.tile.compilation._signature.ArrayConstraint:12 of
+msgid ""
+"For each dimension of the array, an optional inclusive lower bound for "
+"its stride. If all dimensions have the same lower bound, a single number "
+"can be passed instead of a sequence. For example, passing `0` specifies "
+"that all strides are non-negative."
+msgstr "数组每个维度的可选步长包含式下界。如果所有维度具有相同的下界，可传入单个数字代替序列。例如，传入 ``0`` 表示所有步长均非负。"
+
+#: cuda.tile.compilation._signature.ArrayConstraint:17 of
+msgid ""
+"When set to an empty sequence, specifies that this array may not alias "
+"any other parameter. Otherwise, it must be a sequence of arbitrary "
+"strings, referred to as \"alias groups\". Two parameters are allowed to "
+"alias each other if and only if they have an alias group in common."
+msgstr ""
+"当设为空序列时，表示该数组不得与任何其他参数存在内存别名（alias）。否则，它必须是由任意字符串组成的序列，称为“别名组（alias "
+"groups）”。当且仅当两个参数共享至少一个别名组时，它们之间才允许存在别名关系。"
+
+#: cuda.tile.compilation._signature.ArrayConstraint:22 of
+msgid ""
+"Indicates whether two distinct in-bounds indices are allowed to point to "
+"the same memory location. For example, this can happen if the array has a"
+" zero stride. For most arrays produced by major tensor libraries, this "
+"can be assumed to be false. Setting this to True may disable certain "
+"optimizations of loads and stores to/from this array."
+msgstr ""
+"指示是否允许两个不同的有效界内索引指向同一内存位置（例如当数组存在零步长时）。对于主流张量库生成的绝大多数数组，通常可假定该值为 "
+"False。将其设为 True 可能会禁用针对该数组加载与存储操作的某些优化。"
+
+#: cuda.tile.compilation._signature.ArrayConstraint:28 of
+msgid ""
+"For each dimension of the array, an optional constant value of its "
+"stride. For example, if the array is known to have a C-contiguous layout,"
+" the stride of the last dimension can be set to 1, which may enable "
+"certain optimizations of loads and stores from/to this array. Can be set "
+"to `None` if none of the dimensions have known strides (this is the "
+"default)."
+msgstr ""
+"数组每个维度的可选常量步长值。例如，若已知数组为 C 连续布局，可将最后一维的步长设为 "
+"1，以启用针对该数组加载与存储操作的特定优化。若各维度均无已知步长，可设为 ``None`` （默认值）。"
+
+#: cuda.tile.compilation._signature.ArrayConstraint:34 of
+msgid ""
+"For each dimension of the array, an optional constant value of its shape."
+" Can be set to `None` if none of the dimensions have known shapes. "
+"Requires ``cutile_python_v2``. If ``shape_constant[i]`` is set, "
+"``shape_divisible_by[i]`` is redundant and must be compatible (i.e., "
+"``shape_constant[i]`` must be divisible by ``shape_divisible_by[i]``); it"
+" is then ignored."
+msgstr ""
+"数组每个维度的可选常量形状值。若各维度均无已知形状，可设为 ``None`` 。需要 ``cutile_python_v2`` 。若已设置 "
+"``shape_constant[i]`` ，则 ``shape_divisible_by[i]`` 属于冗余设定但仍需保持兼容（即 "
+"``shape_constant[i]`` 必须能被 ``shape_divisible_by[i]`` 整除），随后将被忽略。"
+
+#: cuda.tile.compilation._signature.ArrayConstraint:41 of
+msgid ""
+"For each dimension of the array, a factor by which its stride is assumed "
+"to be divisible. The value is given in array elements, not bytes. For "
+"example, a value of `8` for a `float16` array indicates divisibility by "
+"16 bytes, since each element of the array is 2 bytes wide. Value of 1 "
+"indicates that no assumption is made regarding the stride divisibility "
+"(this is the default)."
+msgstr ""
+"数组每个维度步长所假设的整除因子，单位为数组元素数而非字节数。例如，对 ``float16`` 数组指定 ``8`` 表示可被 16 "
+"字节整除（因每个元素占 2 字节）。取值为 1 表示不对步长整除性做任何假设（默认值）。"
+
+#: cuda.tile.compilation._signature.ArrayConstraint:48 of
+msgid ""
+"For each dimension of the array, a factor by which its length is assumed "
+"to be divisible. The value is given in array elements, not bytes. For "
+"example, a value of `8` for a `float16` array indicates divisibility by "
+"16 bytes, since each element of the array is 2 bytes wide. Value of 1 "
+"indicates that no assumption is made regarding the shape divisibility "
+"(this is the default)."
+msgstr ""
+"数组每个维度长度所假设的整除因子，单位为数组元素数而非字节数。例如，对 ``float16`` 数组指定 ``8`` 表示可被 16 "
+"字节整除（因每个元素占 2 字节）。取值为 1 表示不对形状长度整除性做任何假设（默认值）。"
+
+#: cuda.tile.compilation._signature.ArrayConstraint:55 of
+msgid ""
+"Factor by which the array's base address is assumed to be divisible. "
+"Value of 1 indicates that no assumption is made regarding the base "
+"address divisibility (this is the default)."
+msgstr "假定数组基地址可整除的对齐因子（单位为字节）。取值为 1 表示不对基地址对齐做任何假设（默认值）。"
+
+#: cuda.tile.compilation._signature.ListConstraint:1 of
+msgid "Describes a list kernel parameter and associated compile-time assumptions."
+msgstr "描述列表内核参数及其关联的编译期假设。"
+
+#: cuda.tile.compilation._signature.ListConstraint:3 of
+msgid ""
+"Describes the element of this list. Currently, this must be an "
+"`ArrayConstraint`, since only lists of arrays are supported as kernel "
+"arguments."
+msgstr "描述该列表的元素约束。当前必须为 ``ArrayConstraint`` ，因为内核参数仅支持数组列表。"
+
+#: cuda.tile.compilation._signature.ListConstraint:6 of
+msgid ""
+"Describes which other parameters the storage of this list is allowed to "
+"alias. Note that this is different from ``element.alias_groups``, which "
+"sets aliasing assumptions on the list elements. When set to an empty "
+"sequence, specifies that this list may not alias any other parameter. "
+"Otherwise, it must be a sequence of arbitrary strings, referred to as "
+"\"alias groups\". Two parameters are allowed to alias each other if and "
+"only if they have an alias group in common."
+msgstr ""
+"描述该列表自身存储区允许与哪些其他参数产生内存别名。请注意，这与用于设置列表元素别名假设的 ``element.alias_groups`` "
+"不同。当设为空序列时，表示该列表不得与任何其他参数存在别名；否则必须是由任意字符串组成的序列（称为“别名组”）。当且仅当两个参数共享至少一个别名组时，它们之间才允许存在别名关系。"
+
+#: cuda.tile.compilation._signature.ListConstraint:14 of
+msgid ""
+"Specifies whether two distinct elements of this list are allowed to alias"
+" each other."
+msgstr "指定该列表中的两个不同元素是否允许互为内存别名。"
+
+#: cuda.tile.compilation._signature.TupleConstraint:1 of
+msgid "Describes a tuple kernel parameter."
+msgstr "描述元组内核参数。"
+
+#: cuda.tile.compilation._signature.TupleConstraint:3 of
+msgid "Per-item constraints."
+msgstr "逐元素的参数约束。"
+
+#: cuda.tile.compilation._signature.ConstantConstraint:1 of
+msgid "Specifies the compile-time value of a kernel parameter or aggregate field."
+msgstr "指定内核参数或聚合类型字段的编译期常量值。"
+
+#: cuda.tile.compilation._signature.ConstantConstraint:3 of
+msgid ""
+"A constant constraint makes an unannotated parameter or field constant. A"
+" parameter marked with :py:class:`ct.Constant <cuda.tile.Constant>` must "
+"likewise receive a constant constraint."
+msgstr ""
+"常量约束会使未加注解的参数或字段成为常量；同理，标注了 :py:class:`ct.Constant <cuda.tile.Constant>` "
+"的参数也必须接收常量约束。"
+
+#: cuda.tile.compilation._signature.ConstantConstraint:7 of
+msgid "The value of the compile-time constant."
+msgstr "编译期常量的具体取值。"
+
+#: ../../source/compilation.rst:66
+msgid "Calling Conventions"
+msgstr "调用约定"
+
+#: ../../source/compilation.rst:67
+msgid ""
+"A calling convention defines three aspects of the binary interface "
+"provided by an exported kernel:"
+msgstr "调用约定定义了导出内核所提供的二进制接口的三个方面："
+
+#: ../../source/compilation.rst:69
+msgid ""
+"The binary format and the order of kernel arguments, e.g. as passed to "
+"the ``cuLaunchKernel()`` CUDA Driver API function."
+msgstr "内核参数的二进制布局格式与传递顺序，例如传递给 ``cuLaunchKernel()`` CUDA Driver API 函数时的参数。"
+
+#: ../../source/compilation.rst:71
+msgid "The set of supported parameter constraints."
+msgstr "所支持的参数约束集合。"
+
+#: ../../source/compilation.rst:72
+msgid ""
+"The name mangling algorithm used to automatically derive a symbol name "
+"from the kernel's function name and a kernel signature."
+msgstr "用于根据内核函数名和内核签名自动推导出符号名称的名称修饰（name mangling）算法。"
+
+#: ../../source/compilation.rst:75
+msgid ""
+"Two calling conventions are available: ``cutile_python_v1`` and "
+"``cutile_python_v2``. Both pass binary kernel arguments in the same order"
+" as the kernel parameters are declared in the Python kernel function, "
+"except that parameters annotated with :py:class:`ct.Constant "
+"<cuda.tile.Constant>` are omitted. ``cutile_python_v2`` extends "
+"``cutile_python_v1`` with support for tuple parameters "
+"(:py:class:`TupleConstraint`) and static shapes (the ``shape_constant`` "
+"field of :py:class:`ArrayConstraint`). New code should use "
+"``cutile_python_v2``."
+msgstr ""
+"目前提供两种调用约定： ``cutile_python_v1`` 和 ``cutile_python_v2`` 。两者均按 Python "
+"内核函数中参数声明的顺序传递二进制内核参数，但会省略标注了 :py:class:`ct.Constant "
+"<cuda.tile.Constant>` 的参数。 ``cutile_python_v2`` 在 ``cutile_python_v1`` "
+"基础上增加了对元组参数（ :py:class:`TupleConstraint` ）和静态形状（ "
+":py:class:`ArrayConstraint` 的 ``shape_constant`` 字段）的支持。新代码应优先使用 "
+"``cutile_python_v2`` 。"
+
+#: ../../source/compilation.rst:83
+msgid ""
+"The following table lists the supported parameter constraints and their "
+"binary formats. Constraints marked |v2only| require ``cutile_python_v2``."
+msgstr "下表列出了受支持的参数约束及其二进制格式。标注有 |v2only| 的约束要求使用 ``cutile_python_v2`` 。"
+
+#: ../../source/compilation.rst:88
+msgid "Parameter Constraints and their Binary Formats."
+msgstr "参数约束及其二进制格式。"
+
+#: ../../source/compilation.rst:91
+msgid "Constraint Class"
+msgstr "约束类"
+
+#: ../../source/compilation.rst:92
+msgid "Binary Format of Arguments"
+msgstr "参数的二进制格式"
+
+#: ../../source/compilation.rst:94
+msgid ":py:class:`ScalarConstraint`"
+msgstr ""
+
+#: ../../source/compilation.rst:95
+msgid ""
+"Passed as a single argument of the corresponding type. For example, if "
+"the constraint's `dtype` is :py:data:`ct.int32 <cuda.tile.int32>`, the "
+"corresponding C type is ``int32_t``; :py:data:`ct.float64 "
+"<cuda.tile.float64>` corresponds to C's ``double`` and so on."
+msgstr ""
+"按对应类型的单个参数传入。例如，若约束的 ``dtype`` 为 :py:data:`ct.int32 <cuda.tile.int32>` "
+"，则对应的 C 类型为 ``int32_t`` ； :py:data:`ct.float64 <cuda.tile.float64>` 对应 C "
+"语言的 ``double`` ，依此类推。"
+
+#: ../../source/compilation.rst:99
+msgid ":py:class:`ArrayConstraint`"
+msgstr ""
+
+#: ../../source/compilation.rst:100
+msgid ""
+"Passed as `1 + 2n` arguments, where `n` is the number of dimensions "
+"(`ndim`) of the array. The first argument is the device pointer to the "
+"base of the array's data. It is followed by `n` arguments representing "
+"the shape of the array. Finally, the last `n` arguments represent the "
+"strides of the array. The type of shape and stride arguments is "
+"determined by the ``index_dtype`` field of the constraint:"
+msgstr ""
+"按 ``1 + 2n`` 个参数传入，其中 ``n`` 为数组的维度数（ ``ndim`` "
+"）。第一个参数是指向数组数据基地址的设备指针；紧随其后的是 ``n`` 个表示数组形状的参数；最后是 ``n`` "
+"个表示数组步长的参数。形状与步长参数的类型由约束的 ``index_dtype`` 字段决定："
+
+#: ../../source/compilation.rst:107
+msgid "The ``shape_constant`` field |v2only| requires ``cutile_python_v2``."
+msgstr "``shape_constant`` 字段 |v2only| 需要 ``cutile_python_v2`` 。"
+
+#: ../../source/compilation.rst:112
+msgid "Constraint's ``index_dtype``"
+msgstr "约束的 ``index_dtype``"
+
+#: ../../source/compilation.rst:113
+msgid "C Type of Shape & Strides"
+msgstr "形状与步长对应的 C 类型"
+
+#: ../../source/compilation.rst:115
+msgid ":py:data:`ct.int32 <cuda.tile.int32>`"
+msgstr ""
+
+#: ../../source/compilation.rst:116
+msgid "``int32_t``"
+msgstr ""
+
+#: ../../source/compilation.rst:118
+msgid ":py:data:`ct.uint32 <cuda.tile.uint32>`"
+msgstr ""
+
+#: ../../source/compilation.rst:119
+msgid "``uint32_t``"
+msgstr ""
+
+#: ../../source/compilation.rst:121
+msgid ":py:data:`ct.int64 <cuda.tile.int64>`"
+msgstr ""
+
+#: ../../source/compilation.rst:122
+msgid "``int64_t``"
+msgstr ""
+
+#: ../../source/compilation.rst:124
+msgid ":py:class:`ListConstraint` with an :py:class:`ArrayConstraint` element"
+msgstr "包含 :py:class:`ArrayConstraint` 元素的 :py:class:`ListConstraint`"
+
+#: ../../source/compilation.rst:125
+msgid ""
+"Passed as two arguments: a device pointer to the base of the list data "
+"and an ``int32_t`` denoting the length of the list. The base pointer must"
+" point to an 8-byte aligned contiguous buffer in the global GPU memory, "
+"consisting of `(1 + 2n) * L` 64-bit words, where `L` is the length of the"
+" list and `n` is the `ndim` of the element array constraint. Each element"
+" array of the list is represented by `(1 + 2n)` words in this buffer. The"
+" first word stores a device pointer to the base of array; the next `n` "
+"signed integers store the shape of the array; the final `n` signed "
+"integers store the strides of the array. Even though 64-bit integers are "
+"always used for the shape and the strides, they are truncated to the "
+"``index_dtype`` of the element constraint."
+msgstr ""
+"按两个参数传入：指向列表数据基地址的设备指针，以及一个表示列表长度的 ``int32_t`` 。基指针必须指向 GPU 全局内存中一块 8 "
+"字节对齐的连续缓冲区，其中包含 ``(1 + 2n) * L`` 个 64 位字（word），``L`` 为列表长度， ``n`` "
+"为元素数组约束的 ``ndim`` 。列表中的每个元素数组在该缓冲区中由 ``(1 + 2n)`` 个字表示：第 1 "
+"个字存储指向数组基地址的设备指针；随后的 ``n`` 个有符号整数存储数组形状；最后的 ``n`` "
+"个有符号整数存储数组步长。尽管缓冲区中形状和步长始终以 64 位整数存储，但使用时会截断为元素约束的 ``index_dtype`` 。"
+
+#: ../../source/compilation.rst:136
+msgid ":py:class:`TupleConstraint` |v2only|"
+msgstr ""
+
+#: ../../source/compilation.rst:137
+msgid ""
+"The tuple's elements are passed as consecutive arguments, as if each "
+"element were an individual top-level parameter. The binary format of each"
+" element follows the same rules as its corresponding constraint type. "
+"Elements may be scalars, arrays, lists of arrays, constants, or nested "
+"tuples. Constants are omitted and nested tuples are flattened "
+"recursively."
+msgstr "元组中的各个元素会作为连续参数依次传递，就像每个元素都是独立的顶层参数一样。每个元素的二进制格式遵循其对应约束类型的规则。元素可以是标量、数组、数组列表、常量或嵌套元组。常量会被省略，嵌套元组则会递归展平。"
+
+#: ../../source/compilation.rst:143
+msgid ""
+"When the tuple parameter is annotated with :py:class:`ct.Constant[tuple] "
+"<cuda.tile.Constant>`, the entire tuple is omitted from the launch "
+"arguments (same as :py:class:`ConstantConstraint`). In this case, all "
+"leaf elements of the :py:class:`TupleConstraint` must be "
+":py:class:`ConstantConstraint`."
+msgstr ""
+"当元组参数标注为 :py:class:`ct.Constant[tuple] <cuda.tile.Constant>` "
+"时，整个元组会从启动参数中省略（与 :py:class:`ConstantConstraint` 相同）。在此情况下， "
+":py:class:`TupleConstraint` 的所有叶子元素都必须是 :py:class:`ConstantConstraint` 。"
+
+#: ../../source/compilation.rst:149
+msgid ":py:class:`ConstantConstraint`"
+msgstr ""
+
+#: ../../source/compilation.rst:150
+msgid "Omitted from the launch arguments."
+msgstr "从启动参数中省略。"
+
+#: ../../source/compilation.rst:153
+msgid ""
+"Calling conventions are represented by the :py:class:`CallingConvention` "
+"class:"
+msgstr "调用约定由 :py:class:`CallingConvention` 类表示："
+
+#: cuda.tile.compilation.CallingConvention.cutile_python_v1:1 of
+msgid "Returns the ``cutile_python_v1`` calling convention."
+msgstr "返回 ``cutile_python_v1`` 调用约定。"
+
+#: cuda.tile.compilation.CallingConvention.cutile_python_v2:1 of
+msgid "Returns the ``cutile_python_v2`` calling convention."
+msgstr "返回 ``cutile_python_v2`` 调用约定。"
+

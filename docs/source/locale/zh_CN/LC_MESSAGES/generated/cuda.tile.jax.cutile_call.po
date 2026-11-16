@@ -1,0 +1,139 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.jax.cutile_call.rst:2
+msgid "cuda.tile.jax.cutile\\_call"
+msgstr "cuda.tile.jax.cutile\\_call"
+
+#: cuda.tile.jax._jax.cutile_call:1 of
+msgid "Launch a cuTile kernel from a JAX-traced graph."
+msgstr "从 JAX 追踪计算图中启动 cuTile 内核。"
+
+#: ../../source/generated/cuda.tile.jax.cutile_call.rst
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile.jax._jax.cutile_call:3 of
+msgid ""
+"Tuple of up to 3 grid dimensions to execute the |kernel| over. Padded "
+"with 1s on the right."
+msgstr "用于执行 |kernel| 的网格维度元组，最多包含 3 个维度。不足 3 维时会在右侧填充 1。"
+
+#: cuda.tile.jax._jax.cutile_call:5 of
+msgid "The |kernel| to execute."
+msgstr "要执行的 |kernel| 。"
+
+#: cuda.tile.jax._jax.cutile_call:6 of
+msgid ""
+"Positional arguments to pass to the kernel. Each entry must match the "
+"kernel's corresponding parameter:  - :class:`jax.Array`: read-only input "
+"buffer. - :class:`OutputPlaceholder`: output buffer with the given   "
+"``shape`` and ``dtype``; allocated by JAX and returned from   this call. "
+"- :class:`InputOutput`: input buffer aliased to an output slot,   "
+"enabling in-place updates. - ``bool``, ``int``, or ``float``: A scalar "
+"argument to the kernel.   Because JAX treats scalar as 0D Array, to pass "
+"a scalar argument,   it must be a static argument of the JAX function "
+"using   ``static_argnums`` or ``static_argnames``. - ``tuple``: A tuple "
+"parameter (the kernel parameter is annotated   as ``tuple[...]``). Each "
+"element is recursively one of the above   and tuples may be nested. "
+"Elements that are runtime scalars are   subject to the same "
+"``static_argnums`` requirement as top-level   scalars."
+msgstr ""
+
+#: cuda.tile.jax._jax.cutile_call:6 of
+msgid ""
+"Positional arguments to pass to the kernel. Each entry must match the "
+"kernel's corresponding parameter:"
+msgstr "传递给内核的位置参数。每一项都必须与内核中对应的形参相匹配："
+
+#: cuda.tile.jax._jax.cutile_call:9 of
+msgid ":class:`jax.Array`: read-only input buffer."
+msgstr ":class:`jax.Array` ：只读输入缓冲区。"
+
+#: cuda.tile.jax._jax.cutile_call:10 of
+msgid ""
+":class:`OutputPlaceholder`: output buffer with the given ``shape`` and "
+"``dtype``; allocated by JAX and returned from this call."
+msgstr ""
+":class:`OutputPlaceholder` ：具有指定 ``shape`` 和 ``dtype`` 的输出缓冲区；由 JAX "
+"分配并在本次调用中返回。"
+
+#: cuda.tile.jax._jax.cutile_call:13 of
+msgid ""
+":class:`InputOutput`: input buffer aliased to an output slot, enabling "
+"in-place updates."
+msgstr ":class:`InputOutput` ：别名绑定到输出槽位的输入缓冲区，用于支持原地（in-place）更新。"
+
+#: cuda.tile.jax._jax.cutile_call:15 of
+msgid ""
+"``bool``, ``int``, or ``float``: A scalar argument to the kernel. Because"
+" JAX treats scalar as 0D Array, to pass a scalar argument, it must be a "
+"static argument of the JAX function using ``static_argnums`` or "
+"``static_argnames``."
+msgstr ""
+"``bool`` 、 ``int`` 或 ``float`` ：传递给内核的标量参数。由于 JAX 将标量视为 0 维 "
+"Array，若要传递标量参数，必须通过 ``static_argnums`` 或 ``static_argnames`` 将其标记为 JAX "
+"函数的静态参数。"
+
+#: cuda.tile.jax._jax.cutile_call:19 of
+msgid ""
+"``tuple``: A tuple parameter (the kernel parameter is annotated as "
+"``tuple[...]``). Each element is recursively one of the above and tuples "
+"may be nested. Elements that are runtime scalars are subject to the same "
+"``static_argnums`` requirement as top-level scalars."
+msgstr ""
+"``tuple`` ：元组参数（内核形参需注解为 ``tuple[...]`` "
+"）。每个元素递归地为上述类型之一，且元组支持嵌套。作为运行时标量的元素须遵循与顶层标量相同的 ``static_argnums`` 要求。"
+
+#: ../../source/generated/cuda.tile.jax.cutile_call.rst
+msgid "Returns"
+msgstr "返回值"
+
+#: cuda.tile.jax._jax.cutile_call:25 of
+msgid ""
+"For a kernel with one output, the output array. For multiple outputs "
+"(multiple ``OutputPlaceholder`` / ``InputOutput`` args), a tuple of "
+"arrays in declaration order."
+msgstr ""
+"对于单输出内核，返回输出数组；对于多输出内核（多个 ``OutputPlaceholder`` / ``InputOutput`` "
+"参数），按声明顺序返回由数组组成的元组。"
+
+#: cuda.tile.jax._jax.cutile_call:30 of
+msgid "Notes"
+msgstr "备注"
+
+#: cuda.tile.jax._jax.cutile_call:31 of
+msgid ""
+"1. Array passed to cutile_call will use default XLA row-major order. "
+"Customizing layout will be supported in the future."
+msgstr "1\\. 传递给 ``cutile_call`` 的数组将使用默认的 XLA 行主序（row-major）布局。自定义布局将在后续版本中支持。"
+
+#: cuda.tile.jax._jax.cutile_call:34 of
+msgid "Example:"
+msgstr "示例："
+
+#: cuda.tile.jax._jax.cutile_call:83 of
+msgid "Output"
+msgstr "输出"
+

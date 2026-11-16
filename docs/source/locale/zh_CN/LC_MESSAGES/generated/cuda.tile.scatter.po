@@ -1,0 +1,105 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.scatter.rst:2
+msgid "cuda.tile.scatter"
+msgstr "cuda.tile.scatter"
+
+#: cuda.tile._stub.scatter:1 of
+msgid "Stores a tile `value` into the `array` elements specified by `indices`."
+msgstr "将 ``value`` Tile 存储到 ``indices`` 指定的数组元素位置。"
+
+#: cuda.tile._stub.scatter:3 of
+msgid ""
+"`indices` must be a tuple whose length equals the `array` rank. All "
+"elements of this tuple must be integer tiles or scalars of the same "
+"shape, or different shapes that are broadcastable to a common shape."
+msgstr ""
+"``indices`` 必须为长度等于 ``array`` "
+"秩（rank）的元组。该元组的所有元素都必须是具有相同形状（或不同形状但可广播到同一公共形状）的整数 Tile 或标量。"
+
+#: cuda.tile._stub.scatter:7 of
+msgid ""
+"`value` must be a scalar or a tile whose shape is broadcastable to the "
+"common shape of `indices`."
+msgstr "``value`` 必须为标量或 Tile，其形状须可广播到 ``indices`` 的公共形状。"
+
+#: cuda.tile._stub.scatter:10 of
+msgid ""
+"For example, consider a 2-dimensional array. In this case, indices must "
+"be a tuple of length 2. Suppose that ``ind0`` and ``ind1`` are integer "
+"tiles of shapes ``(M, N, 1)`` and ``(M, 1, K)``, and ``value`` is a tile "
+"of shape of ``(N, K)``::"
+msgstr ""
+"例如，考虑一个二维数组。此时 ``indices`` 必须是长度为 2 的元组。假设 ``ind0`` 和 ``ind1`` 分别是形状为 "
+"``(M, N, 1)`` 和 ``(M, 1, K)`` 的整数 Tile，且 ``value`` 是形状为 ``(N, K)`` 的 "
+"Tile： ::"
+
+#: cuda.tile._stub.scatter:17 of
+msgid "The above call to `scatter` will store elements according to ::"
+msgstr "上述 ``scatter`` 调用将按如下方式存储元素： ::"
+
+#: cuda.tile._stub.scatter:21 of
+msgid ""
+"If the array is 1-dimensional, `indices` can be passed as a tile rather "
+"than a tuple. This is a convenience notation that is strictly equivalent "
+"to passing a tuple of length 1::"
+msgstr "如果数组为一维， ``indices`` 可以直接作为单个 Tile 传入，而无需包装为元组。这种便捷写法与传入长度为 1 的元组完全等价： ::"
+
+#: cuda.tile._stub.scatter:26 of
+msgid ""
+"A custom boolean `mask` can be provided to control which elements are "
+"stored. The mask must be a scalar or a tile whose shape is broadcastable "
+"to the common shape of indices. Where the mask is ``False``, no store "
+"occurs."
+msgstr ""
+"可提供自定义的布尔 ``mask`` 以控制存储哪些元素。掩码必须为标量或 Tile，且其形状须可广播到索引的公共形状。当掩码为 "
+"``False`` 时，不执行存储。"
+
+#: cuda.tile._stub.scatter:30 of
+msgid ""
+"`scatter()` checks that indices are within the bounds of the array. For "
+"indices that are out of bounds, nothing is stored."
+msgstr "``scatter()`` 会检查索引是否在数组边界内。对于越界索引，不会执行任何存储操作。"
+
+#: cuda.tile._stub.scatter:33 of
+msgid ""
+"If both `mask` and `check_bounds=True` are provided, the effective mask "
+"is the logical AND of both the custom mask and the bounds-checking mask. "
+"This means an element is only stored if both the custom mask is ``True`` "
+"AND the index is within bounds."
+msgstr ""
+"如果同时提供了 ``mask`` 且设置了 ``check_bounds=True`` "
+"，则最终生效的掩码为自定义掩码与边界检查掩码的逻辑与（AND）。这意味着只有当自定义掩码为 ``True`` 且索引位于边界内时，才会执行存储。"
+
+#: cuda.tile._stub.scatter:37 of
+msgid ""
+"To disable bounds checking, set `check_bounds` to ``False``. In this "
+"mode, the caller is responsible for ensuring that all indices are within "
+"the bounds of the array, and any out-of-bounds access will result in "
+"undefined behavior."
+msgstr ""
+"若要禁用边界检查，请将 ``check_bounds`` 设为 ``False`` "
+"。在此模式下，调用方须负责确保所有索引均在数组边界内，任何越界访问都将导致未定义行为。"
+

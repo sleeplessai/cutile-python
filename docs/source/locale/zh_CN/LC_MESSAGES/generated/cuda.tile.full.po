@@ -1,0 +1,60 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.full.rst:2
+msgid "cuda.tile.full"
+msgstr "cuda.tile.full"
+
+#: cuda.tile._stub.full:1 of
+msgid "Creates a tile filled with given value."
+msgstr "创建使用指定值填充的 Tile。"
+
+#: ../../source/generated/cuda.tile.full.rst
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile._stub.full:3 of
+msgid "The shape of the tile."
+msgstr "Tile 的形状。"
+
+#: cuda.tile._stub.full:5 of
+msgid "Value for the tile."
+msgstr "用于填充 Tile 的值。"
+
+#: cuda.tile._stub.full:7 of
+msgid "The |Data type| of the tile."
+msgstr "Tile 的 |Data type| 。"
+
+#: ../../source/generated/cuda.tile.full.rst
+msgid "Return type"
+msgstr "返回类型"
+
+#: cuda.tile._stub.full:13 of
+msgid "Examples"
+msgstr "示例"
+
+#: cuda.tile._stub.full:22 of
+msgid "Output"
+msgstr "输出"
+

@@ -1,0 +1,196 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/data/array.rst:10
+msgid "cuda.tile.Array"
+msgstr "cuda.tile.Array"
+
+#: cuda.tile._stub.Array:1 of
+msgid "Class for |global array| objects."
+msgstr "表示 |global array| 对象的类。"
+
+#: cuda.tile.Array.dtype:1 of
+msgid "The |data type| of the |array|'s elements."
+msgstr "|array| 中元素的 |data type| 。"
+
+#: ../../source/data/array.rst
+msgid "Return type"
+msgstr "返回类型"
+
+#: cuda.tile.Array.shape:1 of
+msgid "The number of elements in each of the |array|'s dimensions."
+msgstr "|array| 在各个维度上的元素数量。"
+
+#: ../../source/data/array.rst
+msgid "Returns"
+msgstr "返回值"
+
+#: cuda.tile.Array.shape:3 cuda.tile.Array.strides:3 of
+msgid ""
+"Uses the array's index dtype (``int32``     by default). Dimensions may "
+"be runtime values or compile-time     constants; see "
+":class:`ArrayAnnotation`."
+msgstr ""
+"使用数组的索引 dtype（默认为 ``int32`` ）。各维度大小既可以是运行时值，也可以是编译期常量；参见 "
+":class:`ArrayAnnotation` 。"
+
+#: cuda.tile.Array.shape:5 cuda.tile.Array.strides:5 of
+msgid "Uses the array's index dtype (``int32``"
+msgstr "使用数组的索引 dtype（默认为 ``int32``"
+
+#: cuda.tile.Array.shape:6 cuda.tile.Array.strides:6 of
+msgid ""
+"by default). Dimensions may be runtime values or compile-time constants; "
+"see :class:`ArrayAnnotation`."
+msgstr "）。各维度大小既可以是运行时值，也可以是编译期常量；参见 :class:`ArrayAnnotation` 。"
+
+#: cuda.tile.Array.strides:1 of
+msgid ""
+"The number of elements to step in each dimension while traversing the "
+"|array|."
+msgstr "遍历 |array| 时，沿每个维度每前进一个索引所跨越的元素步长。"
+
+#: cuda.tile.Array.ndim:1 of
+msgid "The number of dimensions in the |array|."
+msgstr "|array| 的维度数。"
+
+#: cuda.tile._stub.Array.slice:1 of
+msgid "Creates a view of the |array| sliced along a single `axis`."
+msgstr "创建沿单个 ``axis`` 对 |array| 进行切片后的视图。"
+
+#: cuda.tile._stub.Array.slice:3 of
+msgid ""
+"The returned array references the same underlying memory as |array|, but "
+"with a restricted range from index `start` (inclusive) to `stop` "
+"(exclusive) along the specified axis. No data is copied."
+msgstr ""
+"返回的数组与原 |array| 引用相同的底层内存，但在指定轴上的索引范围被限定为从 ``start`` （包含）到 ``stop`` "
+"（不包含）。不会复制任何数据。"
+
+#: cuda.tile._stub.Array.slice:7 of
+msgid ""
+"`axis` must be a constant integer. Negative values are supported and "
+"count from the last dimension (e.g., ``axis=-1`` refers to the last "
+"axis)."
+msgstr "``axis`` 必须是常量整数。支持负数值，从最后一个维度开始倒数（例如 ``axis=-1`` 表示最后一个轴）。"
+
+#: cuda.tile._stub.Array.slice:10 of
+msgid ""
+"`start` and `stop` must be integers (scalars or 0D tiles). They must "
+"satisfy ``0 <= start < N`` and ``start <= stop <= N``, where ``N`` is the"
+" size of `array` along the sliced axis."
+msgstr ""
+"``start`` 和 ``stop`` 必须是整数（标量或零维 Tile），且必须满足 ``0 <= start < N`` 以及 "
+"``start <= stop <= N`` ，其中 ``N`` 为数组沿被切片轴的长度。"
+
+#: cuda.tile._stub.Array.slice:14 of
+msgid ""
+"For example, consider a 2-dimensional array ``A`` of shape ``(M, N)``. "
+"Slicing along axis 0 from `start` to `stop` produces an array of shape "
+"``(stop - start, N)``:"
+msgstr ""
+"例如，考虑形状为 ``(M, N)`` 的二维数组 ``A`` 。沿轴 0 从 ``start`` 到 ``stop`` 切片后，会得到形状为 "
+"``(stop - start, N)`` 的数组："
+
+#: cuda.tile._stub.Array.slice:32 cuda.tile._stub.Array.slice:54
+#: cuda.tile._stub.Array.tiled_view:53 of
+msgid "Output"
+msgstr "输出"
+
+#: cuda.tile._stub.Array.slice:33 of
+msgid "Using NumPy slice notation for illustration, this is equivalent to::"
+msgstr "以 NumPy 切片语法作为示意，上述操作等价于::"
+
+#: cuda.tile._stub.Array.slice:37 of
+msgid "The slice bounds can be dynamic (runtime values):"
+msgstr "切片边界可以是动态的（运行时值）："
+
+#: cuda.tile._stub.Array.tiled_view:1 of
+msgid "Creates a |tiled view| of this array with a fixed `tile_shape`."
+msgstr "使用固定的 ``tile_shape`` 创建该数组的 |tiled view| 。"
+
+#: cuda.tile._stub.Array.tiled_view:3 of
+msgid ""
+"The resulting :class:`TiledView` partitions this array into a grid of "
+"equally sized tiles."
+msgstr "生成的 :class:`TiledView` 将该数组划分为由等尺寸 Tile 组成的网格。"
+
+#: ../../source/data/array.rst
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile._stub.Array.tiled_view:6 of
+msgid "The shape of each tile in the view. Must have the same rank as this array."
+msgstr "视图中每个 Tile 的形状。其秩（维度数）必须与该数组相同。"
+
+#: cuda.tile._stub.Array.tiled_view:9 of
+msgid ""
+"The value used to pad tiles that extend beyond the array boundaries. By "
+"default, the padding value is undetermined."
+msgstr "用于填充超出数组边界部分的填充值。默认情况下，填充值为未确定（undetermined）。"
+
+#: cuda.tile._stub.Array.tiled_view:13 of
+msgid ""
+"Number of elements between consecutive tile origins along each axis. Must"
+" have the same rank as the array, or be ``None`` (default).  - ``None`` "
+"or ``traversal_steps[i] == tile_shape[i]``: tiles   partition axis *i* "
+"with no overlap or gaps. - ``traversal_steps[i] < tile_shape[i]``: tiles "
+"overlap along   axis *i*. - ``traversal_steps[i] > tile_shape[i]``: gaps "
+"between tiles   along axis *i*.  (Since CTK 13.3)"
+msgstr ""
+
+#: cuda.tile._stub.Array.tiled_view:13 of
+msgid ""
+"Number of elements between consecutive tile origins along each axis. Must"
+" have the same rank as the array, or be ``None`` (default)."
+msgstr "沿每个轴相邻 Tile 原点之间相隔的元素数。必须与数组具有相同的秩，或为 ``None`` （默认）。"
+
+#: cuda.tile._stub.Array.tiled_view:17 of
+msgid ""
+"``None`` or ``traversal_steps[i] == tile_shape[i]``: tiles partition axis"
+" *i* with no overlap or gaps."
+msgstr ""
+"``None`` 或 ``traversal_steps[i] == tile_shape[i]`` ：Tile 沿轴 *i* "
+"无重叠且无间隔地划分。"
+
+#: cuda.tile._stub.Array.tiled_view:19 of
+msgid "``traversal_steps[i] < tile_shape[i]``: tiles overlap along axis *i*."
+msgstr "``traversal_steps[i] < tile_shape[i]`` ：Tile 沿轴 *i* 存在重叠。"
+
+#: cuda.tile._stub.Array.tiled_view:21 of
+msgid "``traversal_steps[i] > tile_shape[i]``: gaps between tiles along axis *i*."
+msgstr "``traversal_steps[i] > tile_shape[i]`` ：Tile 沿轴 *i* 之间存在间隔。"
+
+#: cuda.tile._stub.Array.tiled_view:24 of
+msgid "(Since CTK 13.3)"
+msgstr "（自 CTK 13.3 起）"
+
+#: cuda.tile._stub.Array.tiled_view:30 of
+msgid "Examples"
+msgstr "示例"
+
+#: cuda.tile._stub.Array.tiled_view:55 of
+msgid ":ref:`Tiled Views <data-tiled-views>`"
+msgstr ":ref:`分块视图 <data-tiled-views>`"
+

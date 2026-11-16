@@ -1,0 +1,58 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/data/slice.rst:10
+msgid "cuda.tile.Slice"
+msgstr "cuda.tile.Slice"
+
+#: cuda.tile._stub.Slice:1 of
+msgid "A start + length index for array dimensions."
+msgstr "用于数组维度的起始位置 + 长度（start + length）索引。"
+
+#: cuda.tile._stub.Slice:3 of
+msgid ""
+"Used as a dense-dimension entry in :func:`load_advanced_indexing` and "
+":func:`store_advanced_indexing`.  ``start`` is an integer giving the "
+"element-space start offset along this dimension; ``length`` is the tile "
+"size, and must be a power of two and must be a compile-time constant at "
+"the :func:`load_advanced_indexing`/:func:`store_advanced_indexing` call "
+"site."
+msgstr ""
+"在 :func:`load_advanced_indexing` 和 :func:`store_advanced_indexing` "
+"中用作稠密维度项。 ``start`` 为整数，表示沿该维度的元素空间起始偏移量； ``length`` 为 Tile 尺寸，在 "
+":func:`load_advanced_indexing` / :func:`store_advanced_indexing` 调用点处必须是 "
+"2 的幂且为编译期常量。"
+
+#: ../../source/data/slice.rst
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile._stub.Slice:10 of
+msgid "Integer element-space start offset."
+msgstr "元素空间中的整数起始偏移量。"
+
+#: cuda.tile._stub.Slice:11 of
+msgid "Length in elements."
+msgstr "以元素为单位的长度。"
+

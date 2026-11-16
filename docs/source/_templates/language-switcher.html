@@ -1,0 +1,43 @@
+{# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved. #}
+{# SPDX-License-Identifier: Apache-2.0 #}
+{# Language switcher component placed in navbar_end (renders in desktop header and mobile drawer). #}
+{%- set btn_id = unique_html_id("pst-lang-switcher-btn") -%}
+{%- set menu_id = unique_html_id("pst-lang-switcher-list") -%}
+{%- set current_label = dict(doc_languages).get(current_lang, current_lang) -%}
+{%- set short_code = "中文" if current_lang.startswith("zh") else current_lang.upper() -%}
+<div class="lang-switcher">
+  <button
+    id="{{ btn_id }}"
+    type="button"
+    class="btn btn-sm nav-link pst-navbar-icon lang-switcher__trigger"
+    commandfor="{{ menu_id }}"
+    command="toggle-popover"
+    aria-expanded="false"
+    aria-controls="{{ menu_id }}"
+    aria-label="{{ _('Language') }}: {{ current_label }}"
+    title="{{ _('Language') }}: {{ current_label }}"
+  >
+    <i class="fa-solid fa-globe fa-lg" aria-hidden="true"></i>
+    <span class="lang-switcher__code">{{ short_code }}</span>
+    <i class="fa-solid fa-chevron-down lang-switcher__caret" aria-hidden="true"></i>
+  </button>
+  <div id="{{ menu_id }}" class="lang-switcher__menu" popover="auto" aria-labelledby="{{ btn_id }}">
+    <nav class="lang-switcher__nav" aria-label="{{ _('Language') }}">
+      {%- for code, label in doc_languages %}
+      <a
+        class="lang-switcher__option{% if code == current_lang %} is-active{% endif %}"
+        href="{{ lang_switch_url(code) }}"
+        hreflang="{{ code.replace('_', '-') }}"
+        lang="{{ code.replace('_', '-') }}"
+        data-lang="{{ code }}"
+        {%- if code == current_lang %} aria-current="page"{% endif %}
+      >
+        <span class="lang-switcher__label">{{ label }}</span>
+        {%- if code == current_lang %}
+        <i class="fa-solid fa-check lang-switcher__check" aria-hidden="true"></i>
+        {%- endif %}
+      </a>
+      {%- endfor %}
+    </nav>
+  </div>
+</div>

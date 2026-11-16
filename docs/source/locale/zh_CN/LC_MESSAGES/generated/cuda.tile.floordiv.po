@@ -1,0 +1,72 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.floordiv.rst:2
+msgid "cuda.tile.floordiv"
+msgstr "cuda.tile.floordiv"
+
+#: cuda.tile._stub.floordiv:1 of
+msgid "Elementwise floordiv on two tiles."
+msgstr "对两个 Tile 执行逐元素向下取整除法（floordiv）。"
+
+#: cuda.tile._stub.floordiv:3 of
+msgid "Can also use builtin operation ``x // y``."
+msgstr "也可使用内置运算 ``x // y`` 。"
+
+#: cuda.tile._stub.floordiv:5 of
+msgid ""
+"Supports both integer and floating-point operands. For float inputs, the "
+"result is ``floor(x / y)`` as a float (e.g. ``5.5 // 2.2 == 2.0``)."
+msgstr "同时支持整数和浮点操作数。对于浮点输入，结果为浮点型的 ``floor(x / y)`` （例如 ``5.5 // 2.2 == 2.0`` ）。"
+
+#: ../../source/generated/cuda.tile.floordiv.rst
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile._stub.floordiv:8 of
+msgid "LHS tile."
+msgstr "左操作数（LHS）Tile。"
+
+#: cuda.tile._stub.floordiv:10 of
+msgid "RHS tile."
+msgstr "右操作数（RHS）Tile。"
+
+#: cuda.tile._stub.floordiv:13 of
+msgid ""
+"The ``shape`` of ``x`` and ``y`` will be broadcasted and ``dtype`` "
+"promoted to common dtype."
+msgstr "``x`` 和 ``y`` 的 ``shape`` 将会进行广播，且 ``dtype`` 会提升为公共数据类型（common dtype）。"
+
+#: ../../source/generated/cuda.tile.floordiv.rst
+msgid "Return type"
+msgstr "返回类型"
+
+#: cuda.tile._stub.floordiv:19 of
+msgid "Examples"
+msgstr "示例"
+
+#: cuda.tile._stub.floordiv:30 of
+msgid "Output"
+msgstr "输出"
+

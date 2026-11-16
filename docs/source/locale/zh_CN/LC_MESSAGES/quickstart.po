@@ -1,0 +1,229 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/quickstart.rst:8
+msgid "Quickstart"
+msgstr "快速开始"
+
+#: ../../source/quickstart.rst:10
+msgid ""
+"This page will guide you through getting setup and running with cuTile "
+"Python, including running a first example."
+msgstr "本页面将指导您完成 cuTile Python 的环境配置与运行，包括运行第一个示例程序。"
+
+#: ../../source/quickstart.rst:15
+msgid "Prerequisites"
+msgstr "前置条件"
+
+#: ../../source/quickstart.rst:17
+msgid "cuTile Python requires the following:"
+msgstr "cuTile Python 需要满足以下条件："
+
+#: ../../source/quickstart.rst:19
+msgid "Linux x86_64, Linux aarch64 or Windows x86_64"
+msgstr "Linux x86_64、Linux aarch64 或 Windows x86_64"
+
+#: ../../source/quickstart.rst:20
+msgid "A GPU with compute capability 8.x, 9.x, 10.x, 11.x or 12.x"
+msgstr "计算能力（Compute Capability）为 8.x、9.x、10.x、11.x 或 12.x 的 GPU"
+
+#: ../../source/quickstart.rst:21
+msgid "NVIDIA Driver r580 or later"
+msgstr "NVIDIA 驱动 r580 或更高版本"
+
+#: ../../source/quickstart.rst:22
+msgid "Python version 3.11, 3.12, 3.13, 3.14, 3.14t, 3.15, or 3.15t"
+msgstr "Python 3.11、3.12、3.13、3.14、3.14t、3.15 或 3.15t"
+
+#: ../../source/quickstart.rst:26
+msgid "Installing cuTile Python"
+msgstr "安装 cuTile Python"
+
+#: ../../source/quickstart.rst:28
+msgid ""
+"cuTile Python depends on CUDA TileIR compiler ``tileiras``, which futher "
+"depends on ``ptxas`` and ``libnvvm`` from the CUDA Toolkit. They can be "
+"installed as python packages per virtual environment or at system wide "
+"CTK locations."
+msgstr ""
+"cuTile Python 依赖于 CUDA TileIR 编译器 ``tileiras`` ，而 ``tileiras`` 又进一步依赖 "
+"CUDA Toolkit 中的 ``ptxas`` 和 ``libnvvm`` 。它们既可以作为 Python "
+"包安装到各个虚拟环境中，也可以使用系统级安装的 CTK。"
+
+#: ../../source/quickstart.rst:32
+msgid ""
+"If your system does not have system-wide CUDA Toolkit (13.1+), you can "
+"install cuTile Python along with the optional ``[tileiras]``, which "
+"installs ``nvidia-cuda-tileiras``, ``nvidia-cuda-nvcc`` and ``nvidia-"
+"nvvm`` into your Python virtual environment."
+msgstr ""
+"如果您的系统中没有安装系统级 CUDA Toolkit (13.1+)，可以在安装 cuTile Python 时附带可选依赖 "
+"``[tileiras]`` ，这会将 ``nvidia-cuda-tileiras`` 、 ``nvidia-cuda-nvcc`` 和 "
+"``nvidia-nvvm`` 安装到您的 Python 虚拟环境中。"
+
+#: ../../source/quickstart.rst:41
+msgid ""
+"Note: the package versions for ``nvidia-cuda-tileiras``, ``nvidia-cuda-"
+"nvcc`` and ``nvidia-nvvm`` must match up to the same major.minor version."
+msgstr ""
+"注意： ``nvidia-cuda-tileiras`` 、 ``nvidia-cuda-nvcc`` 和 ``nvidia-nvvm`` "
+"这三个包的主次版本号（major.minor）必须保持一致。"
+
+#: ../../source/quickstart.rst:44
+msgid ""
+"cuTile python supports different versions of `tileiras`. To use a "
+"specific version of ``tileiras`` python pacakge, i.e. `13.3` run"
+msgstr ""
+"cuTile Python 支持多个版本的 ``tileiras`` 。如需使用特定版本的 ``tileiras`` Python 包（例如 "
+"``13.3`` ），请运行："
+
+#: ../../source/quickstart.rst:52
+msgid ""
+"Alternatively if you already have system-wide CUDA Toolkit (13.1+) "
+"installed, you can install cuTile Python as a standalone package. cuTile "
+"automatically searches for ``tileiras`` from the location of CUDA "
+"Toolkit."
+msgstr ""
+"或者，如果您已经安装了系统级 CUDA Toolkit (13.1+)，也可以仅将 cuTile Python 作为独立包安装。cuTile "
+"会自动从 CUDA Toolkit 所在位置查找 ``tileiras`` 。"
+
+#: ../../source/quickstart.rst:62
+msgid "Other Packages"
+msgstr "其他依赖包"
+
+#: ../../source/quickstart.rst:64
+msgid "Some of the cuTile Python samples also use other Python packages."
+msgstr "部分 cuTile Python 示例还用到了其他 Python 包。"
+
+#: ../../source/quickstart.rst:66
+msgid "The quickstart sample on this page uses cupy, which can be installed with:"
+msgstr "本页面中的快速开始示例使用了 cupy，可通过以下命令安装："
+
+#: ../../source/quickstart.rst:73
+msgid ""
+"The cuTile Python samples in the ``samples/`` directory also use pytest, "
+"torch, and numpy packages."
+msgstr "``samples/`` 目录下的 cuTile Python 示例还使用了 pytest、torch 和 numpy。"
+
+#: ../../source/quickstart.rst:75
+msgid ""
+"For PyTorch installation instructions, see `<https://pytorch.org/get-"
+"started/locally/>`__."
+msgstr "PyTorch 安装说明请参见 `<https://pytorch.org/get-started/locally/>`__ 。"
+
+#: ../../source/quickstart.rst:77
+msgid "Pytest and Numpy can be installed with:"
+msgstr "可通过以下命令安装 pytest 和 numpy："
+
+#: ../../source/quickstart.rst:85
+msgid "Example Code"
+msgstr "示例代码"
+
+#: ../../source/quickstart.rst:87
+msgid ""
+"The following example shows vector addition, a typical first kernel for "
+"CUDA, but uses cuTile for tile-based programming. This makes use of a "
+"1-dimensional tile to add two 1-dimensional vectors."
+msgstr ""
+"下面的示例展示了向量加法——CUDA 中经典的入门内核，但在本例中采用 cuTile 进行基于 Tile 的编程。程序利用一维 Tile "
+"对两个一维向量执行加法运算。"
+
+#: ../../source/quickstart.rst:89
+msgid "This example shows a structure common to cuTile kernels:"
+msgstr "该示例展示了 cuTile 内核的常见结构："
+
+#: ../../source/quickstart.rst:91
+msgid "Load one or more tiles from GPU memory"
+msgstr "从 GPU 内存中加载一个或多个 Tile"
+
+#: ../../source/quickstart.rst:92
+msgid "Perform computation(s) on the tile(s), resulting in new tile(s)"
+msgstr "在 Tile 上执行计算，生成新的 Tile"
+
+#: ../../source/quickstart.rst:93
+msgid "Write the resulting tile(s) out to GPU memory"
+msgstr "将结果 Tile 写回 GPU 内存"
+
+#: ../../source/quickstart.rst:95
+msgid ""
+"In this case, the kernel loads tiles from two vectors, ``a`` and ``b``. "
+"These loads create tiles called ``a_tile`` and ``b_tile``. These tiles "
+"are added together to form a third tile, called ``result``. In the last "
+"step, the kernel stores the ``result`` tile to the output vector ``c``. "
+"More samples can be found in the cuTile Python `repository "
+"<https://github.com/nvidia/cutile-python>`_."
+msgstr ""
+"在此例中，内核从两个向量 ``a`` 和 ``b`` 中加载 Tile，分别创建名为 ``a_tile`` 和 ``b_tile`` 的 "
+"Tile。随后将这两个 Tile 相加得到第三个 Tile ``result`` 。最后一步，内核将 ``result`` Tile "
+"存储到输出向量 ``c`` 中。更多示例可在 cuTile Python `代码仓库 <https://github.com/nvidia"
+"/cutile-python>`_ 中找到。"
+
+#: ../../source/quickstart.rst:103
+msgid ""
+"Run this from a command line as shown below. If everything has been setup"
+" correctly, the test will print that the example passed."
+msgstr "如下所示从命令行运行该脚本。如果环境配置正确，测试将输出示例已通过的提示信息。"
+
+#: ../../source/quickstart.rst:110
+msgid ""
+"To run more of the cuTile Python examples, you can directly run the "
+"samples by invoking them in the same way as the quickstart example:"
+msgstr "如需运行更多 cuTile Python 示例，可以用与快速开始示例相同的方式直接执行对应的脚本："
+
+#: ../../source/quickstart.rst:117
+msgid "You can also use pytest to run all the samples:"
+msgstr "也可以使用 pytest 一次性运行所有示例："
+
+#: ../../source/quickstart.rst:133
+msgid "Developer Tools"
+msgstr "开发者工具"
+
+#: ../../source/quickstart.rst:135
+msgid ""
+"`NVIDIA Nsight Compute <https://developer.nvidia.com/nsight-compute>`__ "
+"can profile cuTile Python kernels in the same way as SIMT CUDA kernels. "
+"With NVIDIA Nsight Compute installed, the quickstart vector addition "
+"kernel introduced here can be profiled using the following command to "
+"create a profile:"
+msgstr ""
+"`NVIDIA Nsight Compute <https://developer.nvidia.com/nsight-compute>`__ "
+"可以像分析 SIMT CUDA 内核一样分析 cuTile Python 内核。安装 NVIDIA Nsight Compute "
+"后，可使用以下命令对本节介绍的向量加法内核进行性能剖析以生成分析报告："
+
+#: ../../source/quickstart.rst:141
+msgid ""
+"This profile can then be loaded in a graphical instance of Nsight Compute"
+" and the kernel ``vector_add`` selected to see statistics about the "
+"kernel."
+msgstr "随后可在 Nsight Compute 图形界面中加载生成的性能文件，并选择内核 ``vector_add`` 来查看其详细统计指标。"
+
+#: ../../source/quickstart.rst:144
+msgid ""
+"Capturing detailed statistics for cuTile Python kernels requires running "
+"on NVIDIA Driver equals or later than r580.126.09 (linux) or r582.16 "
+"(windows)."
+msgstr ""
+"捕获 cuTile Python 内核的详细统计信息需要使用 r580.126.09 (Linux) 或 r582.16 (Windows) "
+"及更高版本的 NVIDIA 驱动。"
+

@@ -1,0 +1,81 @@
+# SPDX-FileCopyrightText: Copyright (c) <2026> NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2026, NVIDIA Corporation
+# This file is distributed under the same license as the cuTile Python
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cuTile Python \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-16 01:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/generated/cuda.tile.reduce.rst:2
+msgid "cuda.tile.reduce"
+msgstr "cuda.tile.reduce"
+
+#: cuda.tile._stub.reduce:1 of
+msgid "Apply custom reduction function along axis."
+msgstr "沿指定轴应用自定义归约函数。"
+
+#: ../../source/generated/cuda.tile.reduce.rst
+msgid "Parameters"
+msgstr "参数"
+
+#: cuda.tile._stub.reduce:3 of
+msgid ""
+"input tile or a tuple of tiles to be reduced. If a tuple is provided, "
+"shapes of the tiles in the tuple must be broadcastable to a common shape."
+msgstr "要归约的输入 Tile 或 Tile 元组。若提供元组，其中各 Tile 的形状必须可广播到同一个公共形状。"
+
+#: cuda.tile._stub.reduce:5 of
+msgid "an integer constant that specifies the axis to reduce along."
+msgstr "指定归约操作所在轴的整数常量。"
+
+#: cuda.tile._stub.reduce:7 of
+msgid ""
+"function for combining two values. If `x` is a single tile, then the "
+"function must take two 0d tile arguments and return the combined 0d tile."
+" For example, `lambda a, b: a + b` or `operator.add` can be used to "
+"implement the sum reduction. If `x` is a tuple of N tiles, then the "
+"function takes 2N tiles and returns a tuple of N combined tiles. The "
+"first N arguments correspond to one of the groups of values being "
+"combined, while the rest correspond to the other."
+msgstr ""
+"用于合并两个值的函数。如果 ``x`` 是单个 Tile，则该函数必须接收两个零维（0-d）Tile 参数并返回一个合并后的零维 "
+"Tile；例如可使用 ``lambda a, b: a + b`` 或 ``operator.add`` 实现求和归约。如果 ``x`` 是包含 "
+"N 个 Tile 的元组，则该函数接收 2N 个 Tile 并返回由 N 个合并后 Tile 组成的元组：前 N 个参数对应待合并的一组值，其余 "
+"N 个参数对应另一组值。"
+
+#: cuda.tile._stub.reduce:13 of
+msgid ""
+"a constant scalar or a tuple of constant scalars that specifies the "
+"identity element of the `func`."
+msgstr "指定 ``func`` 单位元（identity element）的常量标量或常量标量元组。"
+
+#: cuda.tile._stub.reduce:15 of
+msgid ""
+"True to keep the axis of size 1, False to remove the reduced axis. "
+"Default: False."
+msgstr "为 True 时保留大小为 1 的归约轴，为 False 时移除该轴。默认值为 False。"
+
+#: ../../source/generated/cuda.tile.reduce.rst
+msgid "Returns"
+msgstr "返回值"
+
+#: cuda.tile._stub.reduce:19 of
+msgid "Reduced tile, or tuple of reduced tiles, depending on the type of `x`."
+msgstr "归约后的 Tile 或 Tile 元组，具体取决于 ``x`` 的类型。"
+

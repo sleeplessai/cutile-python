@@ -48,13 +48,25 @@ toc_object_entries = False  # Don't include object entries in the TOC
 html_theme = "nvidia_sphinx_theme"
 html_static_path = ["_static"]
 html_css_files = ["css/custom.css"]
+html_js_files = ["js/language-switcher.js"]
 html_show_sphinx = False
+
+# Internationalization (i18n)
+locale_dirs = ["locale/"]
+gettext_compact = False
+figure_language_filename = "{path}{language}/{basename}{ext}"
+
+DOC_LANGUAGES = [
+    ("en", "English"),
+    ("zh_CN", "简体中文"),
+]
 
 # Configure sidebar depth and content
 html_theme_options = {
     "navigation_depth": 2,
     "show_nav_level": 2,
-    "show_toc_level": 4
+    "show_toc_level": 4,
+    "navbar_end": ["language-switcher.html", "theme-switcher", "navbar-icon-links"],
 }
 
 # Set up the sidebar to use our custom global TOC
@@ -123,5 +135,21 @@ def resolve_type_aliases(app, env, node, contnode):
         )
 
 
+def add_i18n_context(app, pagename, templatename, context, doctree):
+    """Expose active language and relative sibling-language URL builder to templates."""
+    current_lang = app.config.language or "en"
+    depth = pagename.count("/") + 1
+    prefix = "../" * depth
+    suffix = context.get("file_suffix", ".html")
+
+    def lang_switch_url(target_lang):
+        return f"{prefix}{target_lang}/{pagename}{suffix}"
+
+    context["current_lang"] = current_lang
+    context["doc_languages"] = DOC_LANGUAGES
+    context["lang_switch_url"] = lang_switch_url
+
+
 def setup(app):
     app.connect("missing-reference", resolve_type_aliases)
+    app.connect("html-page-context", add_i18n_context)
